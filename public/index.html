@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pipforge – Build your own Deriv site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0e0e0e;--ink:#f4f4f6;--muted:#a6a9b3;
+  --glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.13);--edge:rgba(255,255,255,.17);--line:rgba(255,255,255,.1);
+  --shadow:rgba(0,0,0,.5);--red:#ff444f;--coral:#ff7a5c;--blue:#2f5bff;--btnInk:#fff;
+  --orbA:.55;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;--bg:#f4f5f7;--ink:#151717;--muted:#555b66;
+  --glass:rgba(255,255,255,.45);--glass2:rgba(255,255,255,.75);--edge:rgba(255,255,255,.9);--line:rgba(20,20,30,.1);
+  --shadow:rgba(255,68,79,.2);--orbA:.4}}
+:root[data-theme="light"]{
+  color-scheme:light;--bg:#f4f5f7;--ink:#151717;--muted:#555b66;
+  --glass:rgba(255,255,255,.45);--glass2:rgba(255,255,255,.75);--edge:rgba(255,255,255,.9);--line:rgba(20,20,30,.1);
+  --shadow:rgba(255,68,79,.2);--orbA:.4}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px);scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.55;overflow-x:hidden;transition:background .4s,color .4s}
+.orbs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.orbs i{position:absolute;border-radius:50%;filter:blur(70px);opacity:var(--orbA)}
+.orbs i:nth-child(1){width:46vmax;height:46vmax;left:-12vmax;top:-10vmax;background:var(--red);animation:d1 22s ease-in-out infinite alternate}
+.orbs i:nth-child(2){width:38vmax;height:38vmax;right:-10vmax;top:22vh;background:var(--blue);animation:d2 26s ease-in-out infinite alternate}
+.orbs i:nth-child(3){width:34vmax;height:34vmax;left:25vw;bottom:-14vmax;background:var(--coral);animation:d3 24s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate(14vw,18vh) scale(1.15)}}
+@keyframes d2{to{transform:translate(-16vw,-14vh) scale(.9)}}
+@keyframes d3{to{transform:translate(12vw,-12vh) scale(1.2)}}
+.glass{background:var(--glass);border:1px solid var(--edge);border-radius:24px;
+  -webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  box-shadow:inset 0 1px 0 var(--edge),0 20px 50px -20px var(--shadow)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:14px auto 0;max-width:1120px;padding:0 20px}
+nav .glass{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 18px;border-radius:18px}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.03em;display:flex;align-items:center;gap:9px}
+.logo b{width:26px;height:26px;border-radius:8px;background:var(--red);display:grid;place-items:center;color:#fff;font-size:15px;box-shadow:0 6px 16px -4px var(--red)}
+.links{display:flex;gap:4px;align-items:center}
+.links a{color:var(--muted);text-decoration:none;font-weight:500;font-size:14px;padding:8px 12px;border-radius:10px;transition:.2s}
+.links a:hover{background:var(--glass2);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+.btn{border:0;background:var(--red);color:var(--btnInk);font-weight:600;padding:14px 26px;border-radius:12px;font-size:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 26px -10px var(--red);transition:transform .2s,box-shadow .2s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 16px 30px -10px var(--red)}
+.btn:active{transform:scale(.97)}
+.icon{width:38px;height:38px;border-radius:10px;border:0;background:var(--glass2);color:var(--ink);font-size:16px;transition:transform .3s}
+.icon:hover{transform:rotate(180deg)}
+:focus-visible{outline:3px solid var(--coral);outline-offset:2px}
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:36px;align-items:center;padding:64px 0 40px}
+h1{font-size:clamp(38px,5.6vw,64px);line-height:1.04;letter-spacing:-.04em;margin:0 0 18px;font-weight:700}
+.lead{font-size:18px;color:var(--muted);max-width:46ch;margin:0 0 26px}
+.rise>*{opacity:0;transform:translateY(18px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
+.rise>*:nth-child(2){animation-delay:.12s}.rise>*:nth-child(3){animation-delay:.24s}
+.cfg{padding:22px;display:grid;gap:18px;opacity:0;animation:rise .8s .2s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.cfg label,.cfg .lab{font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:8px}
+.field{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--glass);color:var(--ink);font:inherit;font-size:16px;transition:border-color .2s,background .2s}
+.field:focus{outline:0;border-color:var(--red);background:var(--glass2)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--glass);color:var(--ink);font-weight:600;font-size:14px;transition:.2s}
+.chip:hover{background:var(--glass2)}
+.chip[aria-pressed="true"]{background:var(--red);color:#fff;border-color:transparent}
+.tpl{flex:1;min-width:92px;padding:10px;border-radius:14px;border:2px solid transparent;background:var(--glass);color:var(--ink);text-align:left;transition:.25s}
+.tpl:hover{transform:translateY(-3px);background:var(--glass2)}
+.tpl[aria-pressed="true"]{border-color:var(--red);background:var(--glass2)}
+.tpl i{display:block;height:34px;border-radius:8px;margin-bottom:8px}
+.tpl b{font-size:14px}.tpl small{display:block;color:var(--muted);font-size:12px}
+.total{display:flex;justify-content:space-between;align-items:end;gap:12px;padding-top:6px;border-top:1px solid var(--line)}
+.total strong{font-size:36px;letter-spacing:-.04em;line-height:1}
+.total span{color:var(--muted);font-size:13px}
+.preview{margin:0 0 56px}
+.frame{padding:14px;border-radius:26px}
+.bar{display:flex;align-items:center;gap:10px;padding:4px 6px 12px}
+.dots{display:flex;gap:6px}.dots i{width:11px;height:11px;border-radius:50%;background:var(--line)}
+.dots i:first-child{background:var(--red)}
+.url{flex:1;text-align:center;font-size:13px;color:var(--muted);background:var(--glass);border-radius:8px;padding:6px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.site{--a1:#ff444f;--a2:#ff8a5c;--st:#f4f4f6;--sm:rgba(244,244,246,.68);--sb:rgba(255,255,255,.07);--sl:rgba(255,255,255,.12);
+  border-radius:16px;overflow:hidden;color:var(--st);min-height:380px;display:flex;flex-direction:column;transition:background .5s,color .5s}
+.site[data-t="crimson"]{background:linear-gradient(150deg,#160709,#2c0d12)}
+.site[data-t="midnight"]{--a1:#377cfc;--a2:#3fc4b0;background:linear-gradient(150deg,#0b111f,#101d3a)}
+.site[data-t="snow"]{--a1:#ff444f;--a2:#ff7a5c;--st:#151717;--sm:#5a606b;--sb:rgba(20,20,30,.05);--sl:rgba(20,20,30,.12);background:linear-gradient(150deg,#f3f4f6,#ffffff)}
+.site>*{transition:color .5s}
+.s-top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px}
+.s-name{font-weight:700;letter-spacing:-.03em;font-size:18px}
+.s-pill{font-size:12px;padding:6px 12px;border-radius:8px;background:var(--sb);border:1px solid var(--sl)}
+.s-hero{padding:22px 20px 18px}
+.s-hero h3{margin:0 0 8px;font-size:clamp(22px,3vw,30px);letter-spacing:-.035em;line-height:1.12}
+.s-hero p{margin:0 0 16px;color:var(--sm);font-size:14px;max-width:38ch}
+.s-btn{display:inline-block;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;color:#fff;background:linear-gradient(120deg,var(--a1),var(--a2));margin-right:8px;transition:background .5s}
+.s-btn.o{background:var(--sb);color:var(--st);border:1px solid var(--sl)}
+.s-bots{margin:6px 20px 0;display:grid;gap:8px}
+.s-bot{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:var(--sb);border:1px solid var(--sl);font-size:13px;transition:transform .2s}
+.s-bot:hover{transform:translateX(4px)}
+.s-bot em{font-style:normal;color:var(--a1);font-weight:600}
+.s-foot{margin-top:auto;padding:14px 20px;font-size:11px;color:var(--sm)}
+.swap{animation:swap .45s ease}
+@keyframes swap{from{opacity:.2;transform:scale(.985)}to{opacity:1;transform:none}}
+section{padding:36px 0}
+h2{font-size:clamp(28px,3.6vw,42px);letter-spacing:-.035em;line-height:1.08;margin:0 0 22px;max-width:20ch;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.tile{padding:26px;transition:transform .3s,border-color .3s}
+.tile:hover{transform:translateY(-5px);border-color:var(--red)}
+.tile h3{margin:0 0 8px;font-size:21px;letter-spacing:-.02em}
+.tile p{margin:0;color:var(--muted);font-size:15px}
+.t1{grid-column:span 4}.t2{grid-column:span 2}.t3{grid-column:span 2}.t4{grid-column:span 4}
+.list{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}
+.list li{display:flex;justify-content:space-between;padding:10px 14px;border-radius:10px;background:var(--glass);font-size:14px;font-weight:500}
+.list li span{color:var(--muted);font-weight:400}
+.note{padding:28px;display:grid;grid-template-columns:1fr 1.4fr;gap:24px}
+.note h2{margin:0;font-size:30px}
+.note p{margin:0 0 10px;color:var(--muted)}
+footer{padding:40px 0 60px;color:var(--muted);font-size:13px}
+footer p{max-width:80ch;margin:6px 0}
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.js .reveal.in{opacity:1;transform:none}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;transition:.3s;z-index:30}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.glass:not(.toast){position:relative}
+.glass:not(.toast)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent 38%,transparent 62%,rgba(255,255,255,.07))}
+.glass:not(.toast)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(280px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.18),transparent 62%)}
+.glass:not(.toast):hover::after{opacity:1}
+.links a.on{background:var(--glass2);color:var(--ink)}
+.page.in{animation:pg .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes pg{from{opacity:0;transform:translateY(14px)}}
+.ph{padding:56px 0 24px}.ph h1{font-size:clamp(32px,4.6vw,52px);margin:0 0 12px;max-width:20ch}.ph p{color:var(--muted);font-size:18px;max-width:52ch;margin:0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;padding-bottom:40px}
+.card{padding:22px;display:flex;flex-direction:column;gap:10px;transition:transform .3s,border-color .3s}
+.card:hover{transform:translateY(-5px);border-color:var(--red)}
+.card h3{margin:0;font-size:19px;letter-spacing:-.02em}.card p{margin:0;color:var(--muted);font-size:14px}
+.card .btn{margin-top:auto;padding:10px 16px;font-size:14px}
+.tag{align-self:flex-start;font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px;background:var(--glass2);color:var(--muted)}
+.swatch{height:90px;border-radius:14px}
+.price{font-size:64px;font-weight:700;letter-spacing:-.05em;line-height:1}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;padding-bottom:40px;align-items:start}
+.steps{list-style:none;padding:0;margin:0 0 40px;display:grid;gap:12px}
+.steps li{display:grid;grid-template-columns:44px 1fr;gap:16px;align-items:start;padding:20px}
+.num{width:44px;height:44px;border-radius:12px;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 8px 20px -8px var(--red)}
+.steps h3{margin:0 0 4px;font-size:19px}.steps p{margin:0;color:var(--muted);font-size:15px}
+details.glass{margin-bottom:12px}
+summary{padding:18px 22px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:22px;line-height:1;transition:transform .3s;color:var(--red)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 22px 18px;margin:0;color:var(--muted);font-size:15px}
+.fgrid{display:grid;gap:14px}textarea.field{min-height:110px;resize:vertical}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.stat{padding:20px}.stat strong{font-size:30px;display:block;letter-spacing:-.03em}.stat span{color:var(--muted);font-size:13px}
+.live{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.live::before{content:"";width:9px;height:9px;border-radius:50%;background:#2ecc71;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,.6)}100%{box-shadow:0 0 0 10px rgba(46,204,113,0)}}
+.mini{font-size:13px;color:var(--muted)}
+.flinks{display:flex;gap:18px;flex-wrap:wrap}.flinks a{color:var(--muted)}
+#tpls{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}.tpl{flex:0 0 auto;min-width:104px}
+.site .s-btn{color:var(--bt,#fff)}.site .s-btn.o{color:var(--st)}
+.site[data-l="store"] .s-bots{grid-template-columns:1fr 1fr}
+.site[data-l="terminal"]{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.site[data-l="terminal"] .s-hero h3{text-transform:uppercase;font-size:20px;letter-spacing:0}
+.site[data-l="center"] .s-hero{text-align:center}.site[data-l="center"] .s-hero p{margin-inline:auto}
+.mini{height:110px;border-radius:14px;padding:12px;display:grid;gap:7px;align-content:start}
+.mini i{height:10px;width:40%;border-radius:5px}.mini b{height:12px;border-radius:6px}.mini u{display:block;height:22px;width:55%;border-radius:8px;margin:4px 0}
+.chk{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:10px;background:var(--glass);font-size:14px}
+.chk input{width:18px;height:18px;accent-color:var(--red)}
+.vres{margin-top:16px;padding:20px;display:none}.vres.on{display:block}
+.site{position:relative;max-height:640px;overflow-y:auto}
+.s-nav{display:flex;gap:16px;font-size:13px;color:var(--sm)}.s-nav em{font-style:normal}
+.s-hero{position:relative;overflow:hidden;min-height:270px}
+.s-hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.6;pointer-events:none}
+.s-hero>*:not(canvas){position:relative}
+.s-sec{padding:16px 20px}.s-sec h4{margin:0 0 12px;font-size:16px;letter-spacing:-.01em}.s-sec .s-bots{margin:0}
+.s-g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.s-c{padding:14px;border-radius:12px;background:var(--sb);border:1px solid var(--sl);font-size:13px;transition:transform .2s}.s-c:hover{transform:translateY(-3px)}
+.s-c b{display:block;margin-bottom:4px}.s-c span{color:var(--sm)}
+.s-st{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.s-st div{padding:14px;border-radius:12px;background:var(--sb);border:1px solid var(--sl);font-size:13px}
+.s-st b{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;margin-bottom:8px;color:var(--bt,#fff);background:linear-gradient(120deg,var(--a1),var(--a2))}
+.site details{background:var(--sb);border:1px solid var(--sl);border-radius:12px;margin-bottom:8px}
+.site summary{padding:12px 14px;font-size:13px}.site summary::after{color:var(--a1)}
+.site details p{padding:0 14px 12px;color:var(--sm);font-size:13px}
+@media (max-width:860px){.s-g3{grid-template-columns:1fr}.s-st{grid-template-columns:1fr 1fr}.s-nav{display:none}}
+.site{height:640px;max-height:none;overflow:hidden}
+.site>.scene{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.site>.sc{position:relative;height:100%;overflow-y:auto;display:flex;flex-direction:column}
+.pgbg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.cmpw{overflow-x:auto;margin:20px 0 40px}.cmp{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:8px;min-width:600px;font-size:14px}
+.cmp>div{padding:12px 14px;border-radius:10px;background:var(--glass);border:1px solid var(--line)}
+.cmp .h{font-weight:700;background:var(--glass2)}.cmp .y{color:#19d3a2;font-weight:600}
+.q p{font-size:16px;color:var(--ink);margin:0}.q small{color:var(--muted)}
+.sample{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:rgba(255,190,50,.18);color:#d99a00}
+body{background:transparent}
+.orbs i{display:none}
+.glass:not(.toast){background:color-mix(in srgb,var(--glass) 62%,transparent);-webkit-backdrop-filter:blur(14px) saturate(210%) brightness(1.08);backdrop-filter:blur(14px) saturate(210%) brightness(1.08)}
+.imgbg{position:absolute;inset:0;background-size:cover;background-position:center;pointer-events:none}
+.site>.bgl,.site>.scene{display:none}
+.site[data-bg="candles"]>#sc,.site[data-bg="digits"]>#sd,.site[data-bg="pulse"]>#sp,.site[data-bg="arrows"]>#sa,.site[data-bg^="img"]>#si{display:block}
+.site>#sd,.site>#sp,.site>#sa{opacity:.65}
+.thumb{height:110px;border-radius:14px;display:grid;place-items:center;font-size:34px;font-weight:700;background-size:cover;background-position:center}
+.site[data-g="m"]>#sm{display:block}
+.site>#sm{opacity:.7}
+#bgs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}#bgs .chip{flex:0 0 auto;white-space:nowrap}
+.s-ann{display:none;padding:8px 20px;text-align:center;font-size:12px;font-weight:600;background:linear-gradient(120deg,var(--a1),var(--a2));color:var(--bt,#fff)}
+.site[data-h="banner"] .s-ann{display:block}
+.site[data-h="center"] .s-top{flex-direction:column;gap:10px}
+.site[data-h="minimal"] .s-nav{display:none}
+.site[data-h="pill"] .s-top{margin:12px 16px 0;padding:10px 18px;border-radius:999px;background:var(--sb);border:1px solid var(--sl)}
+.site[data-h="split"] .s-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.site[data-h="split"] .s-nav{order:1}.site[data-h="split"] .s-name{order:2}.site[data-h="split"] .s-pill,.site[data-h="split"] .s-soc{order:3;justify-self:end}
+.s-soc{display:flex;gap:8px;align-items:center}
+.s-soc a{display:grid;place-items:center;width:30px;height:30px;color:var(--st);background:var(--sb);border:1px solid var(--sl);border-radius:50%;transition:transform .2s,background .2s}
+.s-soc a:hover{transform:translateY(-2px);background:var(--sl)}
+.s-soc svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.site[data-sh="square"] .s-soc a{border-radius:8px}
+.site[data-sh="plain"] .s-soc a{background:none;border-color:transparent}
+.s-socf{padding:6px 20px 0}
+.site[data-sp="header"] #sf,.site[data-sp="footer"] #sh{display:none}
+.s-ws{display:grid;grid-template-columns:90px 1fr;border-radius:14px;overflow:hidden;background:var(--sb);border:1px solid var(--sl);position:relative}
+.s-pal{display:grid;gap:6px;padding:12px 8px;border-right:1px solid var(--sl);align-content:start}
+.s-pal i{font-style:normal;font-size:11px;padding:6px 8px;border-radius:6px;background:var(--sl);color:var(--sm)}
+.s-can{padding:18px 16px 16px;position:relative;min-height:190px}
+.blk{display:block;width:max-content;max-width:100%;padding:9px 14px;border-radius:6px;font-size:12px;font-weight:600;color:var(--bt,#fff);position:relative;margin-bottom:-1px}
+.blk::before{content:"";position:absolute;left:14px;top:-4px;width:18px;height:5px;border-radius:3px 3px 0 0;background:inherit}
+.b1{background:var(--a1)}.b2{background:var(--a2)}.b3{background:var(--a1);opacity:.85;margin-left:22px}
+.s-tag{position:absolute;right:10px;top:8px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--sl);color:var(--sm)}
+.s-bbn{font-size:12px;color:var(--sm);margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cfg summary{padding:8px 0}#socs{display:grid;gap:8px;margin-top:8px}
+.hero{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+.hero>*,.cfg>*,.two>*,.cards>*{min-width:0}
+.cfg{grid-template-columns:minmax(0,1fr)}
+#tpls{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;overflow:visible;padding-bottom:0}
+.tpl{min-width:0;flex:none;width:auto}
+#bgs{flex-wrap:wrap;overflow:visible;padding-bottom:0}
+.two{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.hero{grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:28px;padding:48px 0 24px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.pills span{font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--edge)}
+.sumc{padding:22px;display:grid;gap:12px;opacity:0;animation:rise .8s .2s cubic-bezier(.2,.8,.2,1) forwards}
+.sumc h3{margin:0;font-size:15px;color:var(--muted);font-weight:600}
+.sr{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.sr span{color:var(--muted)}.sr b{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%}
+.sumc .btn{width:100%}
+.studio{display:grid;grid-template-columns:minmax(0,470px) minmax(0,1fr);gap:20px;align-items:start;margin-bottom:56px}
+.studio .preview{margin:0;position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{border:1px solid var(--line);background:var(--glass);color:var(--ink);padding:9px 14px;border-radius:10px;font-weight:600;font-size:14px;transition:.2s}
+.tabs button:hover{background:var(--glass2)}
+.tabs button[aria-selected="true"]{background:var(--red);color:#fff;border-color:transparent}
+.tp{display:none;gap:18px}.tp.on{display:grid;animation:pg .35s ease}
+#tpls{grid-template-columns:repeat(auto-fill,minmax(78px,1fr))}
+.tpl small{display:none}.tpl{padding:8px}.tpl i{height:26px;margin-bottom:6px}
+#socs{grid-template-columns:repeat(2,minmax(0,1fr))}
+.site{height:clamp(460px,calc(100vh - 220px),640px)}
+.pvh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 6px 10px;font-weight:600;font-size:14px}
+@media (max-width:980px){.studio{grid-template-columns:minmax(0,1fr)}.studio .preview{position:static}}
+.s-top{display:flex;align-items:center;justify-content:flex-start;gap:12px;padding:12px 20px}
+.s-top .s-name{margin-right:auto}
+.site[data-h="center"] .s-top .s-name,.site[data-h="split"] .s-top .s-name{margin:0}
+.site[data-h="split"] #sh{order:1;justify-self:start}.site[data-h="split"] .s-acts{order:3;justify-self:end}
+.site[data-h="minimal"] .s-sign,.site[data-h="minimal"] #sh{display:none}
+.s-acts{display:flex;gap:8px;align-items:center}.s-sign{margin:0}
+.s-tabs{display:flex;flex-wrap:wrap;gap:4px;padding:2px 16px 12px}
+.s-tab{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--st);font-size:12.5px;font-weight:600;padding:7px 11px;border-radius:999px;transition:.2s}
+.s-tab:hover{background:var(--sb)}
+.s-tab[aria-selected="true"]{background:linear-gradient(120deg,var(--a1),var(--a2));color:var(--bt,#fff)}
+.s-tab svg,.s-ico svg,.s-fab svg,.s-sbar svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.s-tab svg{width:15px;height:15px}
+.s-main{padding:6px 20px 16px;min-height:300px}
+.s-p{display:none}.s-p.on{display:block;animation:pg .35s ease}
+.s-ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.s-ph h3{margin:0 0 4px;font-size:22px;letter-spacing:-.03em}.s-ph p{margin:0;color:var(--sm);font-size:13px}
+.s-run{display:flex;border:1px solid var(--sl);border-radius:10px;overflow:hidden;font-size:12px;color:var(--sm)}
+.s-run b{padding:9px 14px;background:var(--sb)}.s-run span{padding:9px 14px}
+.s-promo{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;margin-bottom:14px;background:linear-gradient(120deg,color-mix(in srgb,var(--a2) 22%,transparent),color-mix(in srgb,var(--a1) 10%,transparent));border:1px solid var(--sl)}
+.s-promo>div{flex:1}.s-promo small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--a1)}.s-promo b{font-size:16px}.s-promo p{margin:2px 0 0;font-size:12px;color:var(--sm)}
+.s-promo .s-btn{border:0;margin:0;cursor:pointer}
+.s-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.s-card{padding:14px;border-radius:16px;border:1px solid var(--sl);text-align:left;color:var(--st);background:linear-gradient(160deg,color-mix(in srgb,var(--a1) 16%,transparent),var(--sb) 75%);transition:transform .2s}
+.s-card:nth-child(even){background:linear-gradient(160deg,color-mix(in srgb,var(--a2) 16%,transparent),var(--sb) 75%)}
+.s-card:hover{transform:translateY(-3px)}
+.s-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--a1) 25%,transparent);margin-bottom:10px;color:var(--a1)}
+.s-ico svg{width:17px;height:17px}
+.s-card b{display:block;font-size:14px}.s-card .d{display:block;font-size:11.5px;color:var(--sm);margin:2px 0 10px}
+.s-open{display:inline-block;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;background:color-mix(in srgb,var(--a1) 18%,transparent);color:var(--a1)}
+.s-fabs{position:absolute;left:14px;right:14px;bottom:46px;display:flex;justify-content:space-between;pointer-events:none;z-index:3}
+.s-fab{pointer-events:auto;width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;color:var(--bt,#fff);background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 8px 20px -6px var(--a1)}
+.s-fab svg{width:20px;height:20px}
+.s-sbar{position:absolute;left:0;right:0;bottom:0;height:36px;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:0 14px;font-size:11.5px;color:var(--sm);background:var(--sb);border-top:1px solid var(--sl);z-index:3;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.s-sbar i{width:8px;height:8px;border-radius:50%;background:#2ecc71;display:inline-block}
+.s-sbar button{border:0;background:none;color:var(--sm);padding:4px;display:grid;place-items:center}.s-sbar svg{width:15px;height:15px}
+.site>.sc{padding-bottom:40px}.site>.sc>*{flex:none}
+.site:fullscreen{height:100vh;max-height:none}
+.s-foot-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:0 20px 12px}
+.s-foot-row .s-foot{padding:0;flex:1 1 220px}
+.s-grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.s-box{padding:14px;border-radius:14px;background:var(--sb);border:1px solid var(--sl);font-size:13px}.s-box b{display:block;margin-bottom:3px}.s-box>span{color:var(--sm);font-size:12px}
+.s-tk{display:grid;gap:10px;max-width:380px}
+.mnu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.wrap{max-width:none;padding:0 clamp(16px,2.5vw,40px)}
+.tabs,.s-tabs{position:relative;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.tabs::-webkit-scrollbar,.s-tabs::-webkit-scrollbar{display:none}
+.tabs{padding:6px;gap:4px;border-radius:999px;background:color-mix(in srgb,var(--glass) 62%,transparent);border:1px solid var(--edge);-webkit-backdrop-filter:blur(14px) saturate(210%);backdrop-filter:blur(14px) saturate(210%);box-shadow:inset 0 1px 0 var(--edge),0 10px 30px -16px var(--shadow)}
+.tabs button{flex:0 0 auto;white-space:nowrap;border:0;background:transparent;border-radius:999px;padding:9px 16px}
+.tabs button:not([aria-selected="true"]):hover{background:var(--glass2)}
+.s-tabs{margin:0 16px 12px;padding:5px;gap:2px;border-radius:999px;background:var(--sb);border:1px solid var(--sl);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.s-tab{flex:0 0 auto;white-space:nowrap}
+.site{height:clamp(480px,calc(100vh - 150px),900px)}
+.dnote{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5}.dnote b{color:var(--ink)}
+.dst{font-size:14px;font-weight:600;min-height:20px;line-height:1.4}.dst.ok{color:#19d3a2}.dst.bad{color:#ff6b75}.dst.neu{color:var(--muted);font-weight:500;font-size:13px}
+#dnew,#down{display:grid;gap:14px}
+.links{flex:1;min-width:0;justify-content:center;overflow-x:auto;scrollbar-width:none}.links::-webkit-scrollbar{display:none}.links a{white-space:nowrap}
+.logo{cursor:pointer}
+.acct{display:flex;align-items:center;gap:10px;flex:none}.acct .hi2{font-weight:600;font-size:14px;white-space:nowrap}.acct .btn{padding:8px 16px;font-size:14px;border-radius:10px}
+html.locked .page:not(.pub){display:none!important}
+.lp{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:32px;align-items:center;padding:56px 0 32px}
+.lp h1{font-size:clamp(38px,5.2vw,64px);line-height:1.04;letter-spacing:-.04em;margin:10px 0 16px;font-weight:700;max-width:16ch}
+.eyebrow{display:inline-block;font-size:13px;font-weight:600;padding:6px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--edge);color:var(--muted)}
+.lpl{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px;color:var(--muted)}.lpl b{color:var(--ink)}
+.lp-r{padding:26px;display:grid;gap:12px}.lp-r h2{font-size:24px;margin:0;max-width:none}
+.lp-r label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:6px 0}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:12px;border:1px solid var(--edge);background:var(--glass2);color:var(--ink);font-weight:600;font-size:15px;transition:transform .2s,background .2s}
+.gbtn:hover{transform:translateY(-2px)}.gbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+p.hi{margin:0 0 8px;font-weight:600;color:var(--red);font-size:15px}
+.chk.consent{align-items:flex-start;gap:12px;line-height:1.4;font-size:13px;color:var(--muted)}.chk.consent a{color:var(--ink)}
+.ecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px}
+.etb{width:100%;border-collapse:collapse;font-size:14px}.etb th,.etb td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line)}.etb th:first-child,.etb td:first-child{text-align:left}.etb th{color:var(--muted);font-weight:600;font-size:12px}
+.steps2{margin:0;padding:0 22px 18px 40px;color:var(--muted);font-size:15px;display:grid;gap:6px}
+@media (max-width:860px){.lp{grid-template-columns:1fr;padding-top:32px}.acct .hi2{display:none}}
+html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenant .orbs{display:none!important}
+.tenantsite{position:fixed;inset:0;height:100vh!important;max-height:none!important;border-radius:0!important;z-index:5}
+@media (max-width:860px){.two,.dgrid{grid-template-columns:1fr}.links{overflow-x:auto;max-width:70vw}.logo{font-size:17px}}
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;padding-top:36px}.links a{padding:8px 9px;font-size:13px;white-space:nowrap}
+  .t1,.t2,.t3,.t4{grid-column:span 6}.note{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rise>*,.cfg{opacity:1;transform:none}.js .reveal{opacity:1;transform:none}}
+</style>
+<script src="config.js"></script>
+<script type="module">
+  // Creates the Supabase client when config.js has real keys. Without keys the page runs in demo mode.
+  const c = window.PF_CONFIG || {};
+  if (c.SUPABASE_URL && c.SUPABASE_ANON_KEY) {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm');
+    window.PF_SB = createClient(c.SUPABASE_URL, c.SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+    window.dispatchEvent(new Event('pf:ready'));
+  }
+</script>
+</head>
+<body>
+<div class="orbs" aria-hidden="true"><i></i><i></i><i></i></div>
+<nav><div class="glass">
+  <span class="logo"><b>P</b>Pipforge</span>
+  <div class="links"><a href="#home">Home</a><a href="#templates">Templates</a><a href="#bots">Bots</a><a href="#pricing">Pricing</a><a href="#how">How it works</a><a href="#faq">FAQ</a><a href="#dashboard">Dashboard</a>
+  <button class="icon" id="theme" aria-label="Switch light or dark">◐</button></div>
+</div></nav>
+
+<main class="wrap">
+<div class="page" id="p-home">
+  <div class="hero" id="build">
+    <div class="rise">
+      <h1>Launch your own Deriv site in minutes.</h1>
+      <p class="lead">Choose a template, name your site, pick a domain. Free DBot bots are built in. One setup fee, and you keep everything you earn.</p>
+      <button class="btn" id="reserve">Reserve this site</button>
+    </div>
+    <div class="glass cfg">
+      <div>
+        <label for="name">Site name</label>
+        <input class="field" id="name" value="Nova Trades" maxlength="24" autocomplete="off">
+      </div>
+      <div>
+        <span class="lab">Template</span>
+        <div class="row" id="tpls">
+          <button class="tpl" data-t="crimson" aria-pressed="true"><i style="background:linear-gradient(120deg,#ff444f,#ff8a5c)"></i><b>Crimson</b><small>Dark and bold</small></button>
+          <button class="tpl" data-t="midnight" aria-pressed="false"><i style="background:linear-gradient(120deg,#377cfc,#3fc4b0)"></i><b>Midnight</b><small>Calm and sharp</small></button>
+          <button class="tpl" data-t="snow" aria-pressed="false"><i style="background:linear-gradient(120deg,#f3f4f6,#ff7a5c)"></i><b>Snow</b><small>Light and clean</small></button>
+        </div>
+      </div>
+      <div>
+        <span class="lab">Domain ending</span>
+        <div class="row" id="exts">
+          <button class="chip" data-e=".site" data-f="8" aria-pressed="true">.site</button>
+          <button class="chip" data-e=".com" data-f="15" aria-pressed="false">.com</button>
+          <button class="chip" data-e=".co.ke" data-f="12" aria-pressed="false">.co.ke</button>
+          <button class="chip" data-e=".online" data-f="10" aria-pressed="false">.online</button>
+        </div>
+      </div>
+      <div class="total">
+        <div><span>Setup, one time</span><br><strong>$200</strong></div>
+        <span id="ren">+ $8 a year for the domain</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview reveal">
+    <div class="glass frame">
+      <div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url" id="url">novatrades.site</div></div>
+      <div class="site" id="site" data-t="crimson">
+        <div class="s-top"><span class="s-name" id="sname">Nova Trades</span><span class="s-pill">Free bots</span></div>
+        <div class="s-hero">
+          <h3>Automate your Deriv trading with ready-made bots.</h3>
+          <p>Load a bot into DBot in one tap, test it on a demo account, and trade on your own terms.</p>
+          <span class="s-btn">Open Deriv</span><span class="s-btn o">Browse bots</span>
+        </div>
+        <div class="s-bots">
+          <div class="s-bot">Rise/Fall starter <em>Load in DBot</em></div>
+          <div class="s-bot">Digits Differs starter <em>Load in DBot</em></div>
+          <div class="s-bot">Matches starter <em>Load in DBot</em></div>
+        </div>
+        <div class="s-foot">Trading carries a high risk of loss. Bots do not guarantee profit. Only trade money you can afford to lose.</div>
+      </div>
+    </div>
+  </div>
+
+  <section id="included">
+    <h2 class="reveal">Built to look trustworthy, because trust is the product.</h2>
+    <div class="grid">
+      <div class="glass tile t1 reveal"><h3>Free bot library</h3><p>Every site ships with starter bots your visitors can load straight into DBot. Updates reach all sites at once.</p>
+        <ul class="list"><li>Rise/Fall starter <span>demo first</span></li><li>Digits Differs starter <span>demo first</span></li><li>Matches starter <span>demo first</span></li></ul></div>
+      <div class="glass tile t2 reveal"><h3>Your domain</h3><p>Choose your name and ending. SSL is set up for you.</p></div>
+      <div class="glass tile t3 reveal"><h3>Your link</h3><p>Visitors who sign up go through your own Deriv referral link.</p></div>
+      <div class="glass tile t4 reveal"><h3>Risk warnings that stay put</h3><p>Every template carries a risk notice in the footer and next to the bots. Clients can’t remove it, which protects them and their visitors.</p></div>
+    </div>
+  </section>
+
+  <section id="honest">
+    <div class="glass note reveal">
+      <h2>Straight talk about bots.</h2>
+      <div>
+        <p>Most retail traders lose money, and no bot changes that. Pipforge sites say so openly instead of promising profits.</p>
+        <p>You are paying for a well-built site, a domain and a bot library, not for earnings. What you make on Deriv depends on your trading and on the clients you bring.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="page" id="p-templates" hidden>
+  <div class="ph"><h1>Templates</h1><p>Every template includes the bot library, your referral link and locked risk warnings.</p></div>
+  <div class="cards">
+    <div class="glass card"><div class="swatch" style="background:linear-gradient(135deg,#160709,#ff444f)"></div><h3>Crimson</h3><p>Dark with Deriv red. Bold and high contrast.</p><button class="btn" data-use="crimson">Use Crimson</button></div>
+    <div class="glass card"><div class="swatch" style="background:linear-gradient(135deg,#0b111f,#377cfc 60%,#3fc4b0)"></div><h3>Midnight</h3><p>Deep blue with teal. Calm and sharp.</p><button class="btn" data-use="midnight">Use Midnight</button></div>
+    <div class="glass card"><div class="swatch" style="background:linear-gradient(135deg,#f3f4f6,#ff7a5c)"></div><h3>Snow</h3><p>Light and clean with a coral accent.</p><button class="btn" data-use="snow">Use Snow</button></div>
+  </div>
+</div>
+
+<div class="page" id="p-bots" hidden>
+  <div class="ph"><h1>Bot library</h1><p>Starter bots for DBot. Always test on a demo account first.</p></div>
+  <div class="row" id="bf" style="margin-bottom:18px"><button class="chip" data-k="all" aria-pressed="true">All</button><button class="chip" data-k="rf" aria-pressed="false">Rise/Fall</button><button class="chip" data-k="dg" aria-pressed="false">Digits</button><button class="chip" data-k="mt" aria-pressed="false">Matches</button></div>
+  <div class="cards" id="bl">
+    <div class="glass card" data-k="rf"><span class="tag">Rise/Fall</span><h3>Rise/Fall starter</h3><p>Places a Rise or Fall contract with a fixed stake and duration.</p><button class="btn" data-load>Load in DBot</button></div>
+    <div class="glass card" data-k="rf"><span class="tag">Rise/Fall</span><h3>Rise/Fall with stop-loss</h3><p>Same idea, with a daily loss limit that stops the bot.</p><button class="btn" data-load>Load in DBot</button></div>
+    <div class="glass card" data-k="dg"><span class="tag">Digits</span><h3>Digits Differs starter</h3><p>Trades the Differs contract on a chosen market and digit.</p><button class="btn" data-load>Load in DBot</button></div>
+    <div class="glass card" data-k="dg"><span class="tag">Digits</span><h3>Over/Under starter</h3><p>Trades Digits Over or Under with adjustable barrier.</p><button class="btn" data-load>Load in DBot</button></div>
+    <div class="glass card" data-k="dg"><span class="tag">Digits</span><h3>Even/Odd starter</h3><p>Trades Even or Odd with a fixed stake.</p><button class="btn" data-load>Load in DBot</button></div>
+    <div class="glass card" data-k="mt"><span class="tag">Matches</span><h3>Matches starter</h3><p>Trades the Matches contract on a chosen digit.</p><button class="btn" data-load>Load in DBot</button></div>
+  </div>
+  <div class="glass note" style="margin-bottom:40px"><h2>Bots are tools, not guarantees.</h2><div><p>A bot only follows its rules. It can lose money as fast as it can make it. Set a stake and a stop-loss you can afford before you run anything.</p></div></div>
+</div>
+
+<div class="page" id="p-pricing" hidden>
+  <div class="ph"><h1>One setup fee. No cut of your earnings.</h1><p>Pay once to launch. What you earn on Deriv stays yours.</p></div>
+  <div class="two">
+    <div class="glass card"><span class="tag">Setup</span><div class="price">$200</div><p>One time</p>
+      <ul class="list"><li>Your template and site name</li><li>Your own domain with SSL</li><li>Free bot library</li><li>Your Deriv referral link</li><li>Locked risk warnings</li></ul>
+      <button class="btn" data-go="checkout">Reserve my site</button></div>
+    <div class="glass card"><h3>Domain, per year</h3>
+      <ul class="list"><li>.site <span>$8</span></li><li>.online <span>$10</span></li><li>.co.ke <span>$12</span></li><li>.com <span>$15</span></li></ul>
+      <p>The yearly fee depends on the name and ending you choose. Renewals are billed once a year.</p></div>
+  </div>
+</div>
+
+<div class="page" id="p-how" hidden>
+  <div class="ph"><h1>How it works</h1><p>From idea to a live site in four steps.</p></div>
+  <ol class="steps">
+    <li class="glass"><b class="num">1</b><div><h3>Pick a template and a name</h3><p>Choose the look and type your site name. You see the result as you go.</p></div></li>
+    <li class="glass"><b class="num">2</b><div><h3>Choose your domain</h3><p>Pick an ending. We register it and set up SSL for you.</p></div></li>
+    <li class="glass"><b class="num">3</b><div><h3>Add your Deriv details</h3><p>Enter your Deriv app ID and referral link in your dashboard.</p></div></li>
+    <li class="glass"><b class="num">4</b><div><h3>Go live</h3><p>Your site and bot library go online. Share it and start trading or bringing clients.</p></div></li>
+  </ol>
+</div>
+
+<div class="page" id="p-faq" hidden>
+  <div class="ph"><h1>Questions, answered.</h1><p>Can’t find yours? Send us a message below.</p></div>
+  <details class="glass"><summary>Is Pipforge part of Deriv?</summary><p>No. Pipforge is independent and not affiliated with Deriv. Your site links to Deriv, and Deriv’s own terms apply to your account there.</p></details>
+  <details class="glass"><summary>Do I keep my earnings?</summary><p>Yes. We charge a setup fee and a yearly domain fee. We take no share of your trading results or referral commissions, which Deriv pays under its own partner terms.</p></details>
+  <details class="glass"><summary>Will the bots make me money?</summary><p>We can’t promise that, and nobody honestly can. Most retail traders lose money. Test every bot on a demo account first.</p></details>
+  <details class="glass"><summary>Can I bring my own domain?</summary><p>You choose a name and ending when you order. Tell us in your message if you want to use one you already own.</p></details>
+  <details class="glass"><summary>What happens when my domain renews?</summary><p>The yearly domain fee is billed each year. If it isn’t paid, the site goes offline until it is.</p></details>
+  <details class="glass"><summary>Can I remove the risk warnings?</summary><p>No. They protect you and your visitors, and every template keeps them.</p></details>
+  <div class="glass cfg" style="margin:28px 0 40px;animation:none;opacity:1">
+    <div class="fgrid"><div><label for="cn">Your name</label><input class="field" id="cn" autocomplete="name"></div>
+    <div><label for="ce">Email</label><input class="field" id="ce" type="email" autocomplete="email"></div>
+    <div><label for="cm">Message</label><textarea class="field" id="cm"></textarea></div>
+    <button class="btn" id="send">Send message</button></div>
+  </div>
+</div>
+
+<div class="page" id="p-legal" hidden>
+  <div class="ph"><h1>Legal</h1><p>Draft wording. Have a lawyer review it before you launch.</p></div>
+  <details class="glass" open><summary>Risk disclosure</summary><p>Trading derivatives and CFDs carries a high level of risk and may not suit everyone. You can lose all the money you deposit. Bots do not guarantee profit. Only trade with money you can afford to lose.</p></details>
+  <details class="glass"><summary>Terms of use</summary><p>Pipforge provides websites and software tools. We are not a broker, financial adviser or Deriv partner by default. You are responsible for how you promote your site and for following the laws where you and your visitors live.</p></details>
+  <details class="glass"><summary>Privacy</summary><p>We collect only what we need to run your account: name, email, payment details handled by our payment provider, and site settings. We don’t sell personal data.</p></details>
+  <details class="glass"><summary>Refunds</summary><p>You can get a refund before your domain is registered. After that, the domain fee is not refundable. Contact us if something isn’t working.</p></details>
+</div>
+
+<div class="page" id="p-dashboard" hidden>
+  <div class="ph"><h1>Your dashboard</h1><p>A preview of what each client sees after they order.</p></div>
+  <div class="dgrid">
+    <div class="glass stat"><span class="live">Live</span><strong id="dd">novatrades.site</strong><span>Site status</span></div>
+    <div class="glass stat"><strong>1,284</strong><span>Visitors this week (sample data)</span></div>
+    <div class="glass stat"><strong>27</strong><span>Signups through your link (sample data)</span></div>
+  </div>
+  <div class="glass cfg" style="margin-bottom:40px;animation:none;opacity:1">
+    <div><label for="da">Deriv app ID</label><input class="field" id="da" inputmode="numeric" placeholder="For example 12345"></div>
+    <div><label for="dr">Referral link</label><input class="field" id="dr" placeholder="Your Deriv referral link"></div>
+    <button class="btn" id="dsave">Save changes</button>
+  </div>
+</div>
+
+<div class="page" id="p-checkout" hidden>
+  <div class="ph"><h1>Reserve your site</h1><p>Check your order, then choose how to pay.</p></div>
+  <div class="two">
+    <div class="glass card"><h3>Your order</h3>
+      <ul class="list"><li>Site name <span id="sN"></span></li><li>Domain <span id="sD"></span></li><li>Template <span id="sT"></span></li><li>Setup <span>$200</span></li><li>Domain, first year <span id="sF"></span></li></ul>
+      <div class="total"><span>Due today</span><strong id="sTot"></strong></div></div>
+    <div class="glass cfg" style="animation:none;opacity:1">
+      <div><span class="lab">Pay with</span><div class="row" id="pm"><button class="chip" aria-pressed="true">M-Pesa</button><button class="chip" aria-pressed="false">Card</button><button class="chip" aria-pressed="false">Crypto</button></div></div>
+      <div><label for="pe">Email</label><input class="field" id="pe" type="email" autocomplete="email"></div>
+      <div><label for="pp">Phone number</label><input class="field" id="pp" type="tel" autocomplete="tel"></div>
+      <button class="btn" id="pay">Pay now</button>
+      <span class="mini">By paying you accept the terms and risk disclosure.</span>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer class="wrap">
+  <p>Pipforge is not affiliated with Deriv. Trading derivatives and CFDs carries a high level of risk and may not suit everyone. Bots do not guarantee profit. Only trade with money you can afford to lose.</p>
+  <div class="flinks"><a href="#legal">Terms, privacy and risk</a><a href="#faq">Contact</a><span>© 2026 Pipforge</span></div>
+</footer>
+<div class="glass toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  document.documentElement.classList.add("js");
+  var st={t:"crimson",e:".site",f:8,n:"Nova Trades"};
+  var $=function(i){return document.getElementById(i)};
+  function slug(s){return (s||"yoursite").toLowerCase().replace(/[^a-z0-9]/g,"")||"yoursite"}
+  function swap(){var s=$("site");s.classList.remove("swap");void s.offsetWidth;s.classList.add("swap")}
+  var shown=8;
+  function tween(to){
+    var from=shown,t0=performance.now();shown=to;
+    (function f(n){var p=Math.min((n-t0)/350,1),v=Math.round(from+(to-from)*p);
+      $("ren").textContent="+ $"+v+" a year for the domain";if(p<1)requestAnimationFrame(f)})(t0);
+  }
+  function render(){
+    $("sname").textContent=st.n||"Your Site";
+    $("url").textContent=slug(st.n)+st.e;
+    $("site").setAttribute("data-t",st.t);
+  }
+  function pick(wrap,cb){
+    $(wrap).addEventListener("click",function(ev){
+      var b=ev.target.closest("button"); if(!b)return;
+      this.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed","false")});
+      b.setAttribute("aria-pressed","true"); cb(b); render();
+    });
+  }
+  pick("tpls",function(b){st.t=b.dataset.t;swap()});
+  pick("exts",function(b){st.e=b.dataset.e;st.f=+b.dataset.f;tween(st.f)});
+  $("name").addEventListener("input",function(){st.n=this.value;render()});
+  function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");setTimeout(function(){t.classList.remove("on")},2400)}
+  $("reserve").addEventListener("click",function(){
+    var txt="Pipforge order: "+st.n+" ("+slug(st.n)+st.e+"), template "+st.t+", $200 setup + $"+st.f+"/yr domain";
+    try{navigator.clipboard.writeText(txt).then(function(){toast("Order summary copied")},function(){toast("Checkout opens in the next build")})}
+    catch(e){toast("Checkout opens in the next build")}
+  });
+  $("theme").addEventListener("click",function(){
+    var r=document.documentElement,d=r.getAttribute("data-theme");
+    var cur=d||(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+    r.setAttribute("data-theme",cur==="dark"?"light":"dark");
+  });
+  var els=document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.12});
+    els.forEach(function(e){io.observe(e)});
+  }else{els.forEach(function(e){e.classList.add("in")})}
+  var pages=["home","templates","bots","pricing","how","faq","legal","dashboard","checkout"];
+  function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+  function route(){
+    var h=(location.hash||"#home").slice(1);if(pages.indexOf(h)<0)h="home";
+    pages.forEach(function(p){var e=$("p-"+p);e.hidden=p!==h;if(p===h){e.classList.remove("in");void e.offsetWidth;e.classList.add("in")}});
+    document.querySelectorAll(".links a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+h)});
+    $("sN").textContent=st.n||"Your Site";$("sD").textContent=slug(st.n)+st.e;$("sT").textContent=cap(st.t);
+    $("sF").textContent="$"+st.f;$("sTot").textContent="$"+(200+st.f);$("dd").textContent=slug(st.n)+st.e;
+    window.scrollTo(0,0);
+  }
+  window.addEventListener("hashchange",route);
+  var rb=$("reserve"),nb=rb.cloneNode(true);rb.parentNode.replaceChild(nb,rb);
+  nb.addEventListener("click",function(){location.hash="#checkout"});
+  document.addEventListener("click",function(ev){
+    var g=ev.target.closest("[data-go]");if(g){location.hash="#"+g.dataset.go;return}
+    var u=ev.target.closest("[data-use]");
+    if(u){st.t=u.dataset.use;document.querySelectorAll("#tpls button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.t===st.t))});render();swap();location.hash="#home";return}
+    if(ev.target.closest("[data-load]"))toast("Demo: this opens the bot in DBot on your live site");
+  });
+  pick("bf",function(b){var k=b.dataset.k;document.querySelectorAll("#bl .card").forEach(function(c){c.style.display=(k==="all"||c.dataset.k===k)?"":"none"})});
+  pick("pm",function(){});
+  $("send").addEventListener("click",function(){toast("Message sent (demo)")});
+  $("dsave").addEventListener("click",function(){toast("Changes saved (demo)")});
+  $("pay").addEventListener("click",function(){toast("Payments connect in the next build")});
+  document.addEventListener("pointermove",function(e){var g=e.target.closest&&e.target.closest(".glass");if(!g)return;var r=g.getBoundingClientRect();g.style.setProperty("--mx",(e.clientX-r.left)+"px");g.style.setProperty("--my",(e.clientY-r.top)+"px")});
+  st.m=1;
+  var D={st:"#f4f4f6",sm:"rgba(244,244,246,.68)",sb:"rgba(255,255,255,.07)",sl:"rgba(255,255,255,.12)",bt:"#fff",l:"hero"};
+  function mk(o){var r={},k;for(k in D)r[k]=D[k];for(k in o)r[k]=o[k];return r}
+  var T={
+    violet:mk({n:"Violet",d:"Bot-hub purple with a pink glow.",bg:"linear-gradient(150deg,#14051c,#2c0b3d)",a1:"#b23cff",a2:"#ff5fa8"}),
+    crimson:mk({n:"Crimson",d:"Dark with Deriv red and a bot store grid.",bg:"linear-gradient(150deg,#160709,#2c0d12)",a1:"#ff444f",a2:"#ff8a5c",l:"store"}),
+    midnight:mk({n:"Midnight",d:"Deep blue and teal in a terminal style.",bg:"linear-gradient(150deg,#0b111f,#101d3a)",a1:"#377cfc",a2:"#3fc4b0",l:"terminal"}),
+    snow:mk({n:"Snow",d:"Light and clean with a coral accent.",bg:"linear-gradient(150deg,#f3f4f6,#ffffff)",a1:"#ff444f",a2:"#ff7a5c",st:"#151717",sm:"#5a606b",sb:"rgba(20,20,30,.05)",sl:"rgba(20,20,30,.12)"}),
+    emerald:mk({n:"Emerald",d:"Dark green with a fresh lime edge.",bg:"linear-gradient(150deg,#06140f,#0c2a1f)",a1:"#1fd18b",a2:"#9bff5e",bt:"#06140f",l:"store"}),
+    gold:mk({n:"Gold",d:"Black and gold in a terminal style.",bg:"linear-gradient(150deg,#0d0b05,#1c1608)",a1:"#ffc83d",a2:"#ff9d2e",bt:"#1a1203",l:"terminal"}),
+    ocean:mk({n:"Ocean",d:"Cool cyan on navy with a centered layout.",bg:"linear-gradient(150deg,#04121c,#06293f)",a1:"#29b6ff",a2:"#6ee7ff",bt:"#04121c",l:"center"}),
+    mono:mk({n:"Mono",d:"Black and white. Minimal and centered.",bg:"linear-gradient(150deg,#0a0a0a,#1a1a1a)",a1:"#ffffff",a2:"#9aa0a6",bt:"#0a0a0a",l:"center"})
+  };
+  var L={hero:"Hub",store:"Store",terminal:"Terminal",center:"Centered"},ids=Object.keys(T);
+  function applyT(el,t){el.style.background=t.bg;["a1","a2","st","sm","sb","sl","bt"].forEach(function(k){el.style.setProperty("--"+k,t[k])});el.dataset.l=t.l}
+  $("tpls").innerHTML=ids.map(function(i){var t=T[i];return '<button class="tpl" data-t="'+i+'" aria-pressed="'+(i===st.t)+'"><i style="background:linear-gradient(120deg,'+t.a1+','+t.a2+')"></i><b>'+t.n+'</b><small>'+L[t.l]+'</small></button>'}).join("");
+  var tg=document.querySelector("#p-templates .cards");
+  tg.innerHTML=ids.map(function(i){var t=T[i];return '<div class="glass card"><div class="mini" style="background:'+t.bg+'"><i style="background:'+t.a1+'"></i><u style="background:linear-gradient(120deg,'+t.a1+','+t.a2+')"></u><b style="background:'+t.sl+'"></b><b style="background:'+t.sl+';width:70%"></b></div><span class="tag">'+L[t.l]+' layout</span><h3>'+t.n+'</h3><p>'+t.d+'</p><button class="btn" data-use="'+i+'">Use '+t.n+'</button></div>'}).join("");
+  document.querySelector("#p-templates .ph p").textContent="Eight looks and four layouts. Each one includes your bot library, referral link, markup notice and locked risk warnings.";
+  var r0=render;
+  render=function(){r0();applyT($("site"),T[st.t]);$("site").querySelector(".s-foot").textContent="Trading carries a high risk of loss. This site adds a "+st.m+"% markup to contract prices. Bots do not guarantee profit. Only trade money you can afford to lose."};
+  $("p-dashboard").insertAdjacentHTML("beforeend",'<div class="two"><div class="glass cfg" style="animation:none;opacity:1"><h3 style="margin:0">Markup</h3><div><label for="dm">Markup on contracts (0 to 3%)</label><input class="field" id="dm" type="number" min="0" max="3" step="0.1" value="1"></div><span class="mini">A higher markup lowers your visitors’ payouts on winning trades, so your site shows this rate to them.</span><h3 style="margin:8px 0 0">Commission tracking</h3><div><label for="dt">Deriv API token (read scope only)</label><input class="field" id="dt" placeholder="Paste a read-only token"></div><span class="mini">Sample: $0.00 this month until a token is connected.</span></div><div class="glass cfg" style="animation:none;opacity:1"><h3 style="margin:0">Bot library</h3><div class="chk">Rise/Fall starter<input type="checkbox" checked aria-label="Rise/Fall starter"></div><div class="chk">Digits Differs starter<input type="checkbox" checked aria-label="Digits Differs starter"></div><div class="chk">Matches starter<input type="checkbox" aria-label="Matches starter"></div><h3 style="margin:8px 0 0">Connect your domain</h3><span class="mini">After checkout you get two DNS records to add at your registrar. SSL is issued automatically.</span></div></div>');
+  $("dm").addEventListener("input",function(){var v=parseFloat(this.value);st.m=isNaN(v)?0:Math.min(3,Math.max(0,v));render()});
+  var vp=document.createElement("div");vp.className="page";vp.id="p-verify";vp.hidden=true;
+  vp.innerHTML='<div class="ph"><h1>Verify a site</h1><p>Scam sites copy real ones. Check any Pipforge site here before you trust it.</p></div><div class="glass cfg" style="animation:none;opacity:1;margin-bottom:16px"><div><label for="vd">Site address</label><input class="field" id="vd" placeholder="For example novatrades.site"></div><button class="btn" id="vgo">Check this site</button></div><div class="glass vres" id="vres"><h3 style="margin:0 0 8px">Demo result for <span id="vn"></span></h3><ul class="list"><li>Owner <span>Shown here in the live version</span></li><li>Markup rate <span>Shown here in the live version</span></li><li>Template <span>Shown here in the live version</span></li></ul></div>';
+  document.querySelector("main").appendChild(vp);pages.push("verify");
+  $("vgo").addEventListener("click",function(){$("vn").textContent=$("vd").value.trim()||"this site";$("vres").classList.add("on")});
+  document.querySelector(".flinks").insertAdjacentHTML("afterbegin",'<a href="#verify">Verify a site</a>');
+  var hub='<div class="s-top"><span class="s-name" id="sname"></span><span class="s-nav"><em>Bots</em><em>Learn</em><em>FAQ</em></span><span class="s-pill">Log in</span></div>'+
+  '<div class="s-hero"><canvas id="hc"></canvas><h3>Trade with bots, built your way.</h3><p>Import a ready-made bot, adjust a strategy, or build one block by block. Test everything on a demo account first.</p><span class="s-btn">Try the bot builder</span><span class="s-btn o">Browse free bots</span></div>'+
+  '<div class="s-sec"><h4>Why use bots here</h4><div class="s-g3"><div class="s-c"><b>Track every run</b><span>See each trade a bot places and how the session is going.</span></div><div class="s-c"><b>Learn as you build</b><span>Guides and tutorials sit right next to the builder.</span></div><div class="s-c"><b>Build visually</b><span>Drag and drop blocks. No coding needed.</span></div></div></div>'+
+  '<div class="s-sec"><div class="s-g3"><div class="s-c"><b>Start from a strategy</b><span>Load Martingale, D’Alembert or Oscar’s Grind and adjust it. Martingale can lose a lot very quickly.</span></div><div class="s-c"><b>Control your risk</b><span>Set take-profit and stop-loss limits before a bot runs.</span></div><div class="s-c"><b>Import and save</b><span>Upload bots from your device or Google Drive and keep your own.</span></div></div></div>'+
+  '<div class="s-sec"><h4>Free bot library</h4><div class="s-bots"><div class="s-bot">Rise/Fall starter <em>Load in DBot</em></div><div class="s-bot">Digits Differs starter <em>Load in DBot</em></div><div class="s-bot">Matches starter <em>Load in DBot</em></div><div class="s-bot">Even/Odd starter <em>Load in DBot</em></div></div></div>'+
+  '<div class="s-sec"><h4>Build a bot in 4 steps</h4><div class="s-st"><div><b>1</b>Choose a market and trade type</div><div><b>2</b>Set your purchase conditions</div><div><b>3</b>Set your restart conditions</div><div><b>4</b>Run it on demo, then real</div></div></div>'+
+  '<div class="s-sec"><h4>Questions</h4><details><summary>Who can use the bots?</summary><p>Anyone with a Deriv account. Start with a ready-made bot and change it to suit you.</p></details><details><summary>What if I close my browser?</summary><p>Bots run in your browser, so closing the tab pauses them. Keep the tab open to keep a bot running.</p></details><details><summary>Can I test before using real money?</summary><p>Yes. Run any bot on a free demo account first.</p></details><details><summary>How do I limit my losses?</summary><p>Set a stop-loss and a take-profit in the bot before you run it, and only stake what you can afford to lose.</p></details></div>'+
+  '<div class="s-foot"></div>';
+  $("site").innerHTML=hub;
+  var r1=render;
+  render=function(){r1();$("site").querySelector(".s-foot").textContent+=" This is an independent site and is not Deriv."};
+  function chart(cv,cols){
+    var c=cv.getContext("2d"),dpr=Math.min(window.devicePixelRatio||1,2),W=0,H=0,N=90,STEP=220,pts=[],v=0,acc=0,last=0,cnt=0,ent=null,entT=0,side="Rise",i;
+    var still=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function size(){var r=cv.parentNode.getBoundingClientRect();if(!r.width)return;W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0)}
+    function step(){v+=(Math.random()-.5)*1.4-v*.03;pts.push(v);pts.shift();cnt++;
+      if(ent!==null&&cnt-entT>=12)ent=null;else if(ent===null&&cnt%24===0){ent=v;entT=cnt;side=side==="Rise"?"Fall":"Rise"}}
+    function Y(p){return H*.55-p*H*.03}
+    for(i=0;i<N;i++){v+=(Math.random()-.5)*1.4-v*.03;pts.push(v)}
+    function draw(f){
+      if(!W)return;var k=cols(),a=k[0],b=k[1],dx=W/(N-2),x,j;
+      c.clearRect(0,0,W,H);c.strokeStyle="rgba(128,128,128,.12)";c.lineWidth=1;
+      for(j=1;j<6;j++){c.beginPath();c.moveTo(0,H*j/6);c.lineTo(W,H*j/6);c.stroke()}
+      c.beginPath();
+      for(j=0;j<N;j++){x=(j-f)*dx;if(j)c.lineTo(x,Y(pts[j]));else c.moveTo(x,Y(pts[j]))}
+      var hx=(N-1-f)*dx,hy=Y(pts[N-1]);
+      c.lineJoin="round";c.lineWidth=2;c.strokeStyle=a;c.shadowColor=a;c.shadowBlur=12;c.stroke();c.shadowBlur=0;
+      c.lineTo(hx,H);c.lineTo(-f*dx,H);c.closePath();c.globalAlpha=.1;c.fillStyle=a;c.fill();c.globalAlpha=1;
+      if(ent!==null){var ex=(N-1-(cnt-entT)-f)*dx,ey=Y(ent);
+        c.setLineDash([5,5]);c.strokeStyle=b;c.lineWidth=1.2;
+        c.beginPath();c.moveTo(ex,ey);c.lineTo(W,ey);c.stroke();c.beginPath();c.moveTo(ex,0);c.lineTo(ex,H);c.stroke();c.setLineDash([]);
+        c.fillStyle=b;c.beginPath();c.arc(ex,ey,4,0,6.283);c.fill();
+        c.font="600 12px sans-serif";c.fillText(side+(side==="Rise"?" \u25B2":" \u25BC")+"   "+Math.max(0,12-(cnt-entT))+" ticks",Math.min(ex+10,W-120),ey-10)}
+      c.fillStyle=a;c.beginPath();c.arc(hx,hy,4+Math.sin(performance.now()/180)*1.2,0,6.283);c.fill();
+    }
+    function loop(t){requestAnimationFrame(loop);if(!cv.offsetParent)return;if(!W)size();
+      acc+=Math.min(t-last,100);last=t;while(acc>=STEP){acc-=STEP;step()}draw(acc/STEP)}
+    window.addEventListener("resize",function(){size();if(still)draw(0)});
+    if(still){size();for(i=0;i<30;i++)step();draw(0)}else requestAnimationFrame(loop);
+  }
+  chart($("hc"),function(){var s=$("site").style;return[s.getPropertyValue("--a1")||"#ff444f",s.getPropertyValue("--a2")||"#ff8a5c"]});
+  var bgc=document.createElement("canvas");bgc.style.cssText="position:absolute;inset:0;width:100%;height:100%;opacity:.22";
+  document.querySelector(".orbs").appendChild(bgc);
+  chart(bgc,function(){return["#ff444f","#ff7a5c"]});
+  var oh=$("hc");if(oh)oh.parentNode.removeChild(oh);
+  var site=$("site");site.innerHTML='<canvas class="scene" id="sc"></canvas><div class="sc">'+site.innerHTML+'</div>';
+  if(bgc.parentNode)bgc.parentNode.removeChild(bgc);
+  function scene(cv,cf,hol,A){
+    var c=cv.getContext("2d"),dpr=Math.min(window.devicePixelRatio||1,1.5),W=0,H=0,CW=16,cand=[],p=0,off=0,S=0,last=0,nC=0,nF=0,side="FALL",ctr=[],chips=[],cols=[],i,
+    still=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function newC(){var o=p;p+=(Math.random()-.5)*7-p*.04;cand.push({o:o,c:p,h:Math.max(o,p)+Math.random()*3,l:Math.min(o,p)-Math.random()*3});if(cand.length>W/CW+3)cand.shift()}
+    function size(){W=cv.clientWidth;H=cv.clientHeight;if(!W)return;cv.width=W*dpr;cv.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0);
+      cand=[];p=0;for(i=0;i<W/CW+3;i++)newC();cols=[];
+      for(i=0;i<W/54;i++){var d=[];for(var m=0;m<7;m++)d.push((Math.random()*10)|0);cols.push({x:i*54+10,y:Math.random()*H,v:14+Math.random()*34,d:d})}}
+    function Y(v){return H*.5-v*H*.016}
+    function draw(T,dt){
+      if(!W||!cand.length)return;
+      var k=cf(),up=k[0],dn=k[1],tc=k[2],n=cand.length,j,x,yy,cd,hx=W-off,hy=Y(cand[n-1].c),M=H+160;
+      c.clearRect(0,0,W,H);c.font="12px ui-monospace,Menlo,monospace";c.fillStyle=up;
+      cols.forEach(function(o){o.y-=o.v*dt;if(Math.random()<.015)o.d[(Math.random()*7)|0]=(Math.random()*10)|0;
+        for(var m=0;m<7;m++){c.globalAlpha=(.05+.1*(1-m/7))*A;c.fillText(o.d[m],o.x,((o.y+m*18)%M+M)%M-80)}});
+      c.globalAlpha=.25*A;c.lineWidth=2;c.strokeStyle=dn;c.beginPath();
+      for(j=0;j<n;j++){x=W-off-(n-1-j)*CW;yy=H*.64-cand[j].c*H*.009;if(j)c.lineTo(x,yy);else c.moveTo(x,yy)}c.stroke();
+      for(j=0;j<n;j++){cd=cand[j];x=W-off-(n-1-j)*CW;var upc=cd.c>=cd.o,col=upc?up:dn;
+        c.globalAlpha=.5*A;c.strokeStyle=col;c.fillStyle=col;c.lineWidth=1.5;c.beginPath();c.moveTo(x,Y(cd.h));c.lineTo(x,Y(cd.l));c.stroke();
+        var y1=Y(Math.max(cd.o,cd.c)),hh=Math.max(2,Math.abs(Y(cd.o)-Y(cd.c)));
+        if(upc||!hol)c.fillRect(x-4.5,y1,9,hh);else c.strokeRect(x-4.5,y1,9,hh)}
+      c.globalAlpha=.95*A;c.lineWidth=2.5;c.lineJoin="round";c.strokeStyle=up;c.shadowColor=up;c.shadowBlur=18;c.beginPath();
+      for(j=0;j<n;j++){x=W-off-(n-1-j)*CW;yy=Y(cand[j].c);if(j)c.lineTo(x,yy);else c.moveTo(x,yy)}c.stroke();c.shadowBlur=0;
+      var pr=(T*1.5)%1;c.globalAlpha=(1-pr)*.7*A;c.lineWidth=2;c.beginPath();c.arc(hx,hy,6+pr*22,0,6.283);c.stroke();
+      c.globalAlpha=A;c.fillStyle=up;c.beginPath();c.arc(hx,hy,5,0,6.283);c.fill();
+      if(T>nC){nC=T+4.5;side=side==="RISE"?"FALL":"RISE";ctr.push({s:side,t:T,sx:S,py:cand[n-1].c})}
+      ctr=ctr.filter(function(o){return T-o.t<5.7});
+      ctr.forEach(function(o){var a=T-o.t,ex=hx-(S-o.sx),ey=Y(o.py),col=o.s==="RISE"?up:dn,fade=a<5?1:Math.max(0,1-(a-5)/.7);
+        c.globalAlpha=.9*fade*A;c.setLineDash([6,6]);c.strokeStyle=col;c.lineWidth=1.3;c.beginPath();c.moveTo(ex,ey);c.lineTo(hx,ey);c.stroke();c.setLineDash([]);
+        c.fillStyle=col;c.beginPath();c.arc(ex,ey,5,0,6.283);c.fill();
+        c.font="700 12px sans-serif";var lab=(o.s==="RISE"?"\u25B2 RISE":"\u25BC FALL")+"  $10",w=c.measureText(lab).width+18;
+        c.globalAlpha=.9*fade*A;c.fillStyle=col;c.beginPath();if(c.roundRect)c.roundRect(ex+8,ey-32,w,22,11);else c.rect(ex+8,ey-32,w,22);c.fill();
+        c.fillStyle=tc;c.fillText(lab,ex+17,ey-17);
+        c.lineWidth=3;c.strokeStyle=col;c.beginPath();
+        if(a<5)c.arc(hx,hy,18,-1.5708,-1.5708+6.283*(a/5));else{var b=(a-5)/.7;c.globalAlpha=(1-b)*.8*A;c.arc(hx,hy,18+b*55,0,6.283)}
+        c.stroke()});
+      if(T>nF){nF=T+1.4;chips.push({x:Math.random()*W,y:H+20,v:30+Math.random()*45,u:Math.random()<.5})}
+      chips=chips.filter(function(o){return o.y>-40});
+      c.font="700 16px sans-serif";
+      chips.forEach(function(o){o.y-=o.v*dt;var f=Math.max(0,Math.min(1,(H-o.y)/120,(o.y+40)/160)),col=o.u?up:dn;
+        c.globalAlpha=.6*f*A;c.fillStyle=col;c.shadowColor=col;c.shadowBlur=14;c.fillText(o.u?"\u25B2":"\u25BC",o.x,o.y);c.shadowBlur=0});
+      c.globalAlpha=1;
+    }
+    function loop(t){requestAnimationFrame(loop);if(!cv.getClientRects().length||document.hidden){last=t;return}
+      if(!W||W!==cv.clientWidth||H!==cv.clientHeight)size();if(!W)return;
+      var dt=Math.min((t-last)/1000,.1);last=t;off+=dt*46;S+=dt*46;while(off>=CW){off-=CW;newC()}draw(t/1000,dt)}
+    if(still){size();draw(0,0);window.addEventListener("resize",function(){size();draw(0,0)})}else requestAnimationFrame(loop);
+  }
+  var pg=document.createElement("canvas");pg.className="pgbg";document.body.insertBefore(pg,document.querySelector(".orbs").nextSibling);
+  scene(pg,function(){return["#19d3a2","#ff444f","#ffffff"]},false,1);
+  scene($("sc"),function(){var s=$("site").style;return[s.getPropertyValue("--a1")||"#ff444f",s.getPropertyValue("--a2")||"#ff8a5c",s.getPropertyValue("--bt")||"#fff"]},true,.75);
+  var earn='<p>When a visitor places a contract on your site, your markup is added to it. In Deriv’s own example, a $10 stake with a $17.20 payout and a 2% markup earns the app owner $0.34, and the visitor’s payout drops to $16.86.</p><p>Referral commissions are separate. They apply when someone you referred trades on Deriv’s own platforms and you are in Deriv’s partner programme.</p><p>Earnings depend on how much your visitors trade, and nothing is guaranteed. A higher markup lowers your visitors’ payouts, so be open about your rate.</p>';
+  document.querySelector("#p-home .lead").textContent="Own a branded Deriv site, give visitors free bots, and earn markup commission on the contracts they trade. One setup fee. We take no share of your earnings.";
+  $("included").insertAdjacentHTML("beforebegin",'<section><h2>Why own your Deriv site?</h2><div class="grid"><div class="glass tile t1"><h3>Earn on contracts your visitors place</h3><p>Deriv lets an app owner add a markup of up to 3% to contracts placed through their app. That markup goes to you, not to us.</p></div><div class="glass tile t2"><h3>Your brand</h3><p>Your name, your domain, your audience.</p></div><div class="glass tile t3"><h3>No revenue share</h3><p>One setup fee. We take no cut of your earnings.</p></div><div class="glass tile t4"><h3>Free bots give people a reason to return</h3><p>A bot library turns a one-time visit into a site people come back to.</p></div></div><div class="glass note" style="margin-top:16px"><h2>How you get paid.</h2><div>'+earn+'</div></div></section>');
+  $("p-pricing").insertAdjacentHTML("beforeend",'<div class="glass note" style="margin-bottom:40px"><h2>What you earn is yours.</h2><div><p>The setup fee pays for your site. Your markup and referral commissions come from Deriv and go to you. We take no share of either.</p></div></div>');
+  $("p-how").insertAdjacentHTML("beforeend",'<div class="ph" style="padding-top:8px"><h1>How you get paid</h1></div><ol class="steps"><li class="glass"><b class="num">1</b><div><h3>A visitor places a contract</h3><p>They trade on your site, which runs on your own Deriv app ID.</p></div></li><li class="glass"><b class="num">2</b><div><h3>Your markup is added</h3><p>You set the rate from 0 to 3%, and it is shown to your visitors.</p></div></li><li class="glass"><b class="num">3</b><div><h3>Deriv pays you</h3><p>Markup commission goes to you under Deriv’s terms. We never touch it.</p></div></li><li class="glass"><b class="num">4</b><div><h3>You track it</h3><p>Your dashboard shows your site, your markup and your commission.</p></div></li></ol>');
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Why have my own site instead of just sharing a referral link?</summary><p>A referral link earns partner commission when people trade on Deriv’s own platforms. A site of your own can also earn markup on contracts placed through your app, carries your brand, and gives your audience somewhere to return to.</p></details><details class="glass"><summary>How exactly do I get paid?</summary><p>Deriv pays markup commission to the owner of the app ID a contract was placed through. On Pipforge that is your own app ID, so it goes straight to you.</p></details><details class="glass"><summary>Does Pipforge take a share?</summary><p>No. You pay a one-time setup fee and a yearly domain fee. We take no part of your markup or referral commissions.</p></details>');
+  $("pay").insertAdjacentHTML("beforebegin",'<span class="mini">You keep 100% of the markup your site earns. We take no share.</span>');
+  function mkPage(id,html){var d=document.createElement("div");d.className="page";d.id="p-"+id;d.hidden=true;d.innerHTML=html;document.querySelector("main").appendChild(d);pages.push(id)}
+  mkPage("why",'<div class="ph"><h1>Why have your own third-party Deriv site?</h1><p>A referral link sends people to Deriv. Your own site gives them a place to come back to, and gives you more ways to earn.</p></div><div class="cards"><div class="glass card"><h3>Earn markup</h3><p>Add up to 3% to contracts placed through your app. It is paid to you.</p></div><div class="glass card"><h3>Build a brand</h3><p>Your name and domain, so people remember you and not a link.</p></div><div class="glass card"><h3>Stand apart from scams</h3><p>Locked risk warnings, a visible markup rate and a verify page show visitors you are genuine.</p></div><div class="glass card"><h3>Keep what you earn</h3><p>One setup fee. No revenue share.</p></div></div><div class="glass note"><h2>How you get paid.</h2><div>'+earn+'</div></div><div class="cmpw"><div class="cmp"><div class="h"></div><div class="h">Pipforge site</div><div class="h">Referral link only</div><div class="h">Site bought from a stranger</div><div>Your own brand and domain</div><div class="y">Yes</div><div>No</div><div>Varies</div><div>Markup on contracts</div><div class="y">Yes, to your app ID</div><div>No</div><div>Check the app ID</div><div>You set the markup rate</div><div class="y">Yes, 0 to 3%</div><div>Not applicable</div><div>Varies</div><div>Risk warnings built in</div><div class="y">Locked on</div><div>Not applicable</div><div>Varies</div><div>Share of your earnings taken</div><div class="y">None</div><div>None</div><div>Varies</div></div></div><div class="row" style="margin-bottom:40px"><button class="btn" data-go="templates">See templates</button><button class="btn" data-go="checkout">Reserve my site</button></div>');
+  var qs=[["Setup took a day and the site looked far better than the one I almost bought."],["The markup rate is shown on the site, and my visitors trust it more because of that."],["A flat fee with no cut of my earnings was what decided it for me."],["The bot library gives people a reason to come back."],["Domain and SSL were handled for me, so I never touched DNS."],["Changing the template took one click."]];
+  mkPage("testimonials",'<div class="ph"><h1>What site owners say</h1><p>Real reviews from people running their own sites will appear here.</p></div><div class="cards">'+qs.map(function(q){return '<div class="glass card q"><span class="sample">Sample</span><p>“'+q[0]+'”</p><small>Site owner, yourdomain.com</small></div>'}).join("")+'</div><div class="glass cfg" style="animation:none;opacity:1;margin-bottom:40px"><h3 style="margin:0">Share your experience</h3><div><label for="tn">Your name</label><input class="field" id="tn"></div><div><label for="ts">Your site</label><input class="field" id="ts" placeholder="yourdomain.com"></div><div><label for="tm">Your review</label><textarea class="field" id="tm"></textarea></div><button class="btn" id="tsend">Submit review</button></div>');
+  $("tsend").addEventListener("click",function(){toast("Review submitted (demo)")});
+  var ln=document.querySelector(".links");ln.querySelectorAll("a").forEach(function(a){ln.removeChild(a)});
+  ln.insertAdjacentHTML("afterbegin",'<a href="#home">Home</a><a href="#why">Why own a site</a><a href="#templates">Templates</a><a href="#bots">Bots</a><a href="#pricing">Pricing</a><a href="#testimonials">Reviews</a><a href="#faq">FAQ</a><a href="#dashboard">Dashboard</a>');
+  document.querySelector(".flinks").insertAdjacentHTML("afterbegin",'<a href="#how">How it works</a>');
+  pg.parentNode.removeChild(pg);
+  var RM=window.matchMedia("(prefers-reduced-motion: reduce)").matches,mm=window.matchMedia("(prefers-color-scheme: light)");
+  function fx(cv,cf,fn){
+    var c=cv.getContext("2d"),dpr=Math.min(window.devicePixelRatio||1,1.5),W=0,H=0,last=0,s={};
+    function size(){W=cv.clientWidth;H=cv.clientHeight;if(!W)return;cv.width=W*dpr;cv.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0);s={}}
+    function tick(T,dt){if(!W)return;c.clearRect(0,0,W,H);fn(c,W,H,T,dt,cf(),s)}
+    function loop(t){requestAnimationFrame(loop);if(!cv.getClientRects().length||document.hidden){last=t;return}
+      if(!W||W!==cv.clientWidth||H!==cv.clientHeight)size();var dt=Math.min((t-last)/1000,.1);last=t;tick(t/1000,dt)}
+    cv.rd=function(){size();for(var k=0;k<40;k++)tick(k*.2,.05)};
+    if(RM){cv.rd();window.addEventListener("resize",cv.rd)}else requestAnimationFrame(loop);
+  }
+  function bgfx(c,W,H,T,dt,k,s){
+    var i,x,yy,R=Math.min(W,H),dk=!(document.documentElement.getAttribute("data-theme")?document.documentElement.getAttribute("data-theme")==="light":mm.matches),
+    cl=["#ff444f","#ff7a5c","#c43cff","#2f5bff","#19d3a2"];
+    if(!s.p){s.p=[];for(i=0;i<70;i++)s.p.push({x:Math.random()*W,y:Math.random()*H,r:.6+Math.random()*1.6,v:8+Math.random()*22,h:Math.random()*6.28})}
+    c.globalCompositeOperation=dk?"lighter":"source-over";
+    for(i=0;i<5;i++){var ox=W*(.5+.42*Math.sin(T*.11*(i+1)+i*1.7)),oy=H*(.5+.38*Math.cos(T*.09*(i+2)+i)),r=R*(.42+.1*Math.sin(T*.2+i)),g=c.createRadialGradient(ox,oy,0,ox,oy,r);
+      g.addColorStop(0,cl[i]+(dk?"d0":"90"));g.addColorStop(1,cl[i]+"00");c.fillStyle=g;c.fillRect(ox-r,oy-r,2*r,2*r)}
+    for(i=0;i<4;i++){c.beginPath();
+      for(x=-20;x<=W+20;x+=24){yy=H*(.25+.17*i)+Math.sin(x*.004+T*.5+i*1.9)*H*.12+Math.sin(x*.011-T*.7+i)*H*.04;if(x===-20)c.moveTo(x,yy);else c.lineTo(x,yy)}
+      c.lineWidth=46;c.strokeStyle=cl[i]+(dk?"66":"55");c.shadowColor=cl[i];c.shadowBlur=40;c.stroke()}
+    c.lineWidth=1.4;
+    for(i=0;i<14;i++){c.beginPath();
+      for(x=-20;x<=W+20;x+=16){yy=H*(.1+.06*i)+Math.sin(x*.006+T*.35+i*.55)*H*.1+Math.cos(x*.013-T*.5+i)*H*.03;if(x===-20)c.moveTo(x,yy);else c.lineTo(x,yy)}
+      c.strokeStyle=cl[i%5]+(dk?"aa":"88");c.shadowColor=cl[i%5];c.shadowBlur=10;c.stroke()}
+    c.shadowBlur=0;c.fillStyle=dk?"#ffffff":"#ff444f";
+    s.p.forEach(function(o){o.y-=o.v*dt;if(o.y<-10){o.y=H+10;o.x=Math.random()*W}c.globalAlpha=Math.max(0,.3+.5*Math.sin(T*2+o.h));c.beginPath();c.arc(o.x,o.y,o.r,0,6.283);c.fill()});
+    c.globalAlpha=1;c.globalCompositeOperation="source-over";
+  }
+  function digFn(c,W,H,T,dt,k,s){
+    if(!s.c){s.c=[];for(var i=0;i<W/20;i++)s.c.push({x:i*20+4,y:Math.random()*H*1.5,v:70+Math.random()*130,n:8+((Math.random()*10)|0),d:[]})}
+    c.font="700 15px ui-monospace,Menlo,monospace";
+    s.c.forEach(function(o){o.y+=o.v*dt;if(o.y-o.n*18>H){o.y=-Math.random()*H*.4;o.v=70+Math.random()*130}
+      for(var m=0;m<o.n;m++){if(o.d[m]===undefined||Math.random()<.02)o.d[m]=(Math.random()*10)|0;
+        c.globalAlpha=m?(1-m/o.n)*.55:1;c.fillStyle=m?k[0]:k[1];if(!m){c.shadowColor=k[1];c.shadowBlur=14}else c.shadowBlur=0;c.fillText(o.d[m],o.x,o.y-m*18)}});
+    c.shadowBlur=0;c.globalAlpha=1}
+  function pulseFn(c,W,H,T,dt,k,s){
+    var n=Math.ceil(W/3),g,i;if(!s.p){s.p=[];s.a=0;s.t=0;for(i=0;i<n;i++)s.p.push(0)}
+    s.a+=dt;while(s.a>=.016){s.a-=.016;s.t++;var ph=s.t%120,v=(Math.random()-.5)*.1;if(ph<8)v+=ph*.1;else if(ph<14)v-=(ph-8)*.18;else if(ph<20)v+=(ph-14)*.12;s.p.push(v);s.p.shift()}
+    c.strokeStyle=k[0];c.lineWidth=1;c.globalAlpha=.1;
+    for(g=1;g<6;g++){c.beginPath();c.moveTo(0,H*g/6);c.lineTo(W,H*g/6);c.stroke()}
+    c.lineJoin="round";c.lineWidth=3;c.shadowColor=k[0];c.shadowBlur=20;c.globalAlpha=.95;c.beginPath();
+    s.p.forEach(function(v,j){var y=H*.5-v*H*.42;if(j)c.lineTo(j*3,y);else c.moveTo(0,y)});c.stroke();
+    c.shadowBlur=0;c.globalAlpha=.25;c.strokeStyle=k[1];c.lineWidth=2;c.beginPath();
+    s.p.forEach(function(v,j){var y=H*.5+v*H*.2;if(j)c.lineTo(j*3,y);else c.moveTo(0,y)});c.stroke();
+    c.globalAlpha=1;c.fillStyle=k[1];c.shadowColor=k[1];c.shadowBlur=18;c.beginPath();c.arc((s.p.length-1)*3,H*.5-s.p[s.p.length-1]*H*.42,5,0,6.283);c.fill();c.shadowBlur=0}
+  function arrFn(c,W,H,T,dt,k,s){
+    if(!s.a){s.a=[];s.n=0}
+    s.n-=dt;if(s.n<=0){s.n=.3;s.a.push({x:Math.random()*W,y:H+40,v:50+Math.random()*110,z:18+Math.random()*40,u:Math.random()<.5,p:Math.random()*6.28})}
+    s.a=s.a.filter(function(o){return o.y>-60});
+    s.a.forEach(function(o){o.y-=o.v*dt;var f=Math.max(0,Math.min(1,(H-o.y)/140,(o.y+60)/200)),col=o.u?k[0]:k[1];
+      c.globalAlpha=.8*f;c.fillStyle=col;c.shadowColor=col;c.shadowBlur=22;c.font="700 "+o.z+"px sans-serif";c.fillText(o.u?"\u25B2":"\u25BC",o.x+Math.sin(T+o.p)*14,o.y)});
+    c.shadowBlur=0;c.globalAlpha=1}
+  function lcg(n){var x=n;return function(){x=(x*1664525+1013904223)%4294967296;return x/4294967296}}
+  function imgBG(kind,a,b){
+    var r=lcg(7),i,j,s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">';
+    if(kind==="img-mesh")return "radial-gradient(50% 60% at 15% 20%,"+a+"88,transparent),radial-gradient(45% 55% at 85% 30%,"+b+"77,transparent),radial-gradient(55% 60% at 50% 100%,"+a+"55,transparent)";
+    if(kind==="img-chart"){var p=250;for(j=1;j<6;j++)s+='<line x1="0" x2="800" y1="'+j*83+'" y2="'+j*83+'" stroke="'+b+'" opacity=".12"/>';
+      for(i=0;i<40;i++){var o=p;p+=(r()-.5)*60-(p-250)*.05;var hi=Math.max(o,p)+r()*20,lo=Math.min(o,p)-r()*20,cx=i*20+10,up=p<=o,col=up?a:b;
+        s+='<line x1="'+cx+'" x2="'+cx+'" y1="'+hi+'" y2="'+lo+'" stroke="'+col+'" stroke-width="2" opacity=".5"/><rect x="'+(cx-6)+'" y="'+Math.min(o,p)+'" width="12" height="'+Math.max(3,Math.abs(o-p))+'" fill="'+(up?a:"none")+'" stroke="'+col+'" opacity=".6"/>'}}
+    if(kind==="img-grid"){s+='<defs><linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+a+'" stop-opacity=".5"/><stop offset="1" stop-color="'+a+'" stop-opacity="0"/></linearGradient></defs><rect width="800" height="250" fill="url(#h)"/>';
+      for(i=-12;i<=12;i++)s+='<line x1="400" y1="250" x2="'+(400+i*130)+'" y2="500" stroke="'+b+'" opacity=".35"/>';
+      for(j=1;j<9;j++)s+='<line x1="0" x2="800" y1="'+(250+j*j*3.9)+'" y2="'+(250+j*j*3.9)+'" stroke="'+b+'" opacity=".35"/>'}
+    if(kind==="img-digits"){for(i=0;i<60;i++)s+='<text x="'+(r()*780|0)+'" y="'+(r()*480|0)+'" font-size="'+(18+r()*60|0)+'" font-family="monospace" font-weight="700" fill="'+(r()<.5?a:b)+'" opacity="'+(.08+r()*.22).toFixed(2)+'">'+(r()*10|0)+'</text>'}
+    return "url('data:image/svg+xml,"+encodeURIComponent(s+'</svg>')+"')";
+  }
+  var pb=document.createElement("canvas");pb.className="pgbg";document.body.insertBefore(pb,document.querySelector(".orbs").nextSibling);
+  fx(pb,function(){return[]},bgfx);
+  site.insertAdjacentHTML("afterbegin",'<canvas class="scene bgl" id="sd"></canvas><canvas class="scene bgl" id="sp"></canvas><canvas class="scene bgl" id="sa"></canvas><div class="imgbg bgl" id="si"></div>');
+  var cfs=function(){var q=$("site").style;return[q.getPropertyValue("--a1")||"#ff444f",q.getPropertyValue("--a2")||"#ff8a5c"]};
+  fx($("sd"),cfs,digFn);fx($("sp"),cfs,pulseFn);fx($("sa"),cfs,arrFn);
+  st.b="candles";
+  var BG=[["candles","Candles","\u25AE"],["digits","Digit rain","7"],["pulse","Pulse line","\u223F"],["arrows","Rise and Fall","\u25B2"],["img-chart","Chart image",""],["img-mesh","Mesh image",""],["img-grid","Grid image",""],["img-digits","Digits image",""],["none","No background","\u2205"]];
+  function setBg(){var e=$("site"),t=T[st.t];e.dataset.bg=st.b;if(st.b.indexOf("img")===0)$("si").style.backgroundImage=imgBG(st.b,t.a1,t.a2);if(RM)window.dispatchEvent(new Event("resize"))}
+  var r2=render;render=function(){r2();setBg()};
+  $("tpls").parentNode.insertAdjacentHTML("afterend",'<div><span class="lab">Background: animation or still image</span><div class="row" id="bgs">'+BG.map(function(b){return '<button class="chip" data-b="'+b[0]+'" aria-pressed="'+(b[0]==="candles")+'">'+b[1]+'</button>'}).join("")+'</div></div>');
+  pick("bgs",function(b){st.b=b.dataset.b;swap()});
+  tg.insertAdjacentHTML("afterend",'<div class="ph" style="padding:8px 0 16px"><h1 style="font-size:32px">Backgrounds</h1><p>Pick an animation, or a still image if you prefer no motion. You can change it any time.</p></div><div class="cards" id="bgc"></div>');
+  $("bgc").innerHTML=BG.map(function(b){var im=b[0].indexOf("img")===0,th=T[st.t],thumb=im?'<div class="thumb" style="background-color:#0b0b10;background-image:'+imgBG(b[0],th.a1,th.a2)+'"></div>':'<div class="thumb" style="background:linear-gradient(135deg,#0b0b10,'+th.a1+'44);color:'+th.a1+'">'+b[2]+'</div>';
+    return '<div class="glass card">'+thumb+'<span class="tag">'+(im?"Still image":b[0]==="none"?"No background":"Animation")+'</span><h3>'+b[1]+'</h3><button class="btn" data-bgu="'+b[0]+'">Use this</button></div>'}).join("");
+  document.addEventListener("click",function(ev){var u=ev.target.closest("[data-bgu]");if(!u)return;st.b=u.dataset.bgu;
+    document.querySelectorAll("#bgs button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.b===st.b))});render();swap();location.hash="#home"});
+  var EX=[[".com",15],[".net",14],[".org",14],[".site",8],[".online",10],[".store",8],[".app",18],[".dev",14],[".pro",15],[".live",12],[".xyz",4],[".co.ke",12],[".co.za",8],[".com.ng",12],[".co.uk",10],[".in",8],[".ae",30],[".com.au",14],[".ca",15]];
+  $("exts").innerHTML=EX.map(function(e){return '<button class="chip" data-e="'+e[0]+'" data-f="'+e[1]+'" aria-pressed="'+(e[0]===".site")+'">'+e[0]+'</button>'}).join("");
+  $("exts").previousElementSibling.textContent="Domain ending, worldwide";
+  var pl=document.querySelector("#p-pricing .two .card:nth-child(2) .list");
+  pl.innerHTML=EX.map(function(e){return '<li>'+e[0]+' <span>$'+e[1]+'</span></li>'}).join("");pl.style.maxHeight="300px";pl.style.overflowY="auto";
+  pl.insertAdjacentHTML("afterend",'<p>Some country endings have local residency rules.</p>');
+  pb.parentNode.removeChild(pb);
+  function calm(c,W,H,T,dt,k,s){
+    var dk=!(document.documentElement.getAttribute("data-theme")?document.documentElement.getAttribute("data-theme")==="light":mm.matches),i,x,y,g,ink=dk?"255,255,255":"20,20,30",R=Math.max(W,H);
+    if(!s.p){var S=["$","\u20AC","\u00A3","\u00A5","\u20BF","\u20A6","\u20B9","R"];s.p=[];for(i=0;i<22;i++)s.p.push({x:Math.random()*W,y:Math.random()*H,z:16+Math.random()*30,v:6+Math.random()*14,s:S[i%8],r:(Math.random()-.5)*.5,h:Math.random()*6.28})}
+    g=c.createRadialGradient(W*.12,H*.08,0,W*.12,H*.08,R*.55);g.addColorStop(0,"rgba(255,68,79,"+(dk?.16:.12)+")");g.addColorStop(1,"rgba(255,68,79,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
+    g=c.createRadialGradient(W*.92,H*.96,0,W*.92,H*.96,R*.5);g.addColorStop(0,"rgba(47,91,255,"+(dk?.15:.1)+")");g.addColorStop(1,"rgba(47,91,255,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
+    c.strokeStyle="rgba("+ink+",.045)";c.lineWidth=1;for(i=1;i<8;i++){c.beginPath();c.moveTo(0,H*i/8);c.lineTo(W,H*i/8);c.stroke()}
+    for(i=0;i<3;i++){c.beginPath();for(x=0;x<=W;x+=10){y=H*(.35+.18*i)+Math.sin(x*.005+T*.12*(i+1)+i*2)*H*.06+Math.sin(x*.017-T*.2*(i+1))*H*.018+Math.sin(x*.043+T*.35)*H*.006;if(x===0)c.moveTo(x,y);else c.lineTo(x,y)}
+      c.lineWidth=1.4;c.strokeStyle=i===1?"rgba(255,68,79,.4)":"rgba("+ink+",.2)";c.stroke()}
+    c.fillStyle="rgba("+ink+",.12)";
+    s.p.forEach(function(o){o.y-=o.v*dt;if(o.y<-40){o.y=H+40;o.x=Math.random()*W}c.save();c.translate(o.x+Math.sin(T*.3+o.h)*12,o.y);c.rotate(o.r);c.font="600 "+o.z+"px sans-serif";c.fillText(o.s,0,0);c.restore()});
+  }
+  var pc=document.createElement("canvas");pc.className="pgbg";document.body.insertBefore(pc,document.querySelector(".orbs").nextSibling);fx(pc,function(){return[]},calm);
+  var E={};
+  E.ticker=function(c,W,H,T,dt,k,s){
+    var P=["EUR/USD","GBP/USD","USD/JPY","BTC/USD","XAU/USD","R_100","BOOM 500","CRASH 500","USD/KES","AUD/USD"],n=Math.ceil(H/46),i,j,o,x,h,idx;
+    if(!s.r){s.r=[];for(i=0;i<n;i++)s.r.push({o:Math.random()*5000,v:30+Math.random()*70})}
+    c.font="600 15px ui-monospace,Menlo,monospace";
+    for(i=0;i<n;i++){o=s.r[i];o.o+=o.v*dt;for(j=-1;j<W/170+2;j++){idx=Math.floor(o.o/170)+j;x=j*170-(o.o%170);h=((idx*2654435761)^(i*40503))>>>0;
+      c.globalAlpha=.4;c.fillStyle=h&1?k[0]:k[1];c.fillText(P[h%P.length]+" "+(1+((h>>8)%900)/100).toFixed(2)+(h&1?" \u25B2":" \u25BC"),x,i*46+30)}}
+    c.globalAlpha=1};
+  E.coins=function(c,W,H,T,dt,k,s){
+    if(!s.a){s.a=[];s.n=0}s.n-=dt;if(s.n<=0){s.n=.18;s.a.push({x:Math.random()*W,y:-30,v:70+Math.random()*120,r:10+Math.random()*14,p:Math.random()*6.28,w:2+Math.random()*3})}
+    s.a=s.a.filter(function(o){return o.y<H+40});
+    s.a.forEach(function(o){o.y+=o.v*dt;o.p+=o.w*dt;var rx=o.r*Math.abs(Math.cos(o.p));c.globalAlpha=.75;c.fillStyle=k[0];c.strokeStyle=k[1];c.lineWidth=2;c.shadowColor=k[0];c.shadowBlur=12;
+      c.beginPath();c.ellipse(o.x,o.y,Math.max(1,rx),o.r,0,0,6.283);c.fill();c.stroke();
+      if(rx>o.r*.5){c.shadowBlur=0;c.fillStyle=k[1];c.font="700 "+o.r+"px sans-serif";c.textAlign="center";c.fillText("$",o.x,o.y+o.r*.35);c.textAlign="left"}});
+    c.shadowBlur=0;c.globalAlpha=1};
+  E.currency=function(c,W,H,T,dt,k,s){
+    var S=["$","\u20AC","\u00A3","\u00A5","\u20BF","\u20A6","\u20B9","R","\u20A9"];
+    if(!s.a){s.a=[];s.n=0}s.n-=dt;if(s.n<=0){s.n=.35;s.a.push({x:Math.random()*W,y:H+50,v:40+Math.random()*90,z:24+Math.random()*50,t:S[(Math.random()*9)|0],p:Math.random()*6.28,c:Math.random()<.5})}
+    s.a=s.a.filter(function(o){return o.y>-80});
+    s.a.forEach(function(o){o.y-=o.v*dt;var f=Math.max(0,Math.min(1,(H-o.y)/140,(o.y+80)/200)),col=o.c?k[0]:k[1];c.globalAlpha=.7*f;c.fillStyle=col;c.shadowColor=col;c.shadowBlur=18;c.font="700 "+o.z+"px sans-serif";c.fillText(o.t,o.x+Math.sin(T*.8+o.p)*18,o.y)});
+    c.shadowBlur=0;c.globalAlpha=1};
+  E.moneyrain=function(c,W,H,T,dt,k,s){
+    var S=["$","\u20AC","\u00A3","\u00A5"];
+    if(!s.c){s.c=[];for(var i=0;i<W/26;i++)s.c.push({x:i*26+4,y:Math.random()*H*1.5,v:60+Math.random()*120,n:7+((Math.random()*8)|0),d:[]})}
+    c.font="700 18px sans-serif";
+    s.c.forEach(function(o){o.y+=o.v*dt;if(o.y-o.n*22>H){o.y=-Math.random()*H*.4;o.v=60+Math.random()*120}
+      for(var m=0;m<o.n;m++){if(o.d[m]===undefined)o.d[m]=S[(Math.random()*4)|0];c.globalAlpha=m?(1-m/o.n)*.5:1;c.fillStyle=m?k[0]:k[1];if(!m){c.shadowColor=k[1];c.shadowBlur=14}else c.shadowBlur=0;c.fillText(o.d[m],o.x,o.y-m*22)}});
+    c.shadowBlur=0;c.globalAlpha=1};
+  E.waves=function(c,W,H,T,dt,k){
+    for(var i=0;i<5;i++){c.beginPath();c.moveTo(0,H);for(var x=0;x<=W;x+=12)c.lineTo(x,H*(.45+.1*i)+Math.sin(x*.006+T*(.4+i*.12)+i)*H*.07+Math.sin(x*.015-T*.6)*H*.02);
+      c.lineTo(W,H);c.closePath();c.globalAlpha=.16;c.fillStyle=i%2?k[1]:k[0];c.fill();c.globalAlpha=.7;c.lineWidth=1.5;c.strokeStyle=i%2?k[1]:k[0];c.stroke()}c.globalAlpha=1};
+  E.bars=function(c,W,H,T,dt,k){
+    var n=Math.ceil(W/22),i,h;for(i=0;i<n;i++){h=(Math.sin(T*1.3+i*.7)+Math.sin(T*.8+i*1.9)+2)/4*H*.62;c.globalAlpha=.55;c.fillStyle=Math.cos(T*1.3+i*.7)>0?k[0]:k[1];c.shadowColor=c.fillStyle;c.shadowBlur=10;c.fillRect(i*22+3,H-h,14,h)}
+    c.shadowBlur=0;c.globalAlpha=1};
+  E.radar=function(c,W,H,T,dt,k,s){
+    var cx=W*.5,cy=H*.5,R=Math.min(W,H)*.42,a=T*1.1,j,i;
+    if(!s.b){s.b=[];s.n=0}
+    c.strokeStyle=k[0];c.lineWidth=1;c.globalAlpha=.25;for(i=1;i<=4;i++){c.beginPath();c.arc(cx,cy,R*i/4,0,6.283);c.stroke()}
+    c.beginPath();c.moveTo(cx-R,cy);c.lineTo(cx+R,cy);c.moveTo(cx,cy-R);c.lineTo(cx,cy+R);c.stroke();
+    c.fillStyle=k[0];for(j=0;j<26;j++){c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,R,a-j*.035-.035,a-j*.035);c.closePath();c.globalAlpha=.3*(1-j/26);c.fill()}
+    s.n-=dt;if(s.n<=0){s.n=.5;var r=R*(.2+Math.random()*.75),an=a-Math.random()*.5;s.b.push({x:cx+Math.cos(an)*r,y:cy+Math.sin(an)*r,t:0})}
+    s.b=s.b.filter(function(o){return o.t<3});c.fillStyle=k[1];
+    s.b.forEach(function(o){o.t+=dt;c.globalAlpha=.9*(1-o.t/3);c.shadowColor=k[1];c.shadowBlur=12;c.beginPath();c.arc(o.x,o.y,4,0,6.283);c.fill()});c.shadowBlur=0;c.globalAlpha=1};
+  E.rings=function(c,W,H,T,dt,k,s){
+    if(!s.a){s.a=[];s.n=0}s.n-=dt;if(s.n<=0){s.n=.6;s.a.push({x:Math.random()*W,y:Math.random()*H,t:0,c:Math.random()<.5})}
+    s.a=s.a.filter(function(o){return o.t<4});c.lineWidth=2;
+    s.a.forEach(function(o){o.t+=dt;var col=o.c?k[0]:k[1];c.strokeStyle=col;c.fillStyle=col;c.shadowColor=col;c.shadowBlur=10;
+      for(var m=0;m<2;m++){var r=Math.max(0,o.t-m*.5)*55;c.globalAlpha=Math.max(0,.7*(1-r/220));c.beginPath();c.arc(o.x,o.y,r,0,6.283);c.stroke()}
+      c.globalAlpha=Math.max(0,1-o.t/1.2);c.beginPath();c.arc(o.x,o.y,4,0,6.283);c.fill()});c.shadowBlur=0;c.globalAlpha=1};
+  E.digitgrid=function(c,W,H,T,dt,k,s){
+    var cs=56,cols=Math.ceil(W/cs),rows=Math.ceil(H/cs),i,j;if(!s.f){s.f=[];s.n=0}
+    c.font="600 20px ui-monospace,Menlo,monospace";c.textAlign="center";c.fillStyle=k[0];c.globalAlpha=.13;
+    for(i=0;i<cols;i++)for(j=0;j<rows;j++)c.fillText((i*7+j*13+i*j)%10,i*cs+cs/2,j*cs+cs/2+7);
+    s.n-=dt;if(s.n<=0){s.n=.25;s.f.push({i:(Math.random()*cols)|0,j:(Math.random()*rows)|0,t:0})}
+    s.f=s.f.filter(function(o){return o.t<1.6});
+    s.f.forEach(function(o){o.t+=dt;var a=1-o.t/1.6;c.globalAlpha=.3*a;c.fillStyle=k[1];c.fillRect(o.i*cs+2,o.j*cs+2,cs-4,cs-4);c.globalAlpha=.95*a;c.shadowColor=k[1];c.shadowBlur=12;c.fillText((o.i*7+o.j*13+o.i*o.j)%10,o.i*cs+cs/2,o.j*cs+cs/2+7);c.shadowBlur=0});
+    c.textAlign="left";c.globalAlpha=1};
+  E.spark=function(c,W,H,T,dt,k,s){
+    var cw=170,ch=84,cols=Math.ceil(W/cw),n=cols*Math.ceil(H/ch),i,j;
+    if(!s.c){s.c=[];s.a=0;for(i=0;i<n;i++){var a=[],v=0;for(j=0;j<24;j++){v+=Math.random()-.5;a.push(v)}s.c.push(a)}}
+    s.a+=dt;if(s.a>.25){s.a=0;s.c.forEach(function(a){a.push(a[a.length-1]+Math.random()-.5);a.shift()})}
+    c.lineWidth=1.6;
+    s.c.forEach(function(a,q){var x0=(q%cols)*cw+16,y0=Math.floor(q/cols)*ch+ch/2;c.strokeStyle=a[23]>=a[0]?k[0]:k[1];c.globalAlpha=.5;c.beginPath();
+      a.forEach(function(v,m){var x=x0+m*5.5,y=y0-v*9;if(m)c.lineTo(x,y);else c.moveTo(x,y)});c.stroke()});c.globalAlpha=1};
+  E.depth=function(c,W,H,T,dt,k,s){
+    var n=Math.ceil(H/20),i,o,w1,w2;if(!s.v){s.v=[];for(i=0;i<n;i++)s.v.push({a:Math.random(),b:Math.random(),p:Math.random()*6.28})}
+    for(i=0;i<n;i++){o=s.v[i];if(Math.random()<.02){o.a=Math.random();o.b=Math.random()}
+      w1=W*.38*(.3+.7*o.a)*(.8+.2*Math.sin(T*2+o.p));w2=W*.38*(.3+.7*o.b)*(.8+.2*Math.cos(T*2+o.p));
+      c.globalAlpha=.4;c.fillStyle=k[0];c.fillRect(0,i*20+3,w1,14);c.fillStyle=k[1];c.fillRect(W-w2,i*20+3,w2,14)}c.globalAlpha=1};
+  E.gauge=function(c,W,H,T,dt,k){
+    var cx=W*.5,cy=H*.62,R=Math.min(W*.45,H*.55),a0=Math.PI*.8,a1=Math.PI*2.2,i,t,q,v=.5+.4*Math.sin(T*.5)+.08*Math.sin(T*2.3),an=a0+(a1-a0)*v,g;
+    c.lineWidth=14;c.lineCap="round";c.globalAlpha=.18;c.strokeStyle=k[0];c.beginPath();c.arc(cx,cy,R,a0,a1);c.stroke();
+    g=c.createLinearGradient(cx-R,0,cx+R,0);g.addColorStop(0,k[1]);g.addColorStop(1,k[0]);c.strokeStyle=g;c.globalAlpha=.6;c.shadowColor=k[0];c.shadowBlur=18;c.beginPath();c.arc(cx,cy,R,a0,an);c.stroke();c.shadowBlur=0;
+    c.lineWidth=2;c.globalAlpha=.35;c.strokeStyle=k[0];
+    for(i=0;i<=24;i++){t=a0+(a1-a0)*i/24;q=R-(i%4?36:46);c.beginPath();c.moveTo(cx+Math.cos(t)*(R-26),cy+Math.sin(t)*(R-26));c.lineTo(cx+Math.cos(t)*q,cy+Math.sin(t)*q);c.stroke()}
+    c.lineWidth=4;c.globalAlpha=.9;c.strokeStyle=k[1];c.shadowColor=k[1];c.shadowBlur=12;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(an)*(R-30),cy+Math.sin(an)*(R-30));c.stroke();c.shadowBlur=0;
+    c.fillStyle=k[1];c.beginPath();c.arc(cx,cy,8,0,6.283);c.fill();c.lineCap="butt";c.globalAlpha=1};
+  E.network=function(c,W,H,T,dt,k,s){
+    var i,j,a,b,d,n=Math.min(46,Math.ceil(W*H/22000));
+    if(!s.n){s.n=[];for(i=0;i<n;i++)s.n.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*24,vy:(Math.random()-.5)*24});s.p=[]}
+    s.n.forEach(function(o){o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.x<0||o.x>W)o.vx*=-1;if(o.y<0||o.y>H)o.vy*=-1});
+    c.lineWidth=1;
+    for(i=0;i<n;i++)for(j=i+1;j<n;j++){a=s.n[i];b=s.n[j];d=Math.hypot(a.x-b.x,a.y-b.y);if(d<170){c.globalAlpha=.3*(1-d/170);c.strokeStyle=k[0];c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();if(Math.random()<.0015)s.p.push({a:a,b:b,t:0})}}
+    s.p=s.p.filter(function(o){return o.t<1});c.fillStyle=k[1];c.shadowColor=k[1];c.shadowBlur=12;
+    s.p.forEach(function(o){o.t+=dt*.8;c.globalAlpha=.9;c.beginPath();c.arc(o.a.x+(o.b.x-o.a.x)*o.t,o.a.y+(o.b.y-o.a.y)*o.t,3.5,0,6.283);c.fill()});c.shadowBlur=0;
+    c.fillStyle=k[0];s.n.forEach(function(o){c.globalAlpha=.7;c.beginPath();c.arc(o.x,o.y,2.6,0,6.283);c.fill()});c.globalAlpha=1};
+  E.ticks=function(c,W,H,T,dt,k,s){
+    if(!s.p){s.p=[];s.v=0;s.a=0}s.a+=dt;while(s.a>.05){s.a-=.05;s.v+=(Math.random()-.5)*.5-s.v*.03;s.p.push({x:W+10,y:s.v})}
+    s.p.forEach(function(o){o.x-=110*dt});s.p=s.p.filter(function(o){return o.x>-10});
+    c.lineWidth=1;c.strokeStyle=k[1];c.globalAlpha=.25;c.beginPath();s.p.forEach(function(o,i){var y=H*.5-o.y*H*.2;if(i)c.lineTo(o.x,y);else c.moveTo(o.x,y)});c.stroke();
+    c.fillStyle=k[0];c.shadowColor=k[0];c.shadowBlur=8;s.p.forEach(function(o,i){c.globalAlpha=.85;c.beginPath();c.arc(o.x,H*.5-o.y*H*.2,i===s.p.length-1?5:3,0,6.283);c.fill()});c.shadowBlur=0;c.globalAlpha=1};
+  E.trend=function(c,W,H,T,dt,k,s){
+    var i,m=14,y;
+    if(!s.q||s.t>11){s.t=0;s.q=[];y=H*.8;for(i=0;i<=m;i++){s.q.push({x:W*.06+i*(W*.88/m),y:y});y-=(Math.random()-.3)*H*.1;y=Math.max(H*.12,Math.min(H*.9,y))}}
+    s.t+=dt;var p=Math.min(1,s.t/7),f=s.t>9?Math.max(0,1-(s.t-9)/2):1,tot=p*m,seg=Math.floor(tot),fr=tot-seg,sg=Math.min(seg,m),lx=s.q[sg].x,ly=s.q[sg].y;
+    c.lineJoin="round";c.lineWidth=3;c.strokeStyle=k[0];c.shadowColor=k[0];c.shadowBlur=16;c.globalAlpha=.9*f;c.beginPath();c.moveTo(s.q[0].x,s.q[0].y);
+    for(i=1;i<=sg;i++)c.lineTo(s.q[i].x,s.q[i].y);
+    if(seg<m){lx+=(s.q[seg+1].x-lx)*fr;ly+=(s.q[seg+1].y-ly)*fr;c.lineTo(lx,ly)}
+    c.stroke();c.fillStyle=k[1];c.shadowColor=k[1];c.shadowBlur=14;c.beginPath();c.arc(lx,ly,6,0,6.283);c.fill();c.shadowBlur=0;
+    c.setLineDash([6,6]);c.lineWidth=1;c.strokeStyle=k[1];c.globalAlpha=.3*f;c.beginPath();c.moveTo(0,s.q[0].y);c.lineTo(W,s.q[0].y);c.stroke();c.setLineDash([]);c.globalAlpha=1};
+  E.heatmap=function(c,W,H,T,dt,k){
+    var cs=46,cols=Math.ceil(W/cs),rows=Math.ceil(H/cs),i,j,v;
+    for(i=0;i<cols;i++)for(j=0;j<rows;j++){v=Math.sin(T*.6+i*.5+j*.7+Math.sin(i*j*.3));c.globalAlpha=.06+.3*Math.abs(v);c.fillStyle=v>0?k[0]:k[1];c.fillRect(i*cs+3,j*cs+3,cs-6,cs-6)}c.globalAlpha=1};
+  function dsp(c,W,H,T,dt,k,s){var m=st.b,f=E[m];if(!f)return;if(s.m!==m){s.m=m;s.d={}}c.textAlign="left";c.globalAlpha=1;c.shadowBlur=0;c.lineWidth=1;c.setLineDash([]);f(c,W,H,T,dt,k,s.d)}
+  site.insertAdjacentHTML("afterbegin",'<canvas class="scene bgl" id="sm"></canvas>');
+  fx($("sm"),cfs,dsp);
+  var r2b=render;render=function(){$("site").dataset.g=E[st.b]?"m":"";r2b()};
+  var BG2=[["candles","Candles","\u25AE"],["digits","Digit rain","7"],["pulse","Pulse line","\u223F"],["arrows","Rise and Fall","\u25B2"],["ticker","Ticker tape","\u2192"],["coins","Falling coins","\u25CF"],["currency","Currency symbols","\u20AC"],["moneyrain","Money rain","$"],["waves","Market waves","\u223C"],["bars","Volume bars","\u2587"],["radar","Market radar","\u25CE"],["rings","Expiry rings","\u25CB"],["digitgrid","Digit grid","9"],["spark","Sparklines","\u2197"],["depth","Order book","\u2261"],["gauge","Risk gauge","\u25D4"],["network","Global network","\u2726"],["ticks","Tick stream","\u2022"],["trend","Trend line","\u21D7"],["heatmap","Heatmap","\u25A6"],["img-chart","Chart image",""],["img-mesh","Mesh image",""],["img-grid","Grid image",""],["img-digits","Digits image",""],["none","No background","\u2205"]];
+  $("bgs").innerHTML=BG2.map(function(b){return '<button class="chip" data-b="'+b[0]+'" aria-pressed="'+(b[0]===st.b)+'">'+b[1]+'</button>'}).join("");
+  $("bgc").innerHTML=BG2.map(function(b){var im=b[0].indexOf("img")===0,th=T[st.t],thumb=im?'<div class="thumb" style="background-color:#0b0b10;background-image:'+imgBG(b[0],th.a1,th.a2)+'"></div>':'<div class="thumb" style="background:linear-gradient(135deg,#0b0b10,'+th.a1+'44);color:'+th.a1+'">'+b[2]+'</div>';
+    return '<div class="glass card">'+thumb+'<span class="tag">'+(im?"Still image":b[0]==="none"?"No background":"Animation")+'</span><h3>'+b[1]+'</h3><button class="btn" data-bgu="'+b[0]+'">Use this</button></div>'}).join("");
+  $("bgc").previousElementSibling.querySelector("p").textContent="20 animations in your template colors, 4 still images, or no background at all. You can change it any time.";
+  T.sapphire=mk({n:"Sapphire",d:"Navy with electric blue and violet.",bg:"linear-gradient(150deg,#050b24,#0a1a52)",a1:"#3d7bff",a2:"#9a7bff"});
+  T.amethyst=mk({n:"Amethyst",d:"Deep purple with a soft pink glow.",bg:"linear-gradient(150deg,#120a24,#271252)",a1:"#8b5cf6",a2:"#f0abfc",bt:"#140a2a",l:"center"});
+  T.rose=mk({n:"Rose",d:"Dark plum with hot pink.",bg:"linear-gradient(150deg,#1c0a14,#3a0f26)",a1:"#ff4d8d",a2:"#ffb3c7",bt:"#2a0716",l:"store"});
+  T.sunset=mk({n:"Sunset",d:"Warm orange into magenta, terminal style.",bg:"linear-gradient(150deg,#1c0d08,#3a1608)",a1:"#ff7a3d",a2:"#ff3d77",l:"terminal"});
+  T.lime=mk({n:"Lime",d:"Dark olive with bright lime and yellow.",bg:"linear-gradient(150deg,#0c1304,#1b2a07)",a1:"#a3e635",a2:"#facc15",bt:"#101a02"});
+  T.teal=mk({n:"Teal",d:"Deep teal with a mint edge and a store grid.",bg:"linear-gradient(150deg,#04161a,#08333a)",a1:"#14b8a6",a2:"#5eead4",bt:"#021a18",l:"store"});
+  T.graphite=mk({n:"Graphite",d:"Neutral grey, quiet and serious.",bg:"linear-gradient(150deg,#121417,#1f2329)",a1:"#94a3b8",a2:"#e2e8f0",bt:"#0e1013",l:"terminal"});
+  T.ruby=mk({n:"Ruby",d:"Deep red and soft coral, centered.",bg:"linear-gradient(150deg,#1a0508,#3b0a12)",a1:"#e11d48",a2:"#fb7185",l:"center"});
+  T.cobalt=mk({n:"Cobalt",d:"Rich blue with cyan highlights.",bg:"linear-gradient(150deg,#070a1f,#0f1b4d)",a1:"#2563eb",a2:"#22d3ee"});
+  T.cloud=mk({n:"Cloud",d:"Light sky blue and white.",bg:"linear-gradient(150deg,#eef4ff,#ffffff)",a1:"#2f6bff",a2:"#7aa8ff",st:"#0e1630",sm:"#4a5578",sb:"rgba(20,40,110,.05)",sl:"rgba(20,40,110,.12)",l:"store"});
+  T.sand=mk({n:"Sand",d:"Warm cream with orange accents, centered.",bg:"linear-gradient(150deg,#fbf6ee,#fffdf9)",a1:"#e8590c",a2:"#f59f00",st:"#2b2118",sm:"#6b5b4b",sb:"rgba(60,40,20,.05)",sl:"rgba(60,40,20,.12)",l:"center"});
+  T.mint=mk({n:"Mint",d:"Fresh light green, terminal style.",bg:"linear-gradient(150deg,#effaf4,#ffffff)",a1:"#0f9d6b",a2:"#34c38f",st:"#0c2a1f",sm:"#41614f",sb:"rgba(10,60,40,.05)",sl:"rgba(10,60,40,.12)",l:"terminal"});
+  ids=Object.keys(T);
+  $("tpls").innerHTML=ids.map(function(i){var t=T[i];return '<button class="tpl" data-t="'+i+'" aria-pressed="'+(i===st.t)+'"><i style="background:linear-gradient(120deg,'+t.a1+','+t.a2+')"></i><b>'+t.n+'</b><small>'+L[t.l]+'</small></button>'}).join("");
+  tg.innerHTML=ids.map(function(i){var t=T[i];return '<div class="glass card"><div class="mini" style="background:'+t.bg+'"><i style="background:'+t.a1+'"></i><u style="background:linear-gradient(120deg,'+t.a1+','+t.a2+')"></u><b style="background:'+t.sl+'"></b><b style="background:'+t.sl+';width:70%"></b></div><span class="tag">'+L[t.l]+' layout</span><h3>'+t.n+'</h3><p>'+t.d+'</p><button class="btn" data-use="'+i+'">Use '+t.n+'</button></div>'}).join("");
+  document.querySelector("#p-templates .ph p").textContent="20 looks and four layouts. Each one includes your bot library, referral link, markup notice and locked risk warnings.";
+  st.h="classic";st.sh="round";st.sp="both";st.bb="link";st.soc={};st.ann="Free bots, updated weekly";st.emb="";
+  var PL=[["wa","WhatsApp","number with country code"],["tg","Telegram","username"],["ig","Instagram","username"],["tt","TikTok","username"],["yt","YouTube","channel handle"],["x","X","username"],["fb","Facebook","page name"],["in","LinkedIn","profile name"],["dc","Discord","invite link"],["ml","Email","you@example.com"]];
+  var IC={wa:'<path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z"/><path d="M9 8.5c.5 3 2.5 5 5.5 5.5"/>',tg:'<path d="M21 4 3 11l6 2 2 6 3-4 5 3z"/><path d="m9 13 12-9"/>',ig:'<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r=".8" fill="currentColor"/>',tt:'<path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5M14 4c.5 2.5 2 4 4.5 4.2"/>',yt:'<rect x="3" y="6" width="18" height="12" rx="4"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/>',x:'<path d="M5 5l14 14M19 5 5 19"/>',fb:'<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8.5c0-.3.2-.5.5-.5z"/>',"in":'<rect x="4" y="9" width="3.5" height="11" fill="currentColor"/><circle cx="5.7" cy="5.3" r="1.8" fill="currentColor"/><path d="M10.5 9h3.3v1.6c.6-1 1.8-1.8 3.4-1.8 3 0 3.8 2 3.8 4.6V20h-3.5v-5.4c0-1.3-.3-2.3-1.7-2.3s-1.8 1-1.8 2.3V20h-3.5z" fill="currentColor"/>',dc:'<path d="M6 7c2-1.3 3.8-1.8 6-1.8s4 .5 6 1.8c1.6 3 2.4 6 2.2 10-1.6 1.2-3.2 1.8-4.8 2l-1-2c-1.5.4-3.4.4-5 0l-1 2c-1.6-.2-3.2-.8-4.8-2-.2-4 .6-7 2.4-10z"/><circle cx="9.3" cy="12" r="1.3" fill="currentColor"/><circle cx="14.7" cy="12" r="1.3" fill="currentColor"/>',ml:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/>'};
+  function nm(k){for(var i=0;i<PL.length;i++)if(PL[i][0]===k)return PL[i][1]}
+  function su(k,v){v=(v||"").trim();if(!v)return"";if(/^https?:\/\//i.test(v))return v;var h=v.replace(/^@/,"").replace(/\s+/g,"");
+    if(k==="wa"){h=h.replace(/\D/g,"");return h.length>6?"https://wa.me/"+h:""}
+    if(k==="ml")return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)?"mailto:"+v:"";
+    if(k==="dc")return h?"https://discord.gg/"+encodeURIComponent(h):"";
+    var B={tg:"https://t.me/",ig:"https://instagram.com/",tt:"https://tiktok.com/@",yt:"https://youtube.com/@",x:"https://x.com/",fb:"https://facebook.com/","in":"https://linkedin.com/in/"};
+    return h?B[k]+encodeURIComponent(h):""}
+  function buildSoc(){
+    var l=[],demo=false;PL.forEach(function(p){var u=su(p[0],st.soc[p[0]]);if(u)l.push([p[0],u])});
+    if(!l.length){demo=true;["ig","tg","tt","yt","wa"].forEach(function(k){l.push([k,"#"])})}
+    ["sh","sf"].forEach(function(id){var box=$(id);box.textContent="";l.forEach(function(it){var a=document.createElement("a");a.href=it[1];a.setAttribute("aria-label",nm(it[0]));
+      if(!demo){a.target="_blank";a.rel="noopener noreferrer"}a.dataset.demo=demo?"1":"";
+      var s=document.createElementNS("http://www.w3.org/2000/svg","svg");s.setAttribute("viewBox","0 0 24 24");s.innerHTML=IC[it[0]];a.appendChild(s);box.appendChild(a)})})}
+  function setBB(){var s=$("bbs"),n=$("bbn");s.style.display=st.bb==="none"?"none":"";$("embw").style.display=st.bb==="embed"?"":"none";
+    if(st.bb==="link")n.innerHTML='<span>Opens Deriv’s own Bot platform in a new tab, signed in through your app ID.</span><a class="s-btn" href="https://deriv.com/trading-platforms/deriv-bot" target="_blank" rel="noopener noreferrer">Open Deriv Bot</a>';
+    else if(st.bb==="embed"){n.innerHTML='<span>Embedded workspace from <b id="embu"></b></span>';$("embu").textContent=st.emb||"your approved address"}}
+  var sc2=site.querySelector(".sc");
+  sc2.insertAdjacentHTML("afterbegin",'<div class="s-ann" id="sann"></div>');
+  sc2.querySelector(".s-top").insertAdjacentHTML("beforeend",'<span class="s-soc" id="sh"></span>');
+  sc2.querySelector(".s-foot").insertAdjacentHTML("beforebegin",'<div class="s-soc s-socf" id="sf"></div>');
+  sc2.querySelector(".s-hero").insertAdjacentHTML("afterend",'<div class="s-sec" id="bbs"><h4>Bot builder</h4><div class="s-ws"><div class="s-pal"><i>Trade</i><i>Logic</i><i>Math</i><i>Text</i><i>Lists</i></div><div class="s-can"><span class="s-tag">Preview</span><b class="blk b1">Set trade options</b><b class="blk b2">Buy when the price rises</b><b class="blk b3">Restart after each result</b><b class="blk b1" style="margin-top:14px">Stop at my loss limit</b></div></div><div class="s-bbn" id="bbn"></div></div>');
+  function cp(id,arr,cur){return '<div class="row" id="'+id+'">'+arr.map(function(a){return '<button class="chip" data-v="'+a[0]+'" aria-pressed="'+(a[0]===cur)+'">'+a[1]+'</button>'}).join("")+'</div>'}
+  $("bgs").parentNode.insertAdjacentHTML("afterend",'<div><span class="lab">Header style</span>'+cp("hds",[["classic","Classic"],["center","Centered"],["minimal","Minimal"],["pill","Floating pill"],["banner","Announcement bar"],["split","Split"]],"classic")+'</div><div><label for="ann">Announcement text (used by the announcement bar)</label><input class="field" id="ann" maxlength="60" value="Free bots, updated weekly"></div><div><span class="lab">Social icons</span>'+cp("shp",[["round","Round"],["square","Square"],["plain","Plain"]],"round")+'<div style="height:8px"></div>'+cp("spl",[["both","Header and footer"],["header","Header only"],["footer","Footer only"]],"both")+'<details><summary>Your social profiles</summary><div id="socs"></div></details></div><div><span class="lab">Bot builder</span>'+cp("bbm",[["link","Link to Deriv Bot"],["embed","Embed (iframe)"],["none","No bot builder"]],"link")+'</div><div id="embw" style="display:none"><label for="embi">Embed address</label><input class="field" id="embi" placeholder="https://"><span class="mini">Only embed a page you have written permission to use. Deriv’s terms restrict copying its platform without that.</span></div>');
+  $("socs").innerHTML=PL.map(function(p){return '<input class="field" data-k="'+p[0]+'" aria-label="'+p[1]+'" placeholder="'+p[1]+': '+p[2]+'">'}).join("");
+  pick("hds",function(b){st.h=b.dataset.v});pick("shp",function(b){st.sh=b.dataset.v});pick("spl",function(b){st.sp=b.dataset.v});pick("bbm",function(b){st.bb=b.dataset.v});
+  $("ann").addEventListener("input",function(){st.ann=this.value;render()});
+  $("embi").addEventListener("input",function(){st.emb=this.value;render()});
+  $("socs").addEventListener("input",function(e){var k=e.target.dataset.k;if(k){st.soc[k]=e.target.value;render()}});
+  document.addEventListener("click",function(ev){var a=ev.target.closest(".s-soc a");if(!a)return;ev.preventDefault();toast(a.dataset.demo?"Sample icon. Add your profile link to activate it":"On the live site this opens "+a.href)});
+  var r4=render;render=function(){r4();var e=$("site");e.dataset.h=st.h;e.dataset.sh=st.sh;e.dataset.sp=st.sp;$("sann").textContent=st.ann;buildSoc();setBB()};
+  var hero=document.querySelector("#p-home .hero"),cfg=hero.querySelector(".cfg"),pv=document.querySelector("#p-home .preview"),rise=hero.querySelector(".rise");
+  var bl={site:[$("name").parentNode,$("exts").parentNode],tpl:[$("tpls").parentNode],bg:[$("bgs").parentNode],hd:[$("hds").parentNode,$("ann").parentNode],soc:[$("shp").parentNode],bb:[$("bbm").parentNode,$("embw")]};
+  var tabs=[["site","Site"],["tpl","Template"],["bg","Background"],["hd","Header"],["soc","Social"],["bb","Bot builder"]],tot=cfg.querySelector(".total");
+  cfg.innerHTML='<div class="tabs" role="tablist">'+tabs.map(function(t,i){return '<button role="tab" data-tab="'+t[0]+'" aria-selected="'+(i===0)+'">'+t[1]+'</button>'}).join("")+'</div>'+tabs.map(function(t,i){return '<div class="tp'+(i===0?" on":"")+'" data-p="'+t[0]+'"></div>'}).join("");
+  tabs.forEach(function(t){var p=cfg.querySelector('[data-p="'+t[0]+'"]');bl[t[0]].forEach(function(n){p.appendChild(n)})});
+  cfg.querySelector(".tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+    cfg.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-selected",String(x===b))});
+    cfg.querySelectorAll(".tp").forEach(function(p){p.classList.toggle("on",p.dataset.p===b.dataset.tab)})});
+  $("socs").parentNode.open=true;
+  rise.insertAdjacentHTML("beforeend",'<div class="pills"><span>20 templates</span><span>20 animations</span><span>Free bot library</span><span>No revenue share</span></div>');
+  hero.insertAdjacentHTML("beforeend",'<div class="glass sumc" id="sumc"><h3>Your site</h3><div class="sr"><span>Name</span><b id="hsn"></b></div><div class="sr"><span>Address</span><b id="hsd"></b></div><div class="sr"><span>Template</span><b id="hst"></b></div></div>');
+  $("sumc").appendChild(tot);$("sumc").appendChild($("reserve"));
+  var studio=document.createElement("div");studio.className="studio";hero.parentNode.insertBefore(studio,hero.nextSibling);studio.appendChild(cfg);studio.appendChild(pv);
+  pv.insertAdjacentHTML("afterbegin",'<div class="pvh"><span>Live preview</span><span class="mini">Scroll inside the preview to see the whole site</span></div>');
+  var r5=render;render=function(){r5();$("hsn").textContent=st.n||"Your Site";$("hsd").textContent=slug(st.n)+st.e;$("hst").textContent=cap(st.t)};
+  var ICN={home:'<path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/>',bld:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><path d="M13 16.5h7M16.5 13v7"/>',ana:'<path d="M5 20V10M12 20V4M19 20v-7"/>',smt:'<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',aih:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',acc:'<path d="M12 4 3 9l9 5 9-5z"/><path d="M3 14l9 5 9-5"/>',man:'<path d="M7 3l10 8-5 1 3 6-2 1-3-6-4 4z"/>',blk:'<path d="M12 3 4 7v10l8 4 8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/>',frb:'<rect x="5" y="8" width="14" height="10" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01"/>',cht:'<path d="M3 17l5-6 4 3 8-9"/>',tut:'<path d="M3 9l9-5 9 5-9 5z"/><path d="M7 12v4c2 2 8 2 10 0v-4"/>',mkp:'<path d="M6 18 18 6"/><circle cx="8" cy="8" r="1.6"/><circle cx="16" cy="16" r="1.6"/>',cpy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',up:'<path d="M12 16V5m0 0-4 4m4-4 4 4M5 19h14"/>',cld:'<path d="M7 18a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 4.2 4.2 0 0 1 17 18z"/>',hd:'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',fs:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'};
+  function ic(k){return '<svg viewBox="0 0 24 24">'+ICN[k]+'</svg>'}
+  var MENU=[["home","Home"],["bld","Bot Builder"],["ana","Analysis"],["smt","Smart Trading"],["aih","AI Hub"],["acc","Accumulators"],["man","Manual"],["blk","Bulk Trades"],["frb","Free Bots"],["cht","Charts"],["tut","Tutorials"],["mkp","Markup"],["cpy","Copy Trading"]];
+  st.menu={};st.tab="home";
+  function P(k,h){return '<div class="s-p" data-pn="'+k+'">'+h+'</div>'}
+  function ph(t,s,x){return '<div class="s-ph"><div><h3>'+t+'</h3><p>'+s+'</p></div>'+(x||'<span class="tag">Preview</span>')+'</div>'}
+  function gp(t,s,it){return ph(t,s)+'<div class="s-grid2">'+it.map(function(i){return '<div class="s-box"><b>'+i[0]+'</b><span>'+i[1]+'</span></div>'}).join("")+'</div>'}
+  var cards=[["bld","Build from scratch","Design a strategy block by block","bld"],["smt","Quick start","Launch a ready-made bot in minutes","quick"],["up","From your device","Load a bot you saved earlier","dev"],["cld","From Google Drive","Import a strategy you keep on Drive","drv"],["frb","Free bot library","Browse ready-made strategies","frb"]];
+  var bots=[["Rise/Fall starter","Rise/Fall"],["Rise/Fall with stop-loss","Rise/Fall"],["Digits Differs starter","Digits"],["Over/Under starter","Digits"],["Even/Odd starter","Digits"],["Matches starter","Matches"]];
+  var panels=P("home",ph("Build or load a bot","Pick a starting point for your trading bot.",'<div class="s-run"><b>Run</b><span>Normal speed</span></div>')+'<div class="s-promo"><div><small>TRY THIS</small><b>Bulk trades</b><p>Place a batch of identical trades at once and watch them settle together.</p></div><button class="s-btn" data-tab="blk">Try it</button></div><div class="s-cards">'+cards.map(function(c){return '<button class="s-card" data-act="'+c[3]+'"><span class="s-ico">'+ic(c[0])+'</span><b>'+c[1]+'</b><span class="d">'+c[2]+'</span><span class="s-open">Open \u2192</span></button>'}).join("")+'</div>')
+   +P("bld",ph("Bot builder","Drag blocks together to design your strategy.",'<div class="s-run"><b>Run</b><span>Normal speed</span></div>')+'<div id="bbs"><div class="s-ws"><div class="s-pal"><i>Trade</i><i>Logic</i><i>Math</i><i>Text</i><i>Lists</i></div><div class="s-can"><span class="s-tag">Preview</span><b class="blk b1">Set trade options</b><b class="blk b2">Buy when the price rises</b><b class="blk b3">Restart after each result</b><b class="blk b1" style="margin-top:14px">Stop at my loss limit</b></div></div><div class="s-bbn" id="bbn"></div></div>')
+   +P("ana",gp("Analysis","Tools to read the market before you trade.",[["Market scanner","Spot active markets at a glance"],["Digit statistics","See how last digits are spreading"],["Trend meter","Check direction over several timeframes"],["Trade log","Review every trade a bot placed"]]))
+   +P("smt",gp("Smart trading","Ready-made setups with risk controls built in.",[["Strategy presets","Start from a tested structure"],["Risk presets","Pick a stake and loss limit together"],["Auto-restart","Resume after a result you choose"]]))
+   +P("aih",gp("AI hub","Describe a strategy in words and get a starting bot.",[["Describe it","Type what you want the bot to do"],["Review it","Check the blocks it produced"],["Test it","Run it on a demo account first"]]))
+   +P("acc",gp("Accumulators","Tools for accumulator-style contracts.",[["Growth rate picker","Set the rate you want"],["Take-profit target","Close when you reach a goal"],["Barrier view","See the range as it moves"]]))
+   +P("man",ph("Manual trading","Place a single trade yourself.")+'<div class="s-tk"><div class="s-box"><b>Market</b><span>Volatility 100</span></div><div class="s-box"><b>Stake</b><span>$10</span></div><div class="s-box"><b>Duration</b><span>5 ticks</span></div><div><span class="s-btn">Rise</span><span class="s-btn o">Fall</span></div></div>')
+   +P("blk",ph("Bulk trades","Place a batch of identical trades at once.")+'<div class="s-tk"><div class="s-box"><b>Stake each</b><span>$1</span></div><div class="s-box"><b>Number of trades</b><span>5</span></div><div><span class="s-btn">Place batch</span></div><span class="mini" style="color:var(--sm)">A batch can lose all its trades at once. Use a demo account first.</span></div>')
+   +P("frb",ph("Free bot library","Ready-made bots. Test each one on a demo account first.",'<span class="tag">Preview</span>')+'<div class="s-grid2">'+bots.map(function(b){return '<div class="s-box"><b>'+b[0]+'</b><span>'+b[1]+'</span><br><button class="s-btn" data-load="1" style="border:0;margin-top:8px;cursor:pointer">Load in DBot</button></div>'}).join("")+'</div>')
+   +P("cht",ph("Charts","Watch a market while your bot runs.")+'<div class="s-box"><svg viewBox="0 0 400 160" style="width:100%;height:auto"><polyline fill="none" style="stroke:var(--a1)" stroke-width="2.5" stroke-linejoin="round" points="0,120 30,110 60,125 90,90 120,100 150,70 180,85 210,55 240,70 270,40 300,60 330,35 360,50 400,25"/></svg><div class="row"><span class="tag">1m</span><span class="tag">5m</span><span class="tag">1h</span></div></div>')
+   +P("tut",gp("Tutorials","Short guides for new bot builders.",[["Your first bot","From blank workspace to a demo run"],["Setting a stop-loss","Limit how much a bot can lose"],["Reading a trade log","See what your bot actually did"],["Demo and real accounts","Know the difference before you switch"]]))
+   +P("mkp",ph("Markup","The rate this site adds to contract prices.",'<span class="tag">Live</span>')+'<div class="s-box"><span>Markup on this site</span><b id="mkv" style="font-size:34px;margin:4px 0"></b><span id="mkx"></span></div>')
+   +P("cpy",gp("Copy trading","Follow another trader\u2019s strategy.",[["Find traders","Browse by results and risk"],["Set limits","Choose how much to copy"],["Stop any time","Pause or stop copying"]]));
+  var shell='<div class="s-ann" id="sann"></div><div class="s-top"><span class="s-name" id="sname"></span><span class="s-soc" id="sh"></span><span class="s-acts"><span class="s-pill">Log in</span><span class="s-btn s-sign">Sign up</span></span></div><div class="s-tabs" id="stabs" role="tablist"></div><div class="s-main">'+panels+'</div><div class="s-foot-row"><div class="s-soc s-socf" id="sf"></div><div class="s-foot"></div></div>';
+  site.querySelector(".sc").innerHTML=shell;
+  site.insertAdjacentHTML("beforeend",'<div class="s-fabs"><button class="s-fab" data-fab="help" aria-label="Support">'+ic("hd")+'</button><button class="s-fab" data-fab="ai" aria-label="Assistant">'+ic("aih")+'</button></div><div class="s-sbar"><i></i><span id="sclock"></span><button data-fab="theme" aria-label="Theme">'+ic("sun")+'</button><button data-fab="fs" aria-label="Fullscreen">'+ic("fs")+'</button></div>');
+  function buildTabs(){var on=MENU.filter(function(m){return st.menu[m[0]]!==false});if(!on.length)on=[MENU[0]];if(!on.some(function(m){return m[0]===st.tab}))st.tab=on[0][0];
+    $("stabs").innerHTML=on.map(function(m){return '<button class="s-tab" role="tab" data-tab="'+m[0]+'" aria-selected="'+(m[0]===st.tab)+'">'+ic(m[0])+m[1]+'</button>'}).join("");
+    document.querySelectorAll("#site .s-p").forEach(function(p){p.classList.toggle("on",p.dataset.pn===st.tab)})}
+  site.addEventListener("click",function(e){
+    var t=e.target.closest("[data-tab]");if(t){st.tab=t.dataset.tab;buildTabs();return}
+    var a=e.target.closest("[data-act]");if(a){var k=a.dataset.act;if(k==="bld"||k==="frb"){st.tab=k;buildTabs()}else if(k==="quick"){st.tab="smt";buildTabs()}else toast("Preview: this opens a file picker on the live site");return}
+    var f=e.target.closest("[data-fab]");if(!f)return;var q=f.dataset.fab;
+    if(q==="help")toast("Support chat opens here on the live site");
+    else if(q==="ai"){if(st.menu.aih!==false){st.tab="aih";buildTabs()}else toast("The assistant opens here on the live site")}
+    else if(q==="theme")toast("Light and dark switch here on the live site");
+    else{try{Promise.resolve((site.requestFullscreen||site.webkitRequestFullscreen).call(site)).catch(function(){toast("Fullscreen is not available in the preview")})}catch(x){toast("Fullscreen is not available in the preview")}}
+  });
+  function clk(){var e=$("sclock");if(e)e.textContent=new Date().toISOString().slice(0,19).replace("T"," ")+" GMT"}clk();setInterval(clk,1000);
+  cfg.querySelector(".tabs").insertAdjacentHTML("beforeend",'<button role="tab" data-tab="menu" aria-selected="false">Menu</button>');
+  cfg.insertAdjacentHTML("beforeend",'<div class="tp" data-p="menu"><span class="lab">Pages shown in your site\u2019s menu</span><div id="mnu" class="mnu"></div></div>');
+  $("mnu").innerHTML=MENU.map(function(m){return '<div class="chk">'+m[1]+'<input type="checkbox" data-m="'+m[0]+'" checked aria-label="'+m[1]+'"></div>'}).join("");
+  $("mnu").addEventListener("change",function(e){var k=e.target.dataset.m;if(k){st.menu[k]=e.target.checked;render()}});
+  var r6=render;render=function(){r6();buildTabs();var mv=$("mkv");if(mv){mv.textContent=st.m+"%";var x=17.2*st.m/100;$("mkx").textContent="On a $10 stake with a $17.20 payout, this markup is $"+x.toFixed(2)+" and the payout becomes $"+(17.2-x).toFixed(2)+"."}};
+  function hw(el){el.addEventListener("wheel",function(e){var m=el.scrollWidth-el.clientWidth;if(m>0&&Math.abs(e.deltaY)>Math.abs(e.deltaX)&&((e.deltaY>0&&el.scrollLeft<m-1)||(e.deltaY<0&&el.scrollLeft>0))){el.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false})}
+  hw(cfg.querySelector(".tabs"));hw($("stabs"));
+  var bt0=buildTabs;buildTabs=function(){var b=$("stabs"),x=b.scrollLeft;bt0();b.scrollLeft=x;
+    var a=b.querySelector('[aria-selected="true"]');if(a&&(a.offsetLeft<b.scrollLeft||a.offsetLeft+a.offsetWidth>b.scrollLeft+b.clientWidth))b.scrollLeft=a.offsetLeft-b.clientWidth/2+a.offsetWidth/2};
+  st.dm="new";st.own="";st.dn="";
+  var STRICT=false,dcache={},dtimer;
+  function clean(s){return (s||"").toLowerCase().replace(/[^a-z0-9-]/g,"").replace(/^-+|-+$/g,"").slice(0,63)}
+  function normOwn(v){return (v||"").trim().toLowerCase().replace(/^https?:\/\//,"").replace(/^www\./,"").split("/")[0]}
+  function ownOK(){return /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/.test(normOwn(st.own))}
+  function dom(){return st.dm==="own"?(normOwn(st.own)||"yourdomain.com"):(clean(st.dn)||slug(st.n))+st.e}
+  function dstat(c,m){var e=$("dst");e.className="dst "+c;e.textContent=m}
+  function rdap(d){
+    var ctl=window.AbortController?new AbortController():null,t=setTimeout(function(){if(ctl)ctl.abort()},5000);
+    return fetch("https://rdap.org/domain/"+encodeURIComponent(d),{signal:ctl?ctl.signal:undefined}).then(function(r){clearTimeout(t);return r.status===404?"free":r.ok?"taken":"unknown"}).catch(function(){clearTimeout(t);return "unknown"});
+  }
+  function sugg(){var d=dom(),nm=d.slice(0,d.length-st.e.length),box=$("dsg");box.innerHTML="";
+    EX.filter(function(e){return e[0]!==st.e}).slice(0,8).forEach(function(e){rdap(nm+e[0]).then(function(s){if(s==="free"&&box.children.length<4&&dom()===d){var b=document.createElement("button");b.className="chip";b.textContent=nm+e[0]+"  $"+e[1];b.dataset.sg=e[0];box.appendChild(b)}})})}
+  function show(d,s){if(d!==dom())return s;
+    if(s==="taken"){dstat("bad",d+" is already registered. Pick another name or ending.");sugg()}
+    else if(s==="free"){dstat("ok",d+" looks available.");$("dsg").innerHTML=""}
+    else{dstat("neu","Live lookup is not available in this preview. On the live site every name is checked before you pay, and a taken name cannot be bought.");$("dsg").innerHTML=""}
+    return s}
+  function chk(){if(st.dm==="own")return Promise.resolve("own");var d=dom();if(dcache[d])return Promise.resolve(show(d,dcache[d]));
+    dstat("neu","Checking "+d+"\u2026");return rdap(d).then(function(s){dcache[d]=s;return show(d,s)})}
+  function dReset(){dstat("","");$("dsg").innerHTML="";clearTimeout(dtimer);if(st.dm==="new")dtimer=setTimeout(chk,800)}
+  var sp=cfg.querySelector('[data-p="site"]');
+  sp.insertAdjacentHTML("beforeend",'<div><span class="lab">Domain</span>'+cp("dmm",[["new","Get a new domain"],["own","I already have a domain"]],"new")+'</div><div id="dnew"><div><label for="dn">Domain name (without the ending)</label><input class="field" id="dn" maxlength="40" autocomplete="off"></div><div><button class="btn" id="dchk" style="padding:10px 18px;font-size:14px">Check availability</button></div><div class="dst" id="dst" role="status" aria-live="polite"></div><div class="row" id="dsg"></div><div class="dnote"><b>Your payment covers everything.</b> We register the domain, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or setting up DNS.</div></div><div id="down" style="display:none"><div><label for="dow">Your domain</label><input class="field" id="dow" placeholder="mybrand.com" autocomplete="off"></div><div class="dnote"><b>Keep your domain where it is.</b> After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone.</div></div>');
+  $("dn").parentNode.insertAdjacentElement("afterend",$("exts").parentNode);
+  pick("dmm",function(b){st.dm=b.dataset.v;dReset()});
+  $("dn").addEventListener("input",function(){st.dn=this.value;dReset();render()});
+  $("exts").addEventListener("click",dReset);
+  $("dow").addEventListener("input",function(){st.own=this.value;render()});
+  $("dchk").addEventListener("click",function(){chk()});
+  $("dsg").addEventListener("click",function(e){var b=e.target.closest("[data-sg]");if(!b)return;var c=document.querySelector('#exts [data-e="'+b.dataset.sg+'"]');if(c)c.click()});
+  function fillCk(){var fee=st.dm==="own"?0:st.f;$("sD").textContent=dom();$("sF").textContent=st.dm==="own"?"$0":"$"+fee;$("sTot").textContent="$"+(200+fee);$("dd").textContent=dom();
+    $("ckn").innerHTML=st.dm==="own"?"<b>You keep your domain.</b> After you pay, we show you the DNS records to add at your registrar, or guide you step by step.":"<b>Your domain is fully handled.</b> After you pay, we register it, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or touching DNS."}
+  $("pay").insertAdjacentHTML("beforebegin",'<div class="dnote" id="ckn"></div>');
+  window.addEventListener("hashchange",fillCk);
+  var r8=render;render=function(){r8();var d=dom();$("hsd").textContent=d;$("url").textContent=d;$("dn").placeholder=slug(st.n);
+    $("dnew").style.display=st.dm==="own"?"none":"";$("down").style.display=st.dm==="own"?"":"none";
+    if(st.dm==="own"){$("ren").textContent="No domain fee. You already own it.";st.ld="own"}else if(st.ld==="own"){$("ren").textContent="+ $"+st.f+" a year for the domain";st.ld="new"}
+    fillCk()};
+  function openSite(){location.hash="#home";var t=cfg.querySelector('.tabs [data-tab="site"]');if(t)t.click()}
+  function gate(fn){
+    if(st.dm==="own"){if(!ownOK()){toast("Enter the domain you already own");openSite();return}fn();return}
+    chk().then(function(s){if(s==="taken"||(STRICT&&s==="unknown")){toast("That domain is not available. Pick another name or ending.");openSite();return}fn()})}
+  var rb2=$("reserve"),nb2=rb2.cloneNode(true);rb2.parentNode.replaceChild(nb2,rb2);nb2.addEventListener("click",function(){gate(function(){location.hash="#checkout"})});
+  var pb2=$("pay"),np2=pb2.cloneNode(true);pb2.parentNode.replaceChild(np2,pb2);np2.addEventListener("click",function(){gate(function(){toast("Payments connect in the next build")})});
+  pl.insertAdjacentHTML("beforebegin",'<div class="dnote"><b>Everything is included.</b> The domain fee covers registration, connecting the domain to our servers and SSL. You never visit a registrar or set up DNS. Already own a domain? Connect it instead of buying a new one.</div>');
+  document.querySelector("#p-how .steps li:nth-child(2) p").textContent="Pick an ending and we check that it is free. We register it, connect it to our servers and switch on SSL, so you never touch DNS.";
+  document.querySelector("#included .t2 p").textContent="We check the name is free, register it, connect it and switch on SSL. No registrar, no DNS.";
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Do I need to buy my domain somewhere else?</summary><p>No. Choose it here. We check it is free, register it, connect it to our servers and switch on SSL, so there is no registrar to visit and no DNS to set up.</p></details><details class="glass"><summary>Can I use a domain I already own?</summary><p>Yes. Choose “I already have a domain” and enter it. After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone.</p></details>');
+  var CONN=10,ME=null,PUB=["landing","why","pricing","how","faq","legal","testimonials","verify"],mem={};
+  function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+  function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+  function uGet(m){var u=lsGet("pf_users_v1");return (u&&u[m])||mem[m]||null}
+  function uSave(r){var u=lsGet("pf_users_v1")||{};u[r.email]=r;if(!lsSet("pf_users_v1",u))mem[r.email]=r}
+  ME=lsGet("pf_session_v1");if(!ME||!ME.name)ME=null;
+  function usd(n){return "$"+n.toFixed(2)}
+  mkPage("landing",'<div class="lp"><div><span class="eyebrow">Deriv site builder</span><h1>Your own Deriv site, live in a day.</h1><p class="lead">Sign in, pick a template, name your site, and we handle the domain and the servers. You keep the markup your visitors generate.</p><ul class="lpl"><li><b>One setup fee.</b> We take no share of your earnings.</li><li><b>Domain handled.</b> We register it in your name, connect it and switch on SSL.</li><li><b>Free bots included.</b> Always with clear risk warnings.</li></ul></div><div class="glass lp-r" id="auth"><div id="a1" style="display:grid;gap:12px"><h2>Sign in or create an account</h2><button class="gbtn" id="gsi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Continue with Google</button><span class="mini">Preview sign-in. On the live site this opens Google\u2019s own sign-in window.</span><div id="a1f" style="display:none"><label for="ge">Gmail address (preview only)</label><input class="field" id="ge" type="email" placeholder="you@gmail.com" autocomplete="email"><div style="height:10px"></div><button class="btn" id="gct" style="width:100%">Continue</button></div><div class="dst" id="ae" role="alert"></div></div><div id="a2" style="display:none;gap:12px"><h2>Almost there</h2><span class="mini">Signed in as <b id="gem"></b></span><div><label for="gn">Your name</label><input class="field" id="gn" autocomplete="name" maxlength="60"></div><div><label for="gp">Phone number</label><input class="field" id="gp" type="tel" autocomplete="tel" placeholder="+254 700 000 000"></div><div class="chk consent"><span>I agree that Pipforge stores my name, Gmail address and phone number to run my account. <a href="#legal">Privacy</a></span><input type="checkbox" id="gc" aria-label="Consent"></div><button class="btn" id="gdo">Create my account</button><button class="btn ghost" id="gbk">Back</button><div class="dst" id="ae2" role="alert"></div></div></div></div><div class="grid" style="margin-bottom:40px"><div class="glass tile t2"><h3>Earn on contracts</h3><p>Add up to 3% markup. It goes to you, not to us.</p></div><div class="glass tile t2"><h3>Domain handled</h3><p>Registered in your name, connected for you, no DNS work.</p></div><div class="glass tile t2"><h3>Built to look trusted</h3><p>20 templates, locked risk warnings and a verify page.</p></div></div>');
+  $("p-landing").classList.add("pub");PUB.slice(1).forEach(function(i){$("p-"+i).classList.add("pub")});
+  var LS=[["1. Create your account",["Open the landing page and choose Continue with Google.","Enter your name and phone number, tick the consent box and create your account.","Next time, Continue with Google signs you straight in."]],
+   ["2. Name your site and choose a domain",["In the builder, open the Site tab and type your site name.","Choose Get a new domain, type the name you want and pick an ending. We check it is free.","If it is taken, pick one of the suggested endings. A taken domain cannot be bought.","Already own one? Choose I already have a domain and enter it. There is no domain fee, only a one-time $"+CONN+" connection fee."]],
+   ["3. Pick a template",["Open the Template tab and click any of the 20 looks.","The live preview changes straight away, so try a few."]],
+   ["4. Choose a background",["Open the Background tab. There are 20 animations, 4 still images and a no-background option.","If many of your visitors use slow phones, pick a still image."]],
+   ["5. Set your header, menu and social links",["In the Header tab, choose a header style and write your announcement text.","In the Menu tab, tick the pages you want in your site\u2019s menu.","In the Social tab, enter your profile names or links. Only the ones you fill in show as icons."]],
+   ["6. Add your Deriv details",["Open the Dashboard and enter your Deriv app ID and referral link.","Set your markup from 0 to 3%. Your site shows this rate to visitors.","Optionally paste a read-only token so we can show your commission."]],
+   ["7. Bot builder and free bots",["Link to Deriv Bot is the safe default and opens Deriv\u2019s own bot page in a new tab.","Only use Embed if you have written permission from Deriv to embed the page.","Always tell visitors to test bots on a demo account first."]],
+   ["8. Reserve your site and go live",["Press Reserve this site and check your order.","Pay. We register your domain in your name, connect it to our servers and switch on SSL.","Your site goes live without you visiting a registrar or touching DNS."]],
+   ["9. Track your earnings",["Open Earnings to see your markup over the last 30 days and the most recent days.","Connect a read-only Deriv token to see real numbers."]],
+   ["10. Stay safe",["Never share your registrar or Deriv password with anyone, including us.","Use tokens with read access only.","Be open about your markup rate and never promise profits."]]];
+  mkPage("tutorials",'<div class="ph"><h1>How to use Pipforge</h1><p>Follow these lessons from sign-up to your first earnings.</p></div>'+LS.map(function(l,i){return '<details class="glass"'+(i===0?' open':'')+'><summary>'+l[0]+'</summary><ol class="steps2">'+l[1].map(function(s){return '<li>'+s+'</li>'}).join("")+'</ol></details>'}).join("")+'<div class="row" style="margin:24px 0 40px"><button class="btn" data-go="home">Open the builder</button><button class="btn ghost" data-go="earnings">See my earnings</button></div>');
+  mkPage("earnings",'<div class="ph"><h1>Your earnings</h1><p>The markup commission your site has made.</p></div><div class="row" id="esm" style="margin-bottom:14px"><button class="chip" data-v="on" aria-pressed="true">Sample data</button><button class="chip" data-v="off" aria-pressed="false">My data</button></div><div class="ecards" id="ecs"></div><div class="glass card" style="margin-bottom:16px"><h3>Last 30 days</h3><div id="ech"></div></div><div class="glass card" style="margin-bottom:16px"><h3>Recent days</h3><div style="overflow-x:auto"><table class="etb" id="etb"></table></div></div><div class="glass cfg" style="animation:none;opacity:1;margin-bottom:40px"><h3 style="margin:0">Connect your Deriv account</h3><div><label for="et">Read-only API token</label><input class="field" id="et" placeholder="Paste a token with read access only" autocomplete="off"></div><button class="btn" id="econ">Connect</button><span class="mini">Markup rate on your site: <b id="emr"></b>. Change it in your dashboard. Figures come from Deriv\u2019s commission reports for your app ID, and Deriv pays commission under its own terms and timing.</span></div>');
+  function erows(){var r=lcg(11),a=[],i,c,s,d;for(i=0;i<30;i++){c=40+Math.floor(r()*220);s=5+Math.floor(r()*20);d=new Date(Date.now()-(29-i)*864e5);a.push({l:d.toISOString().slice(5,10),c:c,v:c*s,e:c*s*1.72*st.m/100})}return a}
+  function ern(){
+    var on=st.es!==false,rows=on?erows():[],t30=0,t7=0,best=0,cn=0,mx=1,cs;
+    rows.forEach(function(o,i){t30+=o.e;cn+=o.c;if(i>=23)t7+=o.e;if(o.e>best)best=o.e;if(o.e>mx)mx=o.e});
+    cs=[["Last 30 days",usd(t30)],["Last 7 days",usd(t7)],["Best day",usd(best)],["Contracts traded",String(cn)]];
+    $("ecs").innerHTML=cs.map(function(c){return '<div class="glass stat"><strong>'+c[1]+'</strong><span>'+c[0]+(on?" (sample data)":"")+'</span></div>'}).join("");
+    if(!on){$("ech").innerHTML='<p class="mini">No data yet. Connect your Deriv account to see your real numbers.</p>';$("etb").innerHTML=""}
+    else{var s='<svg viewBox="0 0 600 190" style="width:100%;height:auto">';
+      rows.forEach(function(o,i){var bh=Math.max(2,o.e/mx*150);s+='<rect x="'+i*20+'" y="'+(160-bh)+'" width="14" height="'+bh+'" rx="3" style="fill:var(--red)" opacity=".85"><title>'+o.l+': '+usd(o.e)+'</title></rect>'});
+      s+='<line x1="0" x2="600" y1="160" y2="160" style="stroke:var(--line)"/><text x="0" y="182" font-size="11" style="fill:var(--muted)">'+rows[0].l+'</text><text x="600" y="182" font-size="11" text-anchor="end" style="fill:var(--muted)">'+rows[29].l+'</text></svg>';
+      $("ech").innerHTML=s;
+      $("etb").innerHTML='<tr><th>Date</th><th>Contracts</th><th>Volume</th><th>Markup earned</th></tr>'+rows.slice(-7).reverse().map(function(o){return '<tr><td>'+o.l+'</td><td>'+o.c+'</td><td>'+usd(o.v)+'</td><td>'+usd(o.e)+'</td></tr>'}).join("")}
+    $("emr").textContent=st.m+"%"}
+  pick("esm",function(b){st.es=b.dataset.v==="on"});
+  $("econ").addEventListener("click",function(){toast("Connecting your Deriv account happens in the full build")});
+  document.querySelector("nav .glass").insertAdjacentHTML("beforeend",'<div class="acct" id="acct"></div>');
+  rise.insertAdjacentHTML("afterbegin",'<p class="hi" id="hi"></p>');
+  function navUI(){
+    var ln=document.querySelector(".links"),h=location.hash||"#home",ac=$("acct"),b,s;
+    ln.querySelectorAll("a").forEach(function(a){ln.removeChild(a)});
+    ln.insertAdjacentHTML("afterbegin",ME?'<a href="#home">Site</a><a href="#why">Why own a site</a><a href="#templates">Templates</a><a href="#bots">Bots</a><a href="#pricing">Pricing</a><a href="#tutorials">Tutorials</a><a href="#earnings">Earnings</a><a href="#testimonials">Reviews</a><a href="#faq">FAQ</a><a href="#dashboard">Dashboard</a>':'<a href="#landing">Home</a><a href="#why">Why own a site</a><a href="#pricing">Pricing</a><a href="#testimonials">Reviews</a><a href="#faq">FAQ</a>');
+    ln.querySelectorAll("a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")===h)});
+    ac.textContent="";
+    if(ME){s=document.createElement("span");s.className="hi2";s.textContent="Hi, "+ME.name.split(" ")[0];b=document.createElement("button");b.className="btn ghost";b.id="lgo";b.textContent="Log out";ac.appendChild(s);ac.appendChild(b)}
+    else{b=document.createElement("button");b.className="btn";b.id="sgn";b.textContent="Sign in";ac.appendChild(b)}
+    document.documentElement.classList.toggle("locked",!ME);
+    $("hi").textContent=ME?"Hi, "+ME.name.split(" ")[0]+". Let\u2019s build your site.":""}
+  function aview(n){$("a1").style.display=n===1?"grid":"none";$("a2").style.display=n===2?"grid":"none"}
+  function aerr(id,m){var e=$(id);e.className="dst bad";e.textContent=m}
+  function login(r){ME=r;lsSet("pf_session_v1",r);navUI();aview(1);$("a1f").style.display="none";$("ae").textContent="";location.hash="#home";toast("Welcome, "+r.name.split(" ")[0])}
+  function logout(){ME=null;try{localStorage.removeItem("pf_session_v1")}catch(e){}navUI();location.hash="#landing";toast("You have been logged out")}
+  $("acct").addEventListener("click",function(e){if(e.target.closest("#lgo"))logout();else if(e.target.closest("#sgn"))location.hash="#landing"});
+  document.querySelector(".logo").addEventListener("click",function(){location.hash=ME?"#home":"#landing"});
+  $("gsi").addEventListener("click",function(){$("a1f").style.display="block";$("ge").focus()});
+  $("gct").addEventListener("click",function(){var em=$("ge").value.trim().toLowerCase();
+    if(!/^[a-z0-9._%+-]+@(gmail|googlemail)\.com$/.test(em)){aerr("ae","Enter a Gmail address, for example you@gmail.com");return}
+    $("ae").textContent="";var ex=uGet(em);if(ex){login(ex);return}
+    $("gem").textContent=em;aview(2);$("gn").focus()});
+  $("gbk").addEventListener("click",function(){aview(1)});
+  $("gdo").addEventListener("click",function(){var nm=$("gn").value.trim(),ph=$("gp").value.replace(/[^\d+]/g,""),dg=ph.replace(/\D/g,"");
+    if(nm.length<2){aerr("ae2","Enter your name");return}
+    if(dg.length<9||dg.length>15){aerr("ae2","Enter a valid phone number with country code");return}
+    if(!$("gc").checked){aerr("ae2","Please tick the consent box to continue");return}
+    var r={name:nm,phone:ph,email:$("gem").textContent,created:Date.now()};uSave(r);$("ae2").textContent="";login(r)});
+  ["ge","gn","gp"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter")$(id==="ge"?"gct":"gdo").click()})});
+  function gateRoute(){var h=(location.hash||"#home").slice(1);if(!ME&&PUB.indexOf(h)<0)location.replace("#landing");else if(ME&&h==="landing")location.replace("#home");navUI()}
+  window.addEventListener("hashchange",gateRoute);
+  function fix(){var own=st.dm==="own",fee=own?CONN:st.f;
+    $("sF").textContent="$"+fee;$("sF").parentNode.firstChild.textContent=own?"Domain connection ":"Domain, first year ";$("sTot").textContent="$"+(200+fee);
+    if(own)$("ren").textContent="One-time $"+CONN+" connection fee. No domain fee.";
+    $("ckn").innerHTML=own?"<b>You keep your domain.</b> After you pay, we show you the DNS records to add at your registrar, or guide you step by step. The $"+CONN+" connection fee is one-time.":"<b>Your domain is fully handled.</b> After you pay, we register it in your name, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or touching DNS.";
+    ern()}
+  window.addEventListener("hashchange",fix);
+  var r9=render;render=function(){r9();fix()};
+  $("down").querySelector(".dnote").innerHTML="<b>Keep your domain where it is.</b> There is no domain fee, only a one-time $"+CONN+" connection fee. After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone.";
+  $("dnew").querySelector(".dnote").innerHTML="<b>Your payment covers everything.</b> We register the domain in your name, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or setting up DNS. You can transfer it to another registrar once the standard 60-day lock on new domains ends.";
+  pl.previousElementSibling.innerHTML="<b>Everything is included.</b> The domain fee covers registration in your name, connecting it to our servers and SSL. You never visit a registrar or set up DNS. Already own a domain? Connect it for a one-time $"+CONN+" fee, with no domain fee.";
+  document.querySelectorAll("#p-faq details").forEach(function(d){if(d.querySelector("summary").textContent.indexOf("already own")>-1)d.querySelector("p").textContent="Yes. Choose \u201cI already have a domain\u201d and enter it. There is no domain fee, only a one-time $"+CONN+" connection fee. After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone."});
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Whose name is my domain registered in?</summary><p>Yours. We register it in your name, and you can transfer it to another registrar once the standard 60-day lock on new domains ends.</p></details>');
+  var h0=(location.hash||"").slice(1);
+  if(!ME&&PUB.indexOf(h0||"home")<0)location.replace("#landing");else if(ME&&(!h0||h0==="landing"))location.replace("#home");
+  navUI();
+  // ═════════ Supabase backend adapter ═════════
+  // Active only when public/config.js contains your project URL and anon key. Otherwise the page stays in demo mode.
+  var SB=null,BK={uid:null,site:null,order:null,earn:null,saving:false,dirty:false,loading:false,timer:null,poll:null,p:null};
+  var SL={draft:"Draft",pending_payment:"Awaiting payment",paid:"Paid. Setting up",provisioning:"Setting up",live:"Live",suspended:"Suspended"};
+  function press(id,attr,val){var n=document.querySelectorAll("#"+id+" button");for(var i=0;i<n.length;i++)n[i].setAttribute("aria-pressed",String(n[i].dataset[attr]===val))}
+  function errMsg(e){if(e&&e.context&&typeof e.context.json==="function")return e.context.json().then(function(j){return j.error||e.message},function(){return e.message});return Promise.resolve((e&&e.message)||"Something went wrong")}
+  function setSv(t){var e=document.querySelector("#p-home .pvh .mini");if(e)e.textContent=t}
+  function fromRow(s){
+    var i,ext=null;
+    st.n=s.name;st.t=s.template;st.b=s.background;st.h=s.header;st.ann=s.announcement;st.sh=s.icon_shape;st.sp=s.icon_place;
+    st.soc=s.social||{};st.menu=s.menu||{};st.bb=s.bot_mode;st.emb=s.embed_url||"";st.m=Number(s.markup);st.dm=s.domain_mode;
+    if(s.domain_mode==="own"){st.own=s.domain||"";st.dn=""}
+    else if(s.domain){for(i=0;i<EX.length;i++)if(s.domain.length>EX[i][0].length+1&&s.domain.slice(-EX[i][0].length)===EX[i][0]&&(!ext||EX[i][0].length>ext[0].length))ext=EX[i];
+      if(ext){st.e=ext[0];st.f=ext[1];st.dn=s.domain.slice(0,-ext[0].length)}}
+    $("name").value=st.n;$("ann").value=st.ann;$("embi").value=st.emb;$("dn").value=st.dn||"";$("dow").value=st.own||"";$("dm").value=st.m;
+    press("tpls","t",st.t);press("bgs","b",st.b);press("hds","v",st.h);press("shp","v",st.sh);press("spl","v",st.sp);press("bbm","v",st.bb);press("dmm","v",st.dm);press("exts","e",st.e);
+    document.querySelectorAll("#socs input").forEach(function(x){x.value=st.soc[x.dataset.k]||""});
+    document.querySelectorAll("#mnu input").forEach(function(x){x.checked=st.menu[x.dataset.m]!==false});
+    if(s.deriv_app_id)$("da").value=s.deriv_app_id;if(s.referral_url)$("dr").value=s.referral_url}
+  function cleanSoc(){var o={};Object.keys(st.soc||{}).forEach(function(k){var v=String(st.soc[k]||"").trim().slice(0,200);if(v)o[k]=v});return o}
+  function toRow(){
+    var r={name:(st.n||"").trim().slice(0,24)||"My Trading Site",template:st.t,background:st.b,header:st.h,announcement:(st.ann||"").slice(0,60),icon_shape:st.sh,icon_place:st.sp,social:cleanSoc(),menu:st.menu,bot_mode:st.bb,embed_url:/^https:\/\/\S{1,500}$/.test(st.emb||"")?st.emb:null,markup:st.m};
+    if(!BK.site||BK.site.status==="draft"||BK.site.status==="pending_payment"){r.domain_mode=st.dm;r.domain=(st.dm==="own"?ownOK():true)?dom():null}
+    return r}
+  function flushSave(){
+    if(!BK.uid||BK.loading)return Promise.resolve();
+    clearTimeout(BK.timer);
+    if(BK.saving){BK.dirty=true;return BK.p}
+    BK.saving=true;setSv("Saving\u2026");
+    var row=toRow(),q=BK.site?SB.from("sites").update(row).eq("id",BK.site.id).select().single():SB.from("sites").insert(Object.assign({owner:BK.uid},row)).select().single();
+    BK.p=Promise.resolve(q).then(function(r){BK.saving=false;
+      if(r.error){setSv("Not saved");toast("Could not save: "+r.error.message)}else{BK.site=r.data;setSv("Saved")}
+      if(BK.dirty){BK.dirty=false;return flushSave()}
+    },function(){BK.saving=false;setSv("Not saved")});
+    return BK.p}
+  function schedSave(){if(!BK.uid||BK.loading||!ME)return;setSv("Unsaved changes");clearTimeout(BK.timer);BK.timer=setTimeout(flushSave,1200)}
+  function loadTasks(){
+    if(!BK.site)return Promise.resolve();
+    return SB.from("fulfilment_tasks").select("task,status").eq("site_id",BK.site.id).then(function(r){
+      var box=$("tkl"),names={register_domain:"Register your domain",connect_dns:"Connect it to our servers",issue_ssl:"Switch on SSL",go_live:"Go live"};box.textContent="";
+      if(!r.data||!r.data.length){box.textContent="Nothing to do yet. Steps appear here after you pay.";return}
+      r.data.forEach(function(t){var d=document.createElement("div");d.className="chk";d.textContent=(names[t.task]||t.task)+" \u2014 "+(t.status==="done"?"done":"in progress");box.appendChild(d)})})}
+  function loadStatus(){
+    if(!BK.uid||!BK.site)return Promise.resolve();
+    return SB.from("sites").select("status").eq("id",BK.site.id).single().then(function(r){
+      if(r.data){BK.site.status=r.data.status;var l=document.querySelector("#p-dashboard .dgrid .stat .live");if(l)l.textContent=SL[r.data.status]||r.data.status}}).then(loadTasks)}
+  function loadEarn(){
+    if(!BK.site)return Promise.resolve();
+    var from=new Date(Date.now()-29*864e5).toISOString().slice(0,10);
+    return SB.from("commission_daily").select("day,contracts,volume,markup").eq("site_id",BK.site.id).gte("day",from).then(function(r){
+      var m={};(r.data||[]).forEach(function(x){m[x.day]=x});BK.earn=[];
+      for(var i=0;i<30;i++){var k=new Date(Date.now()-(29-i)*864e5).toISOString().slice(0,10),x=m[k];BK.earn.push({l:k.slice(5),c:x?x.contracts:0,v:x?Number(x.volume):0,e:x?Number(x.markup):0})}
+      ern()})}
+  function loadSite(){
+    BK.loading=true;
+    return SB.from("sites").select("*").eq("owner",BK.uid).maybeSingle().then(function(r){
+      if(r.error){toast("Could not load your site");return}
+      if(r.data){BK.site=r.data;fromRow(r.data);render();setSv("Saved");return loadStatus().then(loadEarn)}
+    }).then(function(){BK.loading=false},function(){BK.loading=false})}
+  function placeOrder(){
+    return flushSave().then(function(){
+      if(!BK.site){toast("Your site could not be saved yet");return false}
+      return SB.rpc("create_order",{p_site:BK.site.id}).then(function(r){
+        if(r.error){toast(r.error.message);return false}
+        BK.order=r.data;BK.site.status="pending_payment";fix2();return true})})}
+  function fix2(){var o=BK.order;if(!o||o.status!=="pending")return;$("sF").textContent="$"+(Number(o.domain_usd)+Number(o.connection_usd));$("sTot").textContent="$"+Number(o.total_usd)}
+  function pollOrder(n){
+    clearTimeout(BK.poll);var pst=$("pst");
+    SB.from("orders").select("status").eq("id",BK.order.id).single().then(function(r){
+      if(r.data&&r.data.status==="paid"){BK.order.status="paid";BK.site.status="paid";pst.className="dst ok";pst.textContent="Payment received. We are registering your domain and setting up your site. Follow progress in your dashboard.";$("pay").disabled=false;loadStatus();return}
+      return SB.from("payments").select("status").eq("order_id",BK.order.id).order("created_at",{ascending:false}).limit(1).then(function(p){
+        if(p.data&&p.data[0]&&p.data[0].status==="failed"){pst.className="dst bad";pst.textContent="The payment was cancelled or failed. You have not been charged. Please try again.";$("pay").disabled=false;return}
+        if(n>=40){pst.className="dst bad";pst.textContent="We have not received a confirmation yet. If you were charged, contact us and we will sort it out.";$("pay").disabled=false;return}
+        BK.poll=setTimeout(function(){pollOrder(n+1)},3000)})})}
+  function startPayment(){
+    var sel=document.querySelector('#pm [aria-pressed="true"]'),ph=$("pp").value.trim(),pst=$("pst");
+    if(!sel||sel.textContent!=="M-Pesa"){toast("Only M-Pesa is available right now");return}
+    if(!ph){toast("Enter your M-Pesa phone number");return}
+    pst.className="dst neu";pst.textContent="Sending the M-Pesa prompt\u2026";$("pay").disabled=true;
+    SB.functions.invoke("checkout",{body:{order_id:BK.order.id,method:"mpesa",phone:ph}}).then(function(r){
+      if(r.error)return errMsg(r.error).then(function(m){pst.className="dst bad";pst.textContent=m;$("pay").disabled=false});
+      pst.className="dst neu";pst.textContent="Check your phone and enter your M-Pesa PIN. Waiting for confirmation\u2026";pollOrder(0)})}
+  function swapBtn(id){var b=$(id),c=b.cloneNode(true);b.parentNode.replaceChild(c,b);return c}
+  function applySession(s){
+    if(!s){return}
+    if(ME&&BK.uid===s.user.id)return;
+    BK.uid=s.user.id;
+    SB.from("profiles").select("full_name,phone,email").eq("id",s.user.id).maybeSingle().then(function(r){
+      var p=r.data;
+      if(p&&p.full_name&&p.phone)login({name:p.full_name,phone:p.phone,email:p.email});
+      else{$("gem").textContent=s.user.email||"";aview(2);if(location.hash!=="#landing")location.hash="#landing"}})}
+  function initBackend(){
+    STRICT=true;ME=null;try{localStorage.removeItem("pf_session_v1")}catch(e){}
+    COMING.forEach(function(k){st.menu[k]=false;var cb=document.querySelector('#mnu input[data-m="'+k+'"]');if(cb){cb.checked=false;var sm=document.createElement("small");sm.textContent=" coming soon";sm.style.color="var(--muted)";cb.parentNode.insertBefore(sm,cb)}});
+    st.es=false;press("esm","v","off");navUI();gateRoute();
+    $("a1").querySelector(".mini").textContent="You will be sent to Google to sign in.";
+    swapBtn("gsi").addEventListener("click",function(){SB.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname,queryParams:{prompt:"select_account"}}}).then(function(r){if(r.error)aerr("ae",r.error.message)})});
+    swapBtn("gbk").addEventListener("click",function(){SB.auth.signOut().then(function(){BK.uid=null;aview(1)})});
+    swapBtn("gdo").addEventListener("click",function(){
+      var nm=$("gn").value.trim(),ph=$("gp").value.replace(/[^\d+]/g,""),dg=ph.replace(/\D/g,"");
+      if(nm.length<2){aerr("ae2","Enter your name");return}
+      if(dg.length<9||dg.length>15){aerr("ae2","Enter a valid phone number with country code");return}
+      if(!$("gc").checked){aerr("ae2","Please tick the consent box to continue");return}
+      SB.rpc("complete_profile",{p_name:nm,p_phone:ph,p_consent:true}).then(function(r){
+        if(r.error){aerr("ae2",r.error.message);return}
+        $("ae2").textContent="";login({name:r.data.full_name,phone:r.data.phone,email:r.data.email})})});
+    login=function(r){ME=r;navUI();aview(1);$("ae").textContent="";if(location.hash==="#landing"||!location.hash)location.hash="#home";toast("Welcome, "+r.name.split(" ")[0]);loadSite()};
+    logout=function(){SB.auth.signOut().then(function(){location.hash="#landing";location.reload()})};
+    rdap=function(d){return SB.functions.invoke("domain-check",{body:{domain:d}}).then(function(r){return r.error||!r.data?"unknown":r.data.status},function(){return "unknown"})};
+    var show0=show;show=function(d,s){var r=show0(d,s);if(d===dom()){
+      if(s==="unknown")dstat("neu","We could not verify this name right now. Check again in a moment.");
+      else if(s==="manual")dstat("neu","This ending cannot be checked automatically. We confirm it with the registry after you pay and refund you in full if it is taken.")}return r};
+    var gate0=gate;gate=function(fn){gate0(function(){placeOrder().then(function(ok){if(ok)fn()})})};
+    swapBtn("pay").addEventListener("click",function(){gate(startPayment)});
+    $("pay").insertAdjacentHTML("afterend",'<div class="dst" id="pst" role="status" aria-live="polite"></div>');
+    var ds=swapBtn("dsave");ds.addEventListener("click",function(){
+      var id=$("da").value.trim(),ref=$("dr").value.trim();
+      if(id&&!/^[0-9]{1,10}$/.test(id)){toast("The app ID is numbers only");return}
+      if(ref&&!/^https:\/\/\S{1,500}$/.test(ref)){toast("The referral link must start with https://");return}
+      flushSave().then(function(){
+        if(!BK.site){toast("Save your site first");return}
+        SB.from("sites").update({deriv_app_id:id||null,referral_url:ref||null}).eq("id",BK.site.id).select().single().then(function(r){if(r.error)toast("Could not save: "+r.error.message);else{BK.site=r.data;toast("Saved")}})})});
+    var sts=document.querySelectorAll("#p-dashboard .dgrid .stat");if(sts[1])sts[1].style.display="none";if(sts[2])sts[2].style.display="none";
+    $("p-dashboard").insertAdjacentHTML("beforeend",'<div class="glass card" style="margin-bottom:40px"><h3>Setup progress</h3><div id="tkl" style="display:grid;gap:8px"></div></div>');
+    swapBtn("vgo").addEventListener("click",function(){
+      var d=normalizeDomainFE($("vd").value);if(!d){toast("Enter a domain such as novatrades.site");return}
+      SB.rpc("public_site",{p_domain:d}).then(function(r){
+        var s=r.data,sp=$("vres").querySelectorAll("li span");$("vn").textContent=d;
+        if(s){sp[0].textContent="Live Pipforge site";sp[1].textContent=s.markup+"%";sp[2].textContent=cap(s.template)}
+        else{sp[0].textContent="No live Pipforge site found";sp[1].textContent="-";sp[2].textContent="-"}
+        $("vres").classList.add("on")})});
+    var r10=render;render=function(){r10();schedSave()};
+    window.addEventListener("hashchange",function(){fix2();if(location.hash==="#dashboard")loadStatus();if(location.hash==="#earnings")loadEarn()});
+    var ern0=ern,erows0=erows;
+    ern=function(){
+      if(BK.uid&&st.es===false&&BK.earn){erows=function(){return BK.earn};st.es=true;try{ern0()}finally{st.es=false;erows=erows0}
+        document.querySelectorAll("#ecs span").forEach(function(x){x.textContent=x.textContent.replace(" (sample data)","")});return}
+      ern0()};
+    SB.auth.getSession().then(function(r){applySession(r.data&&r.data.session)});
+    SB.auth.onAuthStateChange(function(ev,s){if(ev==="SIGNED_IN")applySession(s)})}
+  function normalizeDomainFE(v){var d=(v||"").trim().toLowerCase().replace(/^https?:\/\//,"").replace(/^www\./,"").split(/[\/?#]/)[0];return /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/.test(d)?d:""}
+  // ───── tenant mode: the same page, served on a client's own domain, shows only their live site ─────
+  var COMING=["ana","smt","aih","acc","man","blk","cht","cpy"];   // menu pages that are still placeholders
+  function tenantHost(){
+    var app=(window.PF_CONFIG&&window.PF_CONFIG.APP_HOSTS)||[],h=location.hostname.toLowerCase(),q=(new URLSearchParams(location.search).get("site")||"").toLowerCase();
+    if(!app.length)return "";                                       // no APP_HOSTS configured -> always the builder app
+    if(app.indexOf(h)>-1||h==="localhost"||h==="127.0.0.1")return q;  // on the app host, ?site=domain previews a live site
+    return h.replace(/^www\./,"")}
+  function initTenant(host){
+    document.documentElement.classList.add("tenant");
+    try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+    window.addEventListener("click",function(ev){                    // capture phase: runs before the builder's preview handlers
+      if(ev.target.closest(".s-soc a"))return ev.stopPropagation();   // let social links open normally
+      if(ev.target.closest("[data-load],[data-act=dev],[data-act=drv],[data-fab=help],[data-fab=theme]")){ev.stopPropagation();ev.preventDefault();toast("This feature is coming soon")}
+    },true);
+    SB.rpc("public_site",{p_domain:host}).then(function(r){
+      var s=r.data;
+      if(!s){var m=document.createElement("p");m.style.cssText="position:fixed;inset:0;z-index:50;margin:0;display:grid;place-items:center;background:#0e0e0e;color:#f4f4f6;font:16px sans-serif;text-align:center;padding:40px";m.textContent=host+" is not live yet.";document.body.appendChild(m);return}
+      BK.loading=true;
+      fromRow({name:s.name,template:s.template,background:s.background,header:s.header,announcement:s.announcement,icon_shape:s.icon_shape,icon_place:s.icon_place,social:s.social,menu:s.menu,bot_mode:s.bot_mode,embed_url:s.embed_url,markup:s.markup,domain_mode:"new",domain:s.domain,deriv_app_id:s.deriv_app_id,referral_url:s.referral_url});
+      COMING.forEach(function(k){st.menu[k]=false});
+      st.tab="home";render();
+      var el=$("site");document.body.appendChild(el);el.classList.add("tenantsite");
+      document.title=s.name})}
+  function start(){SB=window.PF_SB;var h=tenantHost();if(h)initTenant(h);else initBackend()}
+  if(window.PF_SB)start();else window.addEventListener("pf:ready",start);
+  render();route();
+})();
+</script>
+</body>
+</html>

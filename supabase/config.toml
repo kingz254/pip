@@ -1,0 +1,6 @@
+project_id = "pipforge"
+
+# Safaricom cannot send a Supabase login token, so this function is public.
+# It protects itself with a secret in the URL and re-verifies every payment with Safaricom.
+[functions.mpesa-callback]
+verify_jwt = false

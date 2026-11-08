@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipforge admin</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{color-scheme:dark light;font-family:system-ui,sans-serif}
+  body{margin:0;padding:24px;background:#0e0e0e;color:#f4f4f6}
+  @media (prefers-color-scheme:light){body{background:#f4f5f7;color:#151717}}
+  h1{margin:0 0 16px;font-size:24px}
+  .card{border:1px solid #8884;border-radius:14px;padding:16px;margin:0 0 14px;max-width:760px}
+  .card h2{margin:0 0 4px;font-size:18px}.muted{opacity:.7;font-size:14px}
+  .task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #8883;flex-wrap:wrap}
+  .task b{min-width:200px}.done{opacity:.55}
+  button{padding:8px 14px;border-radius:10px;border:0;background:#ff444f;color:#fff;font-weight:600;cursor:pointer}
+  input{padding:8px;border-radius:8px;border:1px solid #8886;background:transparent;color:inherit;min-width:180px}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<h1>Fulfilment queue</h1>
+<div id="auth"></div>
+<p id="msg" class="muted" role="status"></p>
+<div id="list"></div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); }, SB = null;
+  var NAMES = { register_domain: 'Register the domain (in the client\u2019s name)', connect_dns: 'Connect DNS to our servers', issue_ssl: 'Issue SSL', go_live: 'Check the site and go live' };
+  var ORDER = ['register_domain', 'connect_dns', 'issue_ssl', 'go_live'];
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+  function index(a) { var o = {}; (a || []).forEach(function (x) { o[x.id] = x; }); return o; }
+  function msg(t) { $('msg').textContent = t || ''; }
+  function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
+
+  function showLogin() {
+    var b = el('button', null, 'Sign in with Google');
+    b.onclick = function () { SB.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } }); };
+    $('auth').replaceChildren(b);
+  }
+  function check() {
+    SB.rpc('is_admin').then(function (r) {
+      if (r.data !== true) { msg('This account is not an admin.'); return; }
+      $('auth').replaceChildren(); load();
+    });
+  }
+  function load() {
+    msg('Loading\u2026');
+    SB.from('fulfilment_tasks').select('id,task,status,notes,site_id,order_id').then(function (t) {
+      var rows = t.data || [];
+      if (!rows.length) { $('list').replaceChildren(); msg('No tasks yet.'); return; }
+      Promise.all([
+        SB.from('sites').select('id,name,domain,domain_mode,owner').in('id', uniq(rows.map(function (r) { return r.site_id; }))),
+        SB.from('orders').select('id,total_usd,paid_at').in('id', uniq(rows.map(function (r) { return r.order_id; }))),
+      ]).then(function (res) {
+        var owners = uniq((res[0].data || []).map(function (s) { return s.owner; }));
+        SB.from('profiles').select('id,email,full_name,phone').in('id', owners).then(function (p) {
+          draw(rows, index(res[0].data), index(res[1].data), index(p.data)); msg('');
+        });
+      });
+    });
+  }
+  function draw(rows, sites, orders, profiles) {
+    var bySite = {}; rows.forEach(function (r) { (bySite[r.site_id] = bySite[r.site_id] || []).push(r); });
+    var ids = Object.keys(bySite).sort(function (a, b) { return open(bySite[b]) - open(bySite[a]); });
+    function open(list) { return list.filter(function (x) { return x.status === 'todo'; }).length; }
+    var out = ids.map(function (sid) {
+      var s = sites[sid] || {}, o = orders[bySite[sid][0].order_id] || {}, p = profiles[s.owner] || {};
+      var card = el('div', 'card');
+      card.appendChild(el('h2', null, (s.domain || '(no domain)') + (s.domain_mode === 'own' ? '  \u2014 client\u2019s own domain' : '')));
+      card.appendChild(el('div', 'muted', (s.name || '') + ' \u00b7 total $' + (o.total_usd || '?') + ' \u00b7 ' + (p.full_name || '') + ' \u00b7 ' + (p.email || '') + ' \u00b7 ' + (p.phone || '')));
+      bySite[sid].sort(function (a, b) { return ORDER.indexOf(a.task) - ORDER.indexOf(b.task); }).forEach(function (t) {
+        var row = el('div', 'task' + (t.status === 'done' ? ' done' : ''));
+        row.appendChild(el('b', null, NAMES[t.task] || t.task));
+        if (t.status === 'done') row.appendChild(el('span', 'muted', 'done' + (t.notes ? ' \u2014 ' + t.notes : '')));
+        else {
+          var note = el('input'); note.placeholder = 'Notes (optional)'; note.setAttribute('aria-label', 'Notes');
+          var btn = el('button', null, 'Mark done');
+          btn.onclick = function () {
+            btn.disabled = true;
+            SB.rpc('admin_complete_task', { p_task: t.id, p_notes: note.value || null }).then(function (r) {
+              if (r.error) { msg(r.error.message); btn.disabled = false; } else load();
+            });
+          };
+          row.appendChild(note); row.appendChild(btn);
+        }
+        card.appendChild(row);
+      });
+      return card;
+    });
+    $('list').replaceChildren.apply($('list'), out);
+  }
+  function init() {
+    SB = window.PF_SB;
+    SB.auth.getSession().then(function (r) { if (!r.data.session) showLogin(); else check(); });
+    SB.auth.onAuthStateChange(function (ev) { if (ev === 'SIGNED_IN') check(); });
+  }
+  if (window.PF_SB) init(); else window.addEventListener('pf:ready', init);
+  if (!(window.PF_CONFIG && window.PF_CONFIG.SUPABASE_URL)) msg('Add your Supabase URL and anon key to public/config.js first.');
+})();
+</script>
+<script type="module">
+  const c = window.PF_CONFIG || {};
+  if (c.SUPABASE_URL && c.SUPABASE_ANON_KEY) {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm');
+    window.PF_SB = createClient(c.SUPABASE_URL, c.SUPABASE_ANON_KEY);
+    window.dispatchEvent(new Event('pf:ready'));
+  }
+</script>
+</body>
+</html>

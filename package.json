@@ -1,0 +1,19 @@
+{
+  "name": "pipforge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pipforge: build-your-own Deriv site platform (static front-end + Supabase backend)",
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "dev": "npx --yes serve public -l 5173",
+    "check:functions": "deno check --node-modules-dir=none supabase/functions/domain-check/index.ts supabase/functions/checkout/index.ts supabase/functions/mpesa-callback/index.ts"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.15",
+    "jsdom": "^24.1.3"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
