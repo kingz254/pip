@@ -1,7 +1,7 @@
 # Pipforge
 
 A platform for selling templated, branded Deriv trading sites. Clients sign in with Google, design their site
-(20 templates, 25 backgrounds, headers, social icons, menu), pick or connect a domain, and pay by M-Pesa.
+(35 templates, 35 animated backgrounds, 35 typefaces, 20 header compositions, social icons, menu), choose from the country list Deriv publishes, pick or connect a domain, and pay by M-Pesa.
 You fulfil the domain and DNS from an admin queue; the client's site then goes live on their own domain.
 
 * **Front-end:** static files in `public/` (no build step). One page, `index.html`, is both the builder app and
@@ -84,10 +84,7 @@ profile, autosave, taken-domain blocking, order, payment polling, tenant mode, a
 * **Domain registration and DNS are manual.** The admin queue lists the steps. Register domains in the client's
   name. A registrar API integration is the next automation.
 * **Card payments are not built.** The schema has `provider = 'card'`; you still need to choose a gateway.
-* **Client sites are mostly a shell.** Implemented: templates, backgrounds, headers, social links, markup page,
-  link to Deriv's own bot page. Placeholders (hidden from visitors in tenant mode): Analysis, Smart Trading,
-  AI Hub, Accumulators, Manual, Bulk Trades, Charts, Copy Trading. "Load in DBot" and the bot library do not load
-  anything yet. Embedding Deriv's pages needs Deriv's written permission (see their General Terms).
+* **Client site workspace.** Templates, backgrounds, headers, social links, a live Deriv market dashboard, and Analysis, Smart Trading, Strategy Notes, Accumulators, Manual, Bulk Trades, Charts, Free Bots, Tutorials, Markup, and Copy Trading Watchlist panels are available from the tenant site navigation. Public ticks and history use Deriv's unauthenticated WebSocket endpoint. Bot setup files and personal limits are kept in the visitor's browser. Deriv XML files can be imported into the workspace and opened in Deriv Bot; Pipforge JSON setups can be saved and reloaded here. Account login and contract execution remain on Deriv.
 * **Earnings.** The `commission_daily` table and the Earnings page are ready, but nothing fills the table yet.
   A scheduled job that reads Deriv's markup reports for each client's app is still to be written and verified
   against Deriv's API scopes. Do not store clients' API tokens without encryption and a clear need.
