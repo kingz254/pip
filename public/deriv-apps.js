@@ -1,9 +1,21 @@
 (function () {
   'use strict';
-  var routes = { bld: ['/apps/bot/#bot_builder', 'Bot Builder'], ana: ['/apps/digits/', 'Digit Analysis'],
-    smt: ['/apps/digits/?mode=smart', 'Smart Trading'], cht: ['/apps/rise-fall/', 'Rise/Fall Charts'], acc: ['/apps/accumulators/', 'Accumulators'] };
+  var routes = { home: ['/apps/bot/#dashboard', 'Dashboard'], bld: ['/apps/bot/#bot_builder', 'Bot Builder'],
+    ana: ['/apps/digits/', 'Digit Analysis'], smt: ['/apps/digits/?mode=smart', 'Smart Trading'],
+    acc: ['/apps/accumulators/', 'Accumulators'], cht: ['/apps/rise-fall/', 'Charts'], tut: ['/apps/bot/#tutorial', 'Tutorials'] };
   var frame = null, current = '', observer = null, botRunning = false;
   var accounts = [];
+  function applyBranding(site) {
+    if (!frame || !frame.contentDocument || !site) return;
+    var doc = frame.contentDocument;
+    if (!doc.head) return;
+    var style = doc.getElementById('pipforge-client-branding') || doc.createElement('style');
+    var brand = getComputedStyle(site), font = brand.fontFamily, accent = brand.getPropertyValue('--a1').trim(), background = brand.background;
+    doc.title = site.querySelector('.s-name')?.textContent || 'Client site';
+    style.id = 'pipforge-client-branding';
+    style.textContent = 'header,.app-header,.dc-tabs__list,footer{display:none!important}html,body,#root,.layout,.main,.main__container,.dc-tabs__content{font-family:'+font+'!important;background:'+background+'!important;color:'+brand.color+'!important;min-height:100%!important}.layout{height:auto!important}:root{--brand-primary:'+accent+';--brand-red-coral:'+accent+';--primary:'+accent+';--a1:'+accent+';--font-family:'+font+'}';
+    doc.head.appendChild(style);
+  }
   function renderAccount(mode) {
     var id=localStorage.getItem('active_loginid');
     var selected=accounts.find(function(a){return mode?a.account_type===mode:a.account_id===id;}) || (!mode&&accounts.find(function(a){return a.account_type==='demo';}));
@@ -38,7 +50,7 @@
       if (!route) { if (frame) frame.remove(); frame = null; current = ''; return false; }
       var panel = site.querySelector('[data-pn="' + tab + '"]');
       if (!panel) return false;
-      if (current === tab && frame && frame.parentNode === panel) return true;
+      if (current === tab && frame && frame.parentNode === panel) { applyBranding(site); return true; }
       if (frame) frame.remove();
       frame = document.createElement('iframe');
       frame.className = 'pf-template-frame'; frame.title = route[1]; frame.src = route[0];
@@ -46,6 +58,7 @@
       frame.referrerPolicy = 'same-origin';
       frame.addEventListener('load',function(){
         if(window.__pfLoadedFrames)window.__pfLoadedFrames[tab]=true;
+        applyBranding(site);
         var loader=document.getElementById('site-loader');if(loader)loader.classList.remove('on');
       });
       panel.classList.add('pf-template-panel'); panel.appendChild(frame); current = tab;
