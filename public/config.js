@@ -3,5 +3,6 @@
 // Leave both empty to run the front-end in demo mode.
 window.PF_CONFIG = {
   SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: ''
+  SUPABASE_ANON_KEY: '',
+  DERIV_OAUTH_CLIENT_ID: '34UIHrhpdq0VwgvjwFvjp'
 };

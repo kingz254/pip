@@ -1,7 +1,7 @@
 # Pipforge
 
 A platform for selling templated, branded Deriv trading sites. Clients sign in with Google, design their site
-(35 templates, 35 animated backgrounds, 35 typefaces, 20 header compositions, social icons, menu), choose from the country list Deriv publishes, pick or connect a domain, and pay by M-Pesa.
+(35 templates, 40 animated backgrounds, 35 typefaces, 20 header compositions, social icons, menu), choose from the country list Deriv publishes, pick or connect a domain, and pay by M-Pesa.
 You fulfil the domain and DNS from an admin queue; the client's site then goes live on their own domain.
 
 * **Front-end:** static files in `public/` (no build step). One page, `index.html`, is both the builder app and
@@ -30,6 +30,24 @@ in the database (column privileges, a guard trigger, and `SECURITY DEFINER` func
 
 ## Set up
 
+### Local development and GitHub
+
+This folder is the main Pipforge application and Git repository, connected to
+`https://github.com/kingz254/pip` on `main`. Run commands here, rather than in the
+outer download folder. The sibling Deriv app folders are separate source templates
+and are not yet part of this repository or the paid fulfilment flow.
+
+Run `npm run dev` and open `http://localhost:5173` for the local site preview.
+Refresh the preview after editing files in `public/`. With empty Supabase values
+in `public/config.js`, it runs in demo mode. The preview does not deploy the site.
+
+Changes reach GitHub after they are tested, committed and pushed; saving a local
+file alone does not update the remote repository. Run `npm test` before syncing.
+The GitHub workflow also runs tests and checks Edge Functions on each push.
+Generated `graphify-out/` maps stay local and are ignored by Git.
+
+### Services
+
 1. **Supabase project.** Create one at supabase.com. Install the CLI (`npm i -g supabase` or see their docs), then
    `supabase login`, `supabase link --project-ref <ref>`, `supabase db push`.
 2. **Google sign-in.** In Google Cloud Console create an OAuth client (type Web). Authorised redirect URI:
@@ -37,7 +55,7 @@ in the database (column privileges, a guard trigger, and `SECURITY DEFINER` func
    ID and secret. Under Authentication > URL Configuration set the Site URL to your app URL and add it (and
    `http://localhost:5173`) to Redirect URLs.
 3. **Front-end keys.** Put the Project URL and the **anon** key in `public/config.js`. Never put the
-   `service_role` key in any file under `public/`. If both values are empty the page runs in demo mode.
+   `service_role` key in any file under `public/`. If both values are empty the page runs in demo mode. The public Deriv OAuth client ID is configured separately in `DERIV_OAUTH_CLIENT_ID`; never put OAuth access tokens or Supabase service keys in this file.
 4. **Make yourself admin.** Sign in once, then in the SQL editor:
    `insert into public.admins select id from auth.users where email = 'you@gmail.com';`
 5. **Edge Function secrets.** Copy `.env.example` to `.env`, fill it in, then

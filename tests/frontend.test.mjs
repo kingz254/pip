@@ -17,8 +17,8 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
     w.location.hash = '#' + p; await tick(30);
     assert.ok(!d.getElementById('p-' + p).hidden, 'page ' + p);
   }
-  assert.equal(d.querySelectorAll('#tpls .tpl').length, 20);
-  assert.equal(d.querySelectorAll('#bgs .chip').length, 25);
+  assert.equal(d.querySelectorAll('#tpls .tpl').length, 35);
+  assert.equal(d.querySelectorAll('#bgs .chip').length, 40);
   for (const b of d.querySelectorAll('#bgs .chip')) click(b);
   for (const t of d.querySelectorAll('#tpls .tpl')) click(t);
   input($('name'), 'Alpha Trades'); assert.equal($('url').textContent, 'alphatrades.site');
@@ -92,6 +92,7 @@ test('backend mode: sign in, profile, autosave, domain check, order, M-Pesa, sta
   input($('pp'), '0712345678'); click($('pay')); await tick(2200);
   const co = sb.calls.invoke.filter((c) => c[0] === 'checkout').pop();
   assert.equal(co[1].method, 'mpesa'); assert.equal(co[1].order_id, sb.db.orders.find((o) => o.status !== 'cancelled').id);
+  assert.equal(co[1].phone, '+254712345678');
   assert.ok(!('amount' in co[1]) && !('total' in co[1]), 'browser never sends the price');
   await tick(3600);
   assert.match($('pst').textContent, /Payment received/);
@@ -143,18 +144,17 @@ test('tenant mode: a client domain shows only the live site, with working social
   assert.ok(w.document.documentElement.classList.contains('tenant'));
   assert.equal(d.body.lastElementChild === $('site') || $('site').parentNode === d.body, true, 'site is a direct child of body');
   assert.equal($('sname').textContent, 'Zed Trades'); assert.equal(d.title, 'Zed Trades');
-  assert.equal($('site').dataset.bg, 'waves'); assert.equal($('site').dataset.h, 'pill');
-  // placeholder pages are hidden for visitors; working ones remain
+  assert.equal($('site').dataset.bg, 'waves'); assert.equal($('site').dataset.h, 'dock');
+  // Legacy header values are normalized, and workspace sections remain available.
   const tabs = [...d.querySelectorAll('#stabs .s-tab')].map((b) => b.dataset.tab);
-  for (const k of ['ana', 'smt', 'aih', 'acc', 'man', 'blk', 'cht', 'cpy']) assert.ok(!tabs.includes(k), k + ' hidden');
-  for (const k of ['home', 'bld', 'frb', 'tut', 'mkp']) assert.ok(tabs.includes(k), k + ' shown');
+  for (const k of ['home', 'bld', 'ana', 'smt', 'aih', 'acc', 'man', 'blk', 'cht', 'cpy', 'frb', 'tut', 'mkp']) assert.ok(tabs.includes(k), k + ' shown');
   // social links are not intercepted
   const a = d.querySelector('#sh a'); assert.match(a.href, /instagram\.com\/zedtrades/);
   const ev = new w.MouseEvent('click', { bubbles: true, cancelable: true }); a.dispatchEvent(ev);
   assert.equal(ev.defaultPrevented, false, 'link follows normally');
-  // placeholders say so instead of faking it
-  const load = d.querySelector('[data-load]'); const ev2 = new w.MouseEvent('click', { bubbles: true, cancelable: true }); load.dispatchEvent(ev2);
-  assert.equal(ev2.defaultPrevented, true); assert.match($('toast').textContent, /coming soon/);
+  // Tenant support routes visitors to the workspace guides.
+  const help = d.querySelector('[data-fab="help"]'); const ev2 = new w.MouseEvent('click', { bubbles: true, cancelable: true }); help.dispatchEvent(ev2);
+  assert.equal(ev2.defaultPrevented, true); assert.match($('toast').textContent, /Tutorials tab/);
   assert.equal(sb.db.sites.length, 1, 'tenant mode never writes');
   assert.deepEqual(errors, []);
 });

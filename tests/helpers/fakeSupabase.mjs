@@ -1,4 +1,6 @@
 // A small in-memory stand-in for the parts of supabase-js the front-end uses.
+import { normalizeKePhone } from '../../supabase/functions/_shared/mpesa.ts';
+
 export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } = {}) {
   const db = { profiles: [], sites: [], orders: [], payments: [], fulfilment_tasks: [], commission_daily: [] };
   const calls = { rpc: [], invoke: [], signOut: 0, oauth: 0 };
@@ -73,7 +75,7 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
         if (name === 'domain-check') return { data: { domain: body.domain, status: domainStatus(body.domain) }, error: null };
         if (name === 'checkout') {
           const o = db.orders.find((x) => x.id === body.order_id);
-          if (!/^0?7\d{8}$/.test(body.phone.replace(/\s/g, ''))) return { data: null, error: { message: 'bad phone', context: { json: async () => ({ error: 'Enter a valid Safaricom number, for example 0712345678' }) } } };
+          if (!normalizeKePhone(body.phone)) return { data: null, error: { message: 'bad phone', context: { json: async () => ({ error: 'Enter a valid Safaricom number, for example 0712345678' }) } } };
           const pay = { id: uid(), order_id: o.id, status: 'initiated' }; db.payments.push(pay);
           setTimeout(() => { pay.status = 'succeeded'; o.status = 'paid'; db.sites.find((s) => s.id === o.site_id).status = 'paid';
             ['register_domain', 'connect_dns', 'issue_ssl', 'go_live'].forEach((t) => db.fulfilment_tasks.push({ site_id: o.site_id, task: t, status: 'todo' })); }, payAfterMs);
