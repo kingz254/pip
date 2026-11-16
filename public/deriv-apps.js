@@ -3,18 +3,36 @@
   var routes = { home: ['/apps/bot/#dashboard', 'Dashboard'], bld: ['/apps/bot/#bot_builder', 'Bot Builder'],
     ana: ['/apps/digits/', 'Digit Analysis'], smt: ['/apps/digits/?mode=smart', 'Smart Trading'],
     acc: ['/apps/accumulators/', 'Accumulators'], cht: ['/apps/rise-fall/', 'Charts'], tut: ['/apps/bot/#tutorial', 'Tutorials'] };
-  var frame = null, current = '', observer = null, botRunning = false;
+  var frame = null, current = '', observer = null, childObserver = null, botRunning = false;
   var accounts = [];
   function applyBranding(site) {
     if (!frame || !frame.contentDocument || !site) return;
     var doc = frame.contentDocument;
     if (!doc.head) return;
     var style = doc.getElementById('pipforge-client-branding') || doc.createElement('style');
-    var brand = getComputedStyle(site), font = brand.fontFamily, accent = brand.getPropertyValue('--a1').trim(), background = brand.background;
-    doc.title = site.querySelector('.s-name')?.textContent || 'Client site';
+    var brand = getComputedStyle(site), font = brand.fontFamily, accent = brand.getPropertyValue('--a1').trim();
+    var rgb = brand.color.match(/[\d.]+/g) || [], dark = rgb.length >= 3 && (Number(rgb[0]) + Number(rgb[1]) + Number(rgb[2])) / 3 > 145;
+    var theme = dark ? 'dark' : 'light', name = site.querySelector('.s-name')?.textContent || 'Client site';
+    doc.title = name;
+    doc.documentElement.dataset.pfTheme = theme;
+    doc.documentElement.classList.toggle('dark', dark);
+    if (!doc.__pfThemeObserver && doc.defaultView) {
+      doc.__pfThemeObserver = new doc.defaultView.MutationObserver(function () {
+        doc.documentElement.classList.toggle('dark', doc.documentElement.dataset.pfTheme === 'dark');
+      });
+      doc.__pfThemeObserver.observe(doc.documentElement, { attributes: true, attributeFilter: ['class'] });
+    }
     style.id = 'pipforge-client-branding';
-    style.textContent = 'header,.app-header,.dc-tabs__list,footer{display:none!important}html,body,#root,.layout,.main,.main__container,.dc-tabs__content{font-family:'+font+'!important;background:'+background+'!important;color:'+brand.color+'!important;min-height:100%!important}.layout{height:auto!important}:root{--brand-primary:'+accent+';--brand-red-coral:'+accent+';--primary:'+accent+';--a1:'+accent+';--font-family:'+font+'}';
+    style.textContent = 'header,.app-header,.dc-tabs__list,footer{display:none!important}html,body,#root,.layout,.main-body,.main,.main__container,.dc-tabs__content{font-family:'+font+'!important;background:transparent!important;color:'+brand.color+'!important;min-height:100%!important}.layout{height:auto!important}:root{--brand-primary:'+accent+';--brand-red-coral:'+accent+';--primary:'+accent+';--a1:'+accent+';--font-family:'+font+'}';
     doc.head.appendChild(style);
+    frame.contentWindow.postMessage({ type: 'PF_SITE_BRANDING', theme: theme, name: name, accent: accent, font: font }, window.location.origin);
+    if (doc.body && !doc.__pfLoaderObserver && doc.defaultView) {
+      var syncLoader = function () { if (window.__pfTemplateLoading) window.__pfTemplateLoading(current, !!doc.querySelector('.initial-loader,.dc-loader')); };
+      childObserver = new doc.defaultView.MutationObserver(syncLoader);
+      childObserver.observe(doc.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'aria-busy'] });
+      doc.__pfLoaderObserver = childObserver;
+      syncLoader();
+    }
   }
   function renderAccount(mode) {
     var id=localStorage.getItem('active_loginid');
@@ -47,19 +65,21 @@
   window.PipforgeApps = {
     show: function (tab, site) {
       var route = routes[tab];
-      if (!route) { if (frame) frame.remove(); frame = null; current = ''; return false; }
+      if (!route) { if (childObserver) childObserver.disconnect(); if (frame) frame.remove(); frame = null; current = ''; return false; }
       var panel = site.querySelector('[data-pn="' + tab + '"]');
       if (!panel) return false;
       if (current === tab && frame && frame.parentNode === panel) { applyBranding(site); return true; }
+      if (childObserver) childObserver.disconnect();
       if (frame) frame.remove();
       frame = document.createElement('iframe');
       frame.className = 'pf-template-frame'; frame.title = route[1]; frame.src = route[0];
+      if (window.__pfLoadedFrames) window.__pfLoadedFrames[tab] = false;
+      if (window.__pfShowPageLoader) window.__pfShowPageLoader(tab);
       frame.setAttribute('allow', 'fullscreen; clipboard-write');
       frame.referrerPolicy = 'same-origin';
       frame.addEventListener('load',function(){
-        if(window.__pfLoadedFrames)window.__pfLoadedFrames[tab]=true;
+        if(window.__pfFrameLoaded)window.__pfFrameLoaded(tab);
         applyBranding(site);
-        var loader=document.getElementById('site-loader');if(loader)loader.classList.remove('on');
       });
       panel.classList.add('pf-template-panel'); panel.appendChild(frame); current = tab;
       if (!observer) {

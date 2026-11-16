@@ -12,11 +12,28 @@ const MainBody: React.FC<TMainBodyProps> = observer(({ children }) => {
     const { ui } = useStore() ?? {
         ui: {
             setDevice: () => {},
-            is_dark_mode_on: false,
+            setDarkMode: () => {},
+            is_dark_mode_on: (window as any).__pfSiteTheme === 'dark',
         },
     };
-    const { setDevice, is_dark_mode_on } = ui;
+    const { setDevice, is_dark_mode_on, setDarkMode } = ui;
     const { isDesktop, isMobile, isTablet } = useDevice();
+
+    useEffect(() => {
+        const initialTheme = (window as any).__pfSiteTheme;
+        if (initialTheme === 'light' || initialTheme === 'dark') setDarkMode(initialTheme === 'dark');
+        const applySiteTheme = (event: MessageEvent) => {
+            if (
+                event.source !== window.parent ||
+                event.origin !== window.location.origin ||
+                event.data?.type !== 'PF_SITE_BRANDING' ||
+                !['light', 'dark'].includes(event.data.theme)
+            ) return;
+            setDarkMode(event.data.theme === 'dark');
+        };
+        window.addEventListener('message', applySiteTheme);
+        return () => window.removeEventListener('message', applySiteTheme);
+    }, [setDarkMode]);
 
     // Apply the theme from the ui store, which defaults to the OS preference
     // when the user hasn't explicitly chosen one (see UiStore.getInitialDarkMode).

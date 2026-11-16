@@ -30,6 +30,17 @@ applyFaviconFromLogo();
 applyBrandFontFromConfig();
 applyPrimaryColorFromConfig();
 
+window.addEventListener('message', event => {
+    if (
+        event.source === window.parent &&
+        event.origin === window.location.origin &&
+        event.data?.type === 'PF_SITE_BRANDING' &&
+        ['light', 'dark'].includes(event.data.theme)
+    ) {
+        (window as any).__pfSiteTheme = event.data.theme;
+    }
+});
+
 // Removed AnalyticsInitializer() call - analytics dependency removed
 
 // App Builder preview branding (incl. PREVIEW_READY handshake) is handled by the
