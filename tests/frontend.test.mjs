@@ -71,7 +71,7 @@ test('backend mode: sign in, profile, autosave, domain check, order, M-Pesa, sta
 
   // Dashboard save validates and stores the Deriv details
   w.location.hash = '#dashboard'; await tick(50);
-  input($('da'), '12ab'); click($('dsave')); await tick(50); assert.equal(s.deriv_app_id, undefined);
+  input($('da'), '12 ab'); click($('dsave')); await tick(50); assert.equal(s.deriv_app_id, undefined);
   input($('da'), '123456'); input($('dr'), 'https://track.example/ref'); click($('dsave')); await tick(100);
   assert.equal(s.deriv_app_id, '123456'); assert.equal(s.referral_url, 'https://track.example/ref');
 

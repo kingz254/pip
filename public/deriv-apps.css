@@ -1,0 +1,9 @@
+.pf-template-panel{position:relative!important;padding:0!important;min-height:720px}
+.pf-template-panel> :not(.pf-template-frame){display:none!important}
+.pf-template-frame{display:block;width:100%;height:calc(100dvh - 170px);min-height:720px;border:0;background:#fff}
+.site[data-active-tab=bld] .s-main,.site[data-active-tab=ana] .s-main,.site[data-active-tab=smt] .s-main,.site[data-active-tab=cht] .s-main,.site[data-active-tab=acc] .s-main{padding:0!important;max-width:none}
+html.tenant .pf-template-frame,.client-preview-mode .pf-template-frame{height:calc(100dvh - 130px)}
+@media(max-width:700px){.pf-template-panel{min-height:680px}.pf-template-frame{height:calc(100dvh - 150px);min-height:680px}}
+
+.site[data-active-tab=bld] .s-top .client-account,.site[data-active-tab=ana] .s-top .client-account,.site[data-active-tab=smt] .s-top .client-account,.site[data-active-tab=cht] .s-top .client-account,.site[data-active-tab=acc] .s-top .client-account,
+.site[data-active-tab=bld] .s-top .s-acts,.site[data-active-tab=ana] .s-top .s-acts,.site[data-active-tab=smt] .s-top .s-acts,.site[data-active-tab=cht] .s-top .s-acts,.site[data-active-tab=acc] .s-top .s-acts{display:none!important}

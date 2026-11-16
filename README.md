@@ -4,7 +4,7 @@ A platform for selling templated, branded Deriv trading sites. Clients sign in w
 (35 templates, 40 animated backgrounds, 35 typefaces, 20 header compositions, social icons, menu), choose from the country list Deriv publishes, pick or connect a domain, and pay by M-Pesa.
 You fulfil the domain and DNS from an admin queue; the client's site then goes live on their own domain.
 
-* **Front-end:** static files in `public/` (no build step). One page, `index.html`, is both the builder app and
+* **Front-end:** the platform is static HTML in `public/`; four trading templates under `apps/` are built into `public/apps/`. One page, `index.html`, is both the builder app and
   the client-site renderer ("tenant mode", see below). `admin.html` is the fulfilment queue.
 * **Backend:** Supabase. Postgres with row level security, Google sign-in, and three Edge Functions.
 * **Payments:** M-Pesa STK push (Safaricom Daraja). Card payments are not built yet.
@@ -34,12 +34,11 @@ in the database (column privileges, a guard trigger, and `SECURITY DEFINER` func
 
 This folder is the main Pipforge application and Git repository, connected to
 `https://github.com/kingz254/pip` on `main`. Run commands here, rather than in the
-outer download folder. The sibling Deriv app folders are separate source templates
-and are not yet part of this repository or the paid fulfilment flow.
+outer download folder. The integrated Deriv sources are tracked under `apps/`, and common auth/trading code is in `packages/deriv-core`. The outer sibling folders are the original downloads.
 
 Run `npm run dev` and open `http://localhost:5173` for the local site preview.
-Refresh the preview after editing files in `public/`. With empty Supabase values
-in `public/config.js`, it runs in demo mode. The preview does not deploy the site.
+The four template development servers run behind the same preview origin. Refresh after editing platform files in `public/`. With empty Supabase values
+in `public/config.js`, it runs in demo mode. The preview does not deploy the site. See [Deriv setup](docs/DERIV_SETUP.md) for the Vercel callback and production session configuration.
 
 Changes reach GitHub after they are tested, committed and pushed; saving a local
 file alone does not update the remote repository. Run `npm test` before syncing.
@@ -65,7 +64,7 @@ Generated `graphify-out/` maps stay local and are ignored by Git.
 6. **Safaricom Daraja.** Create an app at developer.safaricom.co.ke, test on the sandbox, then request go-live for
    your Paybill/Till. The callback URL is built for you:
    `https://<ref>.supabase.co/functions/v1/mpesa-callback?s=<MPESA_CALLBACK_SECRET>`.
-7. **Deploy `public/`** to Vercel, Netlify or Cloudflare Pages. Set `APP_HOSTS` in `config.js` to the hostnames
+7. **Deploy the repository** to Vercel using `vercel.json` so the built apps and shared OAuth backend are available. A static-only upload of `public/` does not provide account login. Set `APP_HOSTS` in `config.js` to the hostnames
    that serve the builder (for example `["app.yourbrand.com"]`).
 8. **Prices.** Edit the `pricing` and `tld_prices` tables (the front-end copies are display only).
 
@@ -82,7 +81,7 @@ enters tenant mode.
 
 ```
 npm install
-npm test                 # 30 tests: database, payments, domain logic, front-end flows, admin page
+npm test                 # platform tests: database, payments, domain logic, front-end flows, admin page
 npm run check:functions  # type-checks the Edge Functions with Deno
 ```
 
@@ -102,7 +101,7 @@ profile, autosave, taken-domain blocking, order, payment polling, tenant mode, a
 * **Domain registration and DNS are manual.** The admin queue lists the steps. Register domains in the client's
   name. A registrar API integration is the next automation.
 * **Card payments are not built.** The schema has `provider = 'card'`; you still need to choose a gateway.
-* **Client site workspace.** Templates, backgrounds, headers, social links, a live Deriv market dashboard, and Analysis, Smart Trading, Strategy Notes, Accumulators, Manual, Bulk Trades, Charts, Free Bots, Tutorials, Markup, and Copy Trading Watchlist panels are available from the tenant site navigation. Public ticks and history use Deriv's unauthenticated WebSocket endpoint. Bot setup files and personal limits are kept in the visitor's browser. Deriv XML files can be imported into the workspace and opened in Deriv Bot; Pipforge JSON setups can be saved and reloaded here. Account login and contract execution remain on Deriv.
+* **Client site workspace.** Templates, backgrounds, headers, social links, a live Deriv market dashboard, and Analysis, Smart Trading, Strategy Notes, Accumulators, Manual, Bulk Trades, Charts, Free Bots, Tutorials, Markup, and Copy Trading Watchlist panels are available from the tenant site navigation. Public ticks and history use Deriv's unauthenticated WebSocket endpoint. Bot setup files and personal limits are kept in the visitor's browser. Deriv XML files can be imported into the workspace and opened in Deriv Bot; Pipforge JSON setups can be saved and reloaded here. Bot Builder, Analysis, Smart Trading, Charts and Accumulators now mount the local templates. Public ticks are live; account access and execution require the shared backend setup in [Deriv setup](docs/DERIV_SETUP.md).
 * **Earnings.** The `commission_daily` table and the Earnings page are ready, but nothing fills the table yet.
   A scheduled job that reads Deriv's markup reports for each client's app is still to be written and verified
   against Deriv's API scopes. Do not store clients' API tokens without encryption and a clear need.
@@ -122,3 +121,7 @@ supabase/functions/domain-check | checkout | mpesa-callback | _shared
 tests/             db, functions, frontend, admin (+ helpers)
 .github/workflows/test.yml                     runs the tests on every push
 ```
+
+## Integrated trading apps
+
+See [Deriv setup](docs/DERIV_SETUP.md) for the tab-to-template map, public feeds, shared OAuth backend, customer-domain callbacks, Vercel settings, and verification limits. Run `npm run build` before production deployment.

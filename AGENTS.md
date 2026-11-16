@@ -8,4 +8,5 @@
 - `public/` contains the static builder and tenant renderer; `supabase/` contains backend functions and migrations; `tests/` contains local checks.
 - Empty Supabase settings in `public/config.js` mean demo mode. Do not claim that payments, Google login, or deployments work without live verification.
 - Never commit secrets or generated `graphify-out/` data.
-- The four sibling Deriv apps are not yet integrated; do not move or wire them into fulfilment until that work is requested.
+- The four trading templates are integrated under `apps/`, with shared code in `packages/deriv-core`. Treat the outer sibling folders as original downloads, not runtime sources.
+- Follow `docs/DERIV_SETUP.md` for template routes, Vercel callbacks, server-only credentials, and deployment checks. Do not reintroduce browser-held provider tokens or hidden duplicate price connections.

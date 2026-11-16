@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
 
 const migration = readFileSync(new URL('../supabase/migrations/20261107000000_init.sql', import.meta.url), 'utf8');
+const oauthMigration = readFileSync(new URL('../supabase/migrations/20261116153130_deriv_oauth_sessions.sql', import.meta.url), 'utf8');
 
 // Minimal stand-in for Supabase's auth schema + roles.
 const supabaseStub = `
@@ -183,4 +184,15 @@ test('draft sites can be deleted by the owner; sites with orders cannot', async 
   ok(d, 'delete draft'); assert.equal(d.rows.length, 1);
   const paid = await as('authenticated', A, `delete from public.sites where owner='${A}' returning id`);
   assert.ok(paid.error || paid.rows.length === 0, 'a paid site cannot be deleted by the client');
+});
+
+test('OAuth migration keeps encrypted sessions server-only and accepts new OAuth client IDs',async()=>{
+  await db.exec(oauthMigration);
+  denied(await as('anon',null,'select * from public.deriv_oauth_sessions'),'anonymous credential access');
+  denied(await as('authenticated',A,'select * from public.deriv_oauth_sessions'),'customer credential access');
+  ok(await as('service_role',null,"insert into public.deriv_oauth_sessions values (repeat('a',64),'encrypted fixture',now()+interval '1 hour')"),'backend credential insert');
+  const rows=await as('service_role',null,'select payload from public.deriv_oauth_sessions');
+  assert.equal(rows.rows[0].payload,'encrypted fixture');
+  ok(await as('authenticated',A,`update public.sites set deriv_app_id='fixture_new-client' where owner='${A}'`),'new OAuth client ID');
+  denied(await as('authenticated',A,`update public.sites set deriv_app_id='unsafe client id' where owner='${A}'`),'unsafe client ID');
 });

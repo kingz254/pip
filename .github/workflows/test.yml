@@ -11,4 +11,7 @@ jobs:
         with: { deno-version: v2.x }
       - run: npm ci
       - run: npm test
+      - run: npm run test --workspace @deriv/core
+      - run: npm run check:apps
+      - run: npm run build
       - run: npm run check:functions

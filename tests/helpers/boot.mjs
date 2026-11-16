@@ -2,6 +2,7 @@
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { readFileSync } from 'node:fs';
 
+const appsScript = readFileSync(new URL('../../public/deriv-apps.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../../public/index.html', import.meta.url), 'utf8');
 export const tick = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -20,6 +21,7 @@ export function boot({ sb, fetchImpl, storage, url = 'https://pipforge.test/', c
       w.fetch = fetchImpl || (() => Promise.reject(new Error('offline')));
       w.addEventListener('error', (e) => errors.push('window.onerror: ' + e.message));
       if (storage) for (const [k, v] of Object.entries(storage)) w.localStorage.setItem(k, v);
+      w.eval(appsScript);
       if (config) w.PF_CONFIG = config;
       if (sb) w.PF_SB = sb;
     },

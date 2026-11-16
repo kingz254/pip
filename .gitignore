@@ -6,3 +6,12 @@ supabase/.temp/
 supabase/.branches/
 .DS_Store
 graphify-out/
+
+.next/
+dist/
+out/
+*.tsbuildinfo
+public/apps/
+public/vendor/
+.next-build/
+coverage/

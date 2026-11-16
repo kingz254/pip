@@ -6,14 +6,27 @@
   "description": "Pipforge: build-your-own Deriv site platform (static front-end + Supabase backend)",
   "scripts": {
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "dev": "npx --yes serve public -l 5173",
-    "check:functions": "deno check --node-modules-dir=none supabase/functions/domain-check/index.ts supabase/functions/checkout/index.ts supabase/functions/mpesa-callback/index.ts"
+    "dev": "node --env-file-if-exists=.env scripts/server.mjs --dev",
+    "check:functions": "deno check --node-modules-dir=none supabase/functions/domain-check/index.ts supabase/functions/checkout/index.ts supabase/functions/mpesa-callback/index.ts",
+    "start": "node --env-file-if-exists=.env scripts/server.mjs",
+    "build": "node scripts/build-apps.mjs",
+    "check:apps": "npm run type-check --workspaces --if-present",
+    "postinstall": "node scripts/patch-smartcharts.mjs && node scripts/copy-smartcharts.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.15",
     "jsdom": "^24.1.3"
   },
   "engines": {
-    "node": ">=22.6"
+    "node": ">=22.12"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "overrides": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "undici": "7.30.1"
   }
 }

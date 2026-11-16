@@ -1,0 +1,11 @@
+import { cp, mkdir } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { dirname, basename, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const require=createRequire(import.meta.url);
+const source=resolve(dirname(require.resolve('@deriv-com/smartcharts-champion/package.json')),'dist');
+const target=resolve(root,'public/vendor/smartcharts');
+await mkdir(target,{recursive:true});
+await cp(source,target,{recursive:true,filter:path=>!['flutter_bootstrap.js','flutter_service_worker.js'].includes(basename(path))});
+console.log('Shared SmartCharts assets ready.');
