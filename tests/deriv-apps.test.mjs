@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {boot,tick} from './helpers/boot.mjs';
+
+test('embedded templates use the client glass surface instead of fixed theme panels',()=>{
+  const source=readFileSync(new URL('../public/deriv-apps.js',import.meta.url),'utf8');
+  assert.match(source,/--pf-client-glass/);
+  assert.match(source,/backdrop-filter:blur\(18px\)/);
+  assert.match(source,/html\[data-pf-theme\] \.bg-background/);
+  assert.match(source,/--primary:'\+accentRgb/);
+});
 
 test('client tabs mount the local templates and leave only one active app frame',async(t)=>{
   const {w,d,$,click,errors}=boot();t.after(()=>w.close());await tick(200);

@@ -87,3 +87,4 @@ export {
 export { restoreDerivSession } from './auth/session';
 export { useSessionAuth } from './react/useSessionAuth';
 export { getAccountCurrency } from './auth/storage';
+export * from './listen-for-client-site-theme';

@@ -11,10 +11,18 @@
     if (!doc.head) return;
     var style = doc.getElementById('pipforge-client-branding') || doc.createElement('style');
     var brand = getComputedStyle(site), font = brand.fontFamily, accent = brand.getPropertyValue('--a1').trim();
+    var hex = accent.match(/^#([\da-f]{3}|[\da-f]{6})$/i), accentRgb = '0 195 144';
+    if (hex) { var value = hex[1]; if (value.length === 3) value = value.replace(/./g, function (c) { return c + c; }); accentRgb = [0, 2, 4].map(function (i) { return parseInt(value.slice(i, i + 2), 16); }).join(' '); }
+    var glass = brand.getPropertyValue('--sb').trim() || 'rgba(127,127,127,.08)', edge = brand.getPropertyValue('--sl').trim() || 'rgba(127,127,127,.18)';
     var rgb = brand.color.match(/[\d.]+/g) || [], dark = rgb.length >= 3 && (Number(rgb[0]) + Number(rgb[1]) + Number(rgb[2])) / 3 > 145;
     var theme = dark ? 'dark' : 'light', name = site.querySelector('.s-name')?.textContent || 'Client site';
     doc.title = name;
     doc.documentElement.dataset.pfTheme = theme;
+    doc.documentElement.style.setProperty('--pf-client-ink', brand.color);
+    doc.documentElement.style.setProperty('--pf-client-muted', brand.getPropertyValue('--sm').trim());
+    doc.documentElement.style.setProperty('--pf-client-glass', glass);
+    doc.documentElement.style.setProperty('--pf-client-edge', edge);
+    doc.documentElement.style.setProperty('--pf-client-accent', accent);
     doc.documentElement.classList.toggle('dark', dark);
     if (!doc.__pfThemeObserver && doc.defaultView) {
       doc.__pfThemeObserver = new doc.defaultView.MutationObserver(function () {
@@ -23,7 +31,7 @@
       doc.__pfThemeObserver.observe(doc.documentElement, { attributes: true, attributeFilter: ['class'] });
     }
     style.id = 'pipforge-client-branding';
-    style.textContent = 'header,.app-header,.dc-tabs__list,footer{display:none!important}html,body,#root,.layout,.main-body,.main,.main__container,.dc-tabs__content{font-family:'+font+'!important;background:transparent!important;color:'+brand.color+'!important;min-height:100%!important}.layout{height:auto!important}:root{--brand-primary:'+accent+';--brand-red-coral:'+accent+';--primary:'+accent+';--a1:'+accent+';--font-family:'+font+'}';
+    style.textContent = 'header,.app-header,.dc-tabs__list,footer{display:none!important}html,body,#root,.layout,.main-body,.main,.main__container,.dc-tabs__content{font-family:'+font+'!important;background:transparent!important;color:var(--pf-client-ink)!important;min-height:100%!important}.layout{height:auto!important}html[data-pf-theme] .bg-background,html[data-pf-theme] .bg-card,html[data-pf-theme] .bg-muted,html[data-pf-theme] .bg-popover,html[data-pf-theme] .bg-secondary,html[data-pf-theme] .bg-accent,html[data-pf-theme] [class*="bg-background/"],html[data-pf-theme] [class*="bg-card/"]{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;border-color:var(--pf-client-edge)!important;backdrop-filter:blur(18px) saturate(135%)!important;-webkit-backdrop-filter:blur(18px) saturate(135%)!important}html[data-pf-theme] .text-foreground,html[data-pf-theme] .text-card-foreground,html[data-pf-theme] .text-popover-foreground{color:var(--pf-client-ink)!important}html[data-pf-theme] .text-muted-foreground{color:var(--pf-client-muted)!important}html[data-pf-theme] .cq-context,html[data-pf-theme] .ciq-chart-area,html[data-pf-theme] .ciq-chart,html[data-pf-theme] .cq-chart-title,html[data-pf-theme] .cq-symbol-select-btn,html[data-pf-theme] .cq-menu-btn,html[data-pf-theme] .sc-dialog,html[data-pf-theme] .sc-mcd{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;border-color:var(--pf-client-edge)!important;backdrop-filter:blur(18px) saturate(135%)!important;-webkit-backdrop-filter:blur(18px) saturate(135%)!important}:root{--brand-primary:'+accent+';--brand-red-coral:'+accent+';--primary:'+accentRgb+';--ring:'+accentRgb+';--a1:'+accent+';--font-family:'+font+'}';
     doc.head.appendChild(style);
     frame.contentWindow.postMessage({ type: 'PF_SITE_BRANDING', theme: theme, name: name, accent: accent, font: font }, window.location.origin);
     if (doc.body && !doc.__pfLoaderObserver && doc.defaultView) {
