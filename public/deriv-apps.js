@@ -25,6 +25,10 @@
     doc.documentElement.style.setProperty('--pf-client-edge', edge);
     doc.documentElement.style.setProperty('--pf-client-accent', accent);
     doc.documentElement.classList.toggle('dark', dark);
+    // An iframe gets an opaque (white) canvas when its document's color-scheme differs from the embedding
+    // element's. Bot-app never declares one, so it defaults to light while the client site is dark. Match both.
+    frame.style.colorScheme = theme;
+    doc.documentElement.style.colorScheme = theme;
     if (!doc.__pfThemeObserver && doc.defaultView) {
       doc.__pfThemeObserver = new doc.defaultView.MutationObserver(function () {
         doc.documentElement.classList.toggle('dark', doc.documentElement.dataset.pfTheme === 'dark');
