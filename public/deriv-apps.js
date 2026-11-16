@@ -15,7 +15,8 @@
     if (hex) { var value = hex[1]; if (value.length === 3) value = value.replace(/./g, function (c) { return c + c; }); accentRgb = [0, 2, 4].map(function (i) { return parseInt(value.slice(i, i + 2), 16); }).join(' '); }
     var glass = brand.getPropertyValue('--sb').trim() || 'rgba(127,127,127,.08)', edge = brand.getPropertyValue('--sl').trim() || 'rgba(127,127,127,.18)';
     var rgb = brand.color.match(/[\d.]+/g) || [], dark = rgb.length >= 3 && (Number(rgb[0]) + Number(rgb[1]) + Number(rgb[2])) / 3 > 145;
-    var theme = dark ? 'dark' : 'light', name = site.querySelector('.s-name')?.textContent || 'Client site';
+    var theme = site.dataset.clientTheme || (dark ? 'dark' : 'light'), name = site.querySelector('.s-name')?.textContent || 'Client site';
+    dark = theme === 'dark';
     doc.title = name;
     doc.documentElement.dataset.pfTheme = theme;
     doc.documentElement.dataset.pfTab = current;
@@ -79,6 +80,7 @@
     }
   },true);
   window.PipforgeApps = {
+    setTheme: function (site) { applyBranding(site); },
     show: function (tab, site) {
       var route = routes[tab];
       if (!route) { if (childObserver) childObserver.disconnect(); if (frame) frame.remove(); frame = null; current = ''; site.classList.remove('pf-template-active'); return false; }
