@@ -11,6 +11,12 @@ test('embedded templates use the client glass surface instead of fixed theme pan
   assert.match(source,/data-pf-theme="dark"\] \.flutter-chart\{mix-blend-mode:screen/);
   assert.match(source,/html\[data-pf-theme\] \.bg-background/);
   assert.match(source,/--primary:'\+accentRgb/);
+  assert.match(source,/body\.theme--light,body\.theme--dark\{--general-main-1:transparent/);
+  assert.match(source,/\.tutorials-wrapper,\.tutorials-mobile__guide\{background:var\(--pf-client-glass\)!important/);
+  assert.match(source,/main>div\[class\*="max-w-"\]\{width:100%!important;max-width:100%!important/);
+  const layout=readFileSync(new URL('../public/deriv-apps.css',import.meta.url),'utf8');
+  assert.match(layout,/\.pf-template-frame\{[^}]*height:100%;min-width:0;min-height:0/);
+  assert.doesNotMatch(layout,/min-height:720px|height:calc\(100dvh/);
 });
 
 test('client tabs mount the local templates and leave only one active app frame',async(t)=>{
