@@ -17,11 +17,12 @@ test('embedded templates use the client glass surface instead of fixed theme pan
   assert.match(source,/html\[data-pf-tab="home"\] \.bot-builder,html\[data-pf-tab="tut"\] \.bot-builder\{display:none!important/);
   assert.match(source,/html\[data-pf-tab="bld"\] \.theme--dark \.zelos-renderer\.zelos_renderer-theme \.blocklyMainBackground\{fill:transparent!important/);
   const layout=readFileSync(new URL('../public/deriv-apps.css',import.meta.url),'utf8');
+  assert.match(layout,/\.site\.pf-template-active\{background:transparent!important\}/);
   assert.match(layout,/\.pf-template-frame\{[^}]*height:100%;min-width:0;min-height:0/);
   assert.doesNotMatch(layout,/min-height:720px|height:calc\(100dvh/);
   const page=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
-  assert.match(page,/deriv-apps\.css\?v=client-preview-fit-4/);
-  assert.match(page,/deriv-apps\.js\?v=client-preview-fit-4/);
+  assert.match(page,/deriv-apps\.css\?v=client-preview-fit-5/);
+  assert.match(page,/deriv-apps\.js\?v=client-preview-fit-5/);
 });
 
 test('client tabs mount the local templates and leave only one active app frame',async(t)=>{
@@ -33,9 +34,11 @@ test('client tabs mount the local templates and leave only one active app frame'
     if(tab==='bld'){assert.equal($('site-loader').dataset.style,'pulse');assert.ok($('site-loader').classList.contains('on'));}
     const frames=d.querySelectorAll('.pf-template-frame');assert.equal(frames.length,1);
     assert.equal(frames[0].getAttribute('src'),path);assert.equal(frames[0].parentNode.dataset.pn,tab);
+    assert.ok($('site').classList.contains('pf-template-active'));
     assert.equal(w.__pfEmbeddedActive,true);
   }
   click(d.querySelector('#stabs [data-tab="aih"]'));
   assert.equal(d.querySelectorAll('.pf-template-frame').length,0);assert.equal(w.__pfEmbeddedActive,false);
+  assert.equal($('site').classList.contains('pf-template-active'),false);
   assert.deepEqual(errors,[]);
 });

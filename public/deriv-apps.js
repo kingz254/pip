@@ -77,9 +77,10 @@
   window.PipforgeApps = {
     show: function (tab, site) {
       var route = routes[tab];
-      if (!route) { if (childObserver) childObserver.disconnect(); if (frame) frame.remove(); frame = null; current = ''; return false; }
+      if (!route) { if (childObserver) childObserver.disconnect(); if (frame) frame.remove(); frame = null; current = ''; site.classList.remove('pf-template-active'); return false; }
       var panel = site.querySelector('[data-pn="' + tab + '"]');
       if (!panel) return false;
+      site.classList.add('pf-template-active');
       if (current === tab && frame && frame.parentNode === panel) { applyBranding(site); return true; }
       if (childObserver) childObserver.disconnect();
       if (frame) frame.remove();
