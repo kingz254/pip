@@ -7,6 +7,8 @@ test('embedded templates use the client glass surface instead of fixed theme pan
   const source=readFileSync(new URL('../public/deriv-apps.js',import.meta.url),'utf8');
   assert.match(source,/--pf-client-glass/);
   assert.match(source,/backdrop-filter:blur\(18px\)/);
+  assert.match(source,/data-pf-theme="light"\] \.flutter-chart\{mix-blend-mode:multiply/);
+  assert.match(source,/data-pf-theme="dark"\] \.flutter-chart\{mix-blend-mode:screen/);
   assert.match(source,/html\[data-pf-theme\] \.bg-background/);
   assert.match(source,/--primary:'\+accentRgb/);
 });
