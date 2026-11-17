@@ -82,13 +82,16 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   assert.equal(sb.calls.rpc.filter((c) => c[0] === 'create_order').length, 0, 'no order for a taken domain');
   input($('dn'), 'alphatrades'); await tick(1100); assert.ok($('dst').classList.contains('ok'));
 
+  // The customer buys the new domain directly, then returns to connect a domain they own.
+  click(d.querySelector('#dmm [data-v="own"]')); input($('dow'), 'alpha-trades.com');
+
   // Reserve -> server-priced order -> checkout page shows server totals
   click($('reserve')); await tick(1800);
   assert.equal(w.location.hash, '#checkout');
-  assert.equal(sb.db.orders.length, 1); assert.equal($('sTot').textContent, '$208');
+  assert.equal(sb.db.orders.length, 1); assert.equal($('sTot').textContent, '$210');
   // Show the configured TRC20 invoice, submit the transaction ID, then wait for admin verification.
   click($('pay')); await tick(20);
-  assert.equal($('crypto-amount').textContent, '208.00 USDT');
+  assert.equal($('crypto-amount').textContent, '210.00 USDT');
   assert.equal($('crypto-address').textContent, 'TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY');
   const txid = 'a'.repeat(64); input($('crypto-txid'), txid); click($('crypto-submit')); await tick(30);
   const submitted = sb.calls.rpc.find((c) => c[0] === 'submit_crypto_payment');
@@ -147,14 +150,14 @@ test('tenant mode: a client domain shows only the live site, with working social
   assert.equal($('site').dataset.bg, 'waves'); assert.equal($('site').dataset.h, 'dock');
   // Legacy header values are normalized, and workspace sections remain available.
   const tabs = [...d.querySelectorAll('#stabs .s-tab')].map((b) => b.dataset.tab);
-  for (const k of ['home', 'bld', 'ana', 'smt', 'aih', 'acc', 'man', 'blk', 'cht', 'cpy', 'frb', 'tut', 'mkp']) assert.ok(tabs.includes(k), k + ' shown');
+  for (const k of ['home', 'bld', 'ana', 'smt', 'aih', 'acc', 'man', 'blk', 'cht', 'cpy', 'frb', 'mkp']) assert.ok(tabs.includes(k), k + ' shown');
   // social links are not intercepted
   const a = d.querySelector('#sh a'); assert.match(a.href, /instagram\.com\/zedtrades/);
   const ev = new w.MouseEvent('click', { bubbles: true, cancelable: true }); a.dispatchEvent(ev);
   assert.equal(ev.defaultPrevented, false, 'link follows normally');
   // Tenant support routes visitors to the workspace guides.
   const help = d.querySelector('[data-fab="help"]'); const ev2 = new w.MouseEvent('click', { bubbles: true, cancelable: true }); help.dispatchEvent(ev2);
-  assert.equal(ev2.defaultPrevented, true); assert.match($('toast').textContent, /Tutorials tab/);
+  assert.equal(ev2.defaultPrevented, true); assert.match($('toast').textContent, /Workspace guides/);
   assert.equal(sb.db.sites.length, 1, 'tenant mode never writes');
   assert.deepEqual(errors, []);
 });

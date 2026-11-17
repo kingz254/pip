@@ -105,7 +105,7 @@
   },true);
   window.PipforgeApps = {
     setTheme: function (site) { applyBranding(site); },
-    setBlur: function (site) { var blur = getComputedStyle(site).getPropertyValue('--pf-client-blur').trim(); if (frame) frame.style.setProperty('--pf-client-blur', blur); if (frame && frame.contentDocument) frame.contentDocument.documentElement.style.setProperty('--pf-client-blur', blur); },
+    setBlur: function (site) { var blur = getComputedStyle(site).getPropertyValue('--pf-client-blur').trim(); if (frame) frame.style.setProperty('--pf-client-blur', blur); if (frame && frame.contentDocument && frame.contentDocument.documentElement) frame.contentDocument.documentElement.style.setProperty('--pf-client-blur', blur); },
     show: function (tab, site) {
       var route = routes[tab];
       if (!route) { if (childObserver) childObserver.disconnect(); if (frame) frame.remove(); frame = null; current = ''; site.classList.remove('pf-template-active'); return false; }

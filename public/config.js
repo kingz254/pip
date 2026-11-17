@@ -1,9 +1,7 @@
-// Copy your project values from Supabase: Project Settings > API.
-// The anon key is meant to be public (row level security protects the data). NEVER put the service_role key here.
-// Leave both empty to run the front-end in demo mode.
+// Supabase publishable keys are public; never put a secret or service_role key here.
 window.PF_CONFIG = {
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://gwdpwhotxeoiqaejbcnr.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_fp5swfyDJl8C8LRTj3MYmQ_nWr4j8Y8',
   DERIV_OAUTH_CLIENT_ID: '34UIHrhpdq0VwgvjwFvjp',
   CRYPTO_PAYMENT: {
     asset: 'USDT',
