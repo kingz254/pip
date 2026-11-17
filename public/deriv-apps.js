@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   var routes = { home: ['/apps/bot/#dashboard', 'Dashboard'], bld: ['/apps/bot/#bot_builder', 'Bot Builder'],
-    ana: ['/apps/digits/', 'Digit Analysis'], smt: ['/apps/digits/?mode=smart', 'Smart Trading'],
+    ana: ['/apps/digits/', 'Digit Analysis'],
     acc: ['/apps/accumulators/', 'Accumulators'], cht: ['/apps/rise-fall/', 'Charts'] };
   var frame = null, current = '', observer = null, childObserver = null, botRunning = false;
   var accounts = [], derivAuthenticated = false;
