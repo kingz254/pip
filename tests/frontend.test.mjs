@@ -23,7 +23,7 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
   for (const t of d.querySelectorAll('#tpls .tpl')) click(t);
   input($('name'), 'Alpha Trades'); assert.equal($('url').textContent, 'alphatrades.site');
   click(d.querySelector('#dmm [data-v="own"]')); input($('dow'), 'https://www.MyBrand.com/x');
-  assert.equal($('url').textContent, 'mybrand.com'); assert.match($('ren').textContent, /\$10/);
+  assert.equal($('url').textContent, 'mybrand.com'); assert.match($('p-pricing').textContent, /\$200/); assert.doesNotMatch($('p-pricing').textContent, /Domain, per year/i);
   assert.deepEqual(errors, []);
 });
 
@@ -65,9 +65,10 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   assert.equal(s.owner, USER.id); assert.equal(s.name, 'Alpha Trades'); assert.equal(s.template, 'gold'); assert.equal(s.background, 'radar');
   assert.equal(s.domain, 'alphatrades.site'); assert.equal(s.domain_mode, 'new'); assert.equal(s.markup, 1);
   assert.equal(s.status, 'draft', 'client never sets status');
-  input(d.querySelector('#socs input[data-k="ig"]'), 'alpha_trades'); input($('dm'), '2.5');
+  assert.equal($('dm'), null, 'markup is configured in Deriv, not Pipforge');
+  input(d.querySelector('#socs input[data-k="ig"]'), 'alpha_trades');
   await tick(1700);
-  assert.equal(JSON.stringify(s.social), JSON.stringify({ ig: 'alpha_trades' })); assert.equal(s.markup, 2.5);
+  assert.equal(JSON.stringify(s.social), JSON.stringify({ ig: 'alpha_trades' })); assert.equal(s.markup, 1);
   assert.equal(sb.db.sites.length, 1, 'updates, not a second insert');
 
   // Dashboard save validates and stores the Deriv details
@@ -82,6 +83,8 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   assert.ok($('dst').classList.contains('bad')); click($('reserve')); await tick(300);
   assert.equal(sb.calls.rpc.filter((c) => c[0] === 'create_order').length, 0, 'no order for a taken domain');
   input($('dn'), 'alphatrades'); await tick(1100); assert.ok($('dst').classList.contains('ok'));
+  assert.match(d.querySelector('#registrar-buy').href, /^https:\/\/www\.namecheap\.com\/domains\/registration\/results\.aspx\?domain=alphatrades\.site$/);
+  assert.match($('dsg').textContent, /return here/i);
 
   // The customer buys the new domain directly, then returns to connect a domain they own.
   click(d.querySelector('#dmm [data-v="own"]')); input($('dow'), 'alpha-trades.com');
@@ -89,10 +92,10 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   // Reserve -> server-priced order -> checkout page shows server totals
   click($('reserve')); await tick(1800);
   assert.equal(w.location.hash, '#checkout');
-  assert.equal(sb.db.orders.length, 1); assert.equal($('sTot').textContent, '$210');
+  assert.equal(sb.db.orders.length, 1); assert.equal($('sTot').textContent, '$200');
   // Show the configured TRC20 invoice, submit the transaction ID, then wait for admin verification.
   click($('pay')); await tick(20);
-  assert.equal($('crypto-amount').textContent, '210.00 USDT');
+  assert.equal($('crypto-amount').textContent, '200.00 USDT');
   assert.equal($('crypto-address').textContent, 'TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY');
   const txid = 'a'.repeat(64); input($('crypto-txid'), txid); click($('crypto-submit')); await tick(30);
   const submitted = sb.calls.rpc.find((c) => c[0] === 'submit_crypto_payment');
@@ -152,7 +155,8 @@ test('tenant mode: a client domain shows only the live site, with working social
   assert.equal($('site').dataset.bg, 'waves'); assert.equal($('site').dataset.h, 'dock');
   // Legacy header values are normalized, and workspace sections remain available.
   const tabs = [...d.querySelectorAll('#stabs .s-tab')].map((b) => b.dataset.tab);
-  for (const k of ['home', 'bld', 'ana', 'smt', 'aih', 'acc', 'man', 'blk', 'cht', 'cpy', 'frb', 'mkp']) assert.ok(tabs.includes(k), k + ' shown');
+  for (const k of ['home', 'bld', 'ana', 'smt', 'aih', 'acc', 'man', 'blk', 'cht', 'cpy', 'frb']) assert.ok(tabs.includes(k), k + ' shown');
+  assert.ok(!tabs.includes('mkp'), 'markup is configured in the customer’s Deriv app');
   // social links are not intercepted
   const a = d.querySelector('#sh a'); assert.match(a.href, /instagram\.com\/zedtrades/);
   const ev = new w.MouseEvent('click', { bubbles: true, cancelable: true }); a.dispatchEvent(ev);

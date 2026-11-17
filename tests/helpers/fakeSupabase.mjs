@@ -39,7 +39,8 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
     },
     create_order({ p_site }) {
       const s = db.sites.find((x) => x.id === p_site); if (!s) return { error: { message: 'site not found' } };
-      const dom = s.domain_mode === 'new' ? (s.domain.endsWith('.com') ? 15 : 8) : 0, conn = s.domain_mode === 'own' ? 10 : 0;
+      if (s.domain_mode !== 'own') return { error: { message: 'buy the domain directly from your registrar first' } };
+      const dom = 0, conn = 0;
       db.orders.filter((o) => o.site_id === s.id && o.status === 'pending').forEach((o) => (o.status = 'cancelled'));
       const o = { id: uid(), owner: s.owner, site_id: s.id, domain: s.domain, domain_mode: s.domain_mode, setup_usd: 200, domain_usd: dom, connection_usd: conn, total_usd: 200 + dom + conn, status: 'pending' };
       db.orders.push(o); s.status = 'pending_payment'; return { data: o, error: null };

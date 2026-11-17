@@ -8,6 +8,8 @@ import { PGlite } from '@electric-sql/pglite';
 const migration = readFileSync(new URL('../supabase/migrations/20261107000000_init.sql', import.meta.url), 'utf8');
 const oauthMigration = readFileSync(new URL('../supabase/migrations/20261116153130_deriv_oauth_sessions.sql', import.meta.url), 'utf8');
 const adminMigration = readFileSync(new URL('../supabase/migrations/20261117120000_client_owned_domains_admin_visits.sql', import.meta.url), 'utf8');
+const directDomainMigration = readFileSync(new URL('../supabase/migrations/20261117210251_client_buys_domains_directly.sql', import.meta.url), 'utf8');
+const setupOnlyMigration = readFileSync(new URL('../supabase/migrations/20261117223423_setup_fee_only.sql', import.meta.url), 'utf8');
 
 // Minimal stand-in for Supabase's auth schema + roles.
 const supabaseStub = `
@@ -27,6 +29,8 @@ const db = new PGlite();
 await db.exec(supabaseStub);
 await db.exec(migration);
 await db.exec(adminMigration);
+await db.exec(directDomainMigration);
+await db.exec(setupOnlyMigration);
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
@@ -70,6 +74,8 @@ test('complete_profile validates name, phone and consent', async () => {
 test('pricing is readable by everyone; only service role may change it', async () => {
   const r = await as('anon', null, `select usd from public.pricing where key='setup'`);
   assert.equal(Number(r.rows[0].usd), 200);
+  const connection = await as('anon', null, `select usd from public.pricing where key='connection'`);
+  assert.equal(Number(connection.rows[0].usd), 0);
   denied(await as('authenticated', A, `update public.pricing set usd=1 where key='setup'`), 'client price change');
   denied(await as('anon', null, `insert into public.tld_prices(tld,usd) values ('.free',0)`), 'client tld insert');
 });
@@ -96,11 +102,13 @@ test('sites: validation, isolation and protected columns', async () => {
   ok(await as('authenticated', A, `update public.sites set template='gold', background='radar', markup=2.5, social='{"ig":"alpha"}', menu='{"ana":false}' where owner='${A}'`), 'valid update');
 });
 
-test('create_order prices on the server', async () => {
+test('create_order charges the $200 setup fee after the client buys their domain', async () => {
   const sid = (await db.query(`select id from public.sites where owner='${A}'`)).rows[0].id;
+  denied(await as('authenticated', A, 'select * from public.create_order($1)', [sid]), 'domain must be bought directly by client');
+  await db.exec(`update public.sites set domain_mode='own' where id='${sid}'`);
   const o = await as('authenticated', A, 'select * from public.create_order($1)', [sid]);
   ok(o, 'order'); const row = o.rows[0];
-  assert.equal(Number(row.setup_usd), 200); assert.equal(Number(row.domain_usd), 15); assert.equal(Number(row.total_usd), 215);
+  assert.equal(Number(row.setup_usd), 200); assert.equal(Number(row.domain_usd), 0); assert.equal(Number(row.connection_usd), 0); assert.equal(Number(row.total_usd), 200);
   assert.equal((await db.query(`select status from public.sites where owner='${A}'`)).rows[0].status, 'pending_payment');
   denied(await as('authenticated', A, `insert into public.orders(owner,site_id,domain,domain_mode,setup_usd,total_usd) values ('${A}','${sid}','alpha.com','new',1,1)`), 'client inserts order');
   denied(await as('authenticated', B, 'select * from public.create_order($1)', [sid]), "order another person's site");
@@ -111,11 +119,11 @@ test('create_order prices on the server', async () => {
   assert.equal((await as('authenticated', B, 'select id from public.orders')).rows.length, 0, 'B sees none of As orders');
 });
 
-test('own-domain orders charge the connection fee, not a domain fee', async () => {
+test('own-domain orders charge only the setup fee', async () => {
   await db.exec(`update public.sites set domain_mode='own', domain='mybrand.com' where owner='${B}'`);
   const sid = (await db.query(`select id from public.sites where owner='${B}'`)).rows[0].id;
   const o = await as('authenticated', B, 'select * from public.create_order($1)', [sid]);
-  ok(o, 'own order'); assert.equal(Number(o.rows[0].connection_usd), 10); assert.equal(Number(o.rows[0].domain_usd), 0); assert.equal(Number(o.rows[0].total_usd), 210);
+  ok(o, 'own order'); assert.equal(Number(o.rows[0].connection_usd), 0); assert.equal(Number(o.rows[0].domain_usd), 0); assert.equal(Number(o.rows[0].total_usd), 200);
 });
 
 test('unsupported endings and domain clashes are refused', async () => {
@@ -123,7 +131,7 @@ test('unsupported endings and domain clashes are refused', async () => {
   await db.exec(`update public.sites set status='draft' where owner='${B}'`);
   await db.exec(`update public.sites set domain_mode='new', domain='beta.zzz' where owner='${B}'`);
   denied(await as('authenticated', B, 'select * from public.create_order($1)', [sid]), 'unsupported ending');
-  await db.exec(`update public.sites set domain='alpha.com' where owner='${B}'`);   // A already claimed alpha.com
+  await db.exec(`update public.sites set domain_mode='own', domain='alpha.com' where owner='${B}'`);   // A already claimed alpha.com
   const clash = await as('authenticated', B, 'select * from public.create_order($1)', [sid]);
   denied(clash, 'domain claimed by another client'); assert.match(clash.error, /already taken/);
   await db.exec(`update public.sites set domain='beta.net' where owner='${B}'`);
@@ -139,7 +147,7 @@ test('payment confirmation is service-role only, idempotent, and creates fulfilm
   const paid2 = (await db.query(`select * from public.mark_order_paid('${o}','mpesa','ws_1','QWE123')`)).rows[0];
   await db.exec('reset role');
   assert.equal(paid.status, 'paid'); assert.deepEqual(paid2.paid_at, paid.paid_at);
-  assert.equal((await db.query(`select count(*)::int n from public.fulfilment_tasks where order_id='${o}'`)).rows[0].n, 4, 'four tasks for a new domain');
+  assert.equal((await db.query(`select count(*)::int n from public.fulfilment_tasks where order_id='${o}'`)).rows[0].n, 3, 'three tasks for a client-owned domain');
   assert.equal((await db.query(`select status, receipt from public.payments where provider_ref='ws_1'`)).rows[0].status, 'succeeded');
   assert.equal((await db.query(`select status from public.sites where owner='${A}'`)).rows[0].status, 'paid');
 });
@@ -147,7 +155,7 @@ test('payment confirmation is service-role only, idempotent, and creates fulfilm
 test('crypto payment submission is owner-only and admin verification starts fulfilment', async () => {
   const C = '55555555-5555-5555-5555-555555555555';
   await db.exec(`insert into auth.users(id,email) values ('${C}','c@gmail.com')`);
-  ok(await as('authenticated', C, `insert into public.sites(owner,name,domain) values ('${C}','Gamma','gamma.com')`), 'insert client site');
+  ok(await as('authenticated', C, `insert into public.sites(owner,name,domain,domain_mode) values ('${C}','Gamma','gamma.com','own')`), 'insert client site');
   const sid = (await db.query(`select id from public.sites where owner='${C}'`)).rows[0].id;
   const order = await as('authenticated', C, 'select * from public.create_order($1)', [sid]); ok(order, 'create order');
   const id = order.rows[0].id, txid = 'a'.repeat(64);
@@ -159,7 +167,7 @@ test('crypto payment submission is owner-only and admin verification starts fulf
   denied(await as('authenticated', C, `select public.admin_confirm_crypto_payment('${id}','${txid}')`), 'client confirms payment');
   const paid = await as('authenticated', ADMIN, `select * from public.admin_confirm_crypto_payment('${id}','${txid}')`);
   ok(paid, 'admin confirms payment'); assert.equal(paid.rows[0].status, 'paid');
-  assert.equal((await db.query(`select count(*)::int n from public.fulfilment_tasks where order_id='${id}'`)).rows[0].n, 4);
+  assert.equal((await db.query(`select count(*)::int n from public.fulfilment_tasks where order_id='${id}'`)).rows[0].n, 3);
   assert.equal((await db.query(`select status from public.payments where order_id='${id}'`)).rows[0].status, 'succeeded');
 });
 
@@ -171,7 +179,7 @@ test('after payment the domain is locked for the client', async () => {
 test('fulfilment: only admins complete tasks; site goes live after the last one', async () => {
   const tasks = (await db.query(`select id from public.fulfilment_tasks where site_id=(select id from public.sites where owner='${A}') order by task`)).rows.map(r => r.id);
   denied(await as('authenticated', A, 'select public.admin_complete_task($1)', [tasks[0]]), 'client completes task');
-  assert.equal((await as('authenticated', A, 'select id from public.fulfilment_tasks')).rows.length, 4, 'client can see their tasks');
+  assert.equal((await as('authenticated', A, 'select id from public.fulfilment_tasks')).rows.length, 3, 'client can see their tasks');
   assert.equal((await as('authenticated', B, 'select id from public.fulfilment_tasks')).rows.length, 0, 'other client cannot');
   for (const [i, t] of tasks.entries()) {
     ok(await as('authenticated', ADMIN, 'select public.admin_complete_task($1,$2)', [t, 'done by test']), 'admin task');
