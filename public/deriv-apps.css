@@ -1,7 +1,7 @@
 .site.pf-template-active{background:transparent!important}
 .site>.sc{min-height:0}
-.site[data-active-tab=home] .s-main,.site[data-active-tab=bld] .s-main,.site[data-active-tab=tut] .s-main,.site[data-active-tab=ana] .s-main,.site[data-active-tab=smt] .s-main,.site[data-active-tab=cht] .s-main,.site[data-active-tab=acc] .s-main{display:flex;flex:1;min-height:0;padding:0!important;max-width:none;overflow:hidden}
-.site[data-active-tab=home] .s-p.on,.site[data-active-tab=bld] .s-p.on,.site[data-active-tab=tut] .s-p.on,.site[data-active-tab=ana] .s-p.on,.site[data-active-tab=smt] .s-p.on,.site[data-active-tab=cht] .s-p.on,.site[data-active-tab=acc] .s-p.on{display:flex;flex:1;min-width:0;min-height:0;overflow:hidden}
+.site[data-active-tab=home] .s-main,.site[data-active-tab=bld] .s-main,.site[data-active-tab=ana] .s-main,.site[data-active-tab=smt] .s-main,.site[data-active-tab=cht] .s-main,.site[data-active-tab=acc] .s-main{display:flex;flex:1;min-height:0;padding:0!important;max-width:none;overflow:hidden}
+.site[data-active-tab=home] .s-p.on,.site[data-active-tab=bld] .s-p.on,.site[data-active-tab=ana] .s-p.on,.site[data-active-tab=smt] .s-p.on,.site[data-active-tab=cht] .s-p.on,.site[data-active-tab=acc] .s-p.on{display:flex;flex:1;min-width:0;min-height:0;overflow:hidden}
 .pf-template-panel{position:relative!important;display:flex;flex:1;min-width:0;min-height:0;height:100%;padding:0!important;overflow:hidden;background:transparent!important;-webkit-backdrop-filter:blur(var(--pf-client-blur,18px)) saturate(145%);backdrop-filter:blur(var(--pf-client-blur,18px)) saturate(145%)}
 .pf-template-panel:not(.on){display:none!important}
 .pf-template-panel> :not(.pf-template-frame){display:none!important}
