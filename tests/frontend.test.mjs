@@ -22,7 +22,7 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
   for (const b of d.querySelectorAll('#bgs .chip')) click(b);
   for (const t of d.querySelectorAll('#tpls .tpl')) click(t);
   input($('name'), 'Alpha Trades'); assert.equal($('url').textContent, 'alphatrades.site');
-  click(d.querySelector('#dmm [data-v="own"]')); input($('dow'), 'https://www.MyBrand.com/x');
+  click(d.querySelector('#dmm button')); input($('dow'), 'https://www.MyBrand.com/x');
   assert.equal($('url').textContent, 'mybrand.com'); assert.match($('p-pricing').textContent, /\$200/); assert.doesNotMatch($('p-pricing').textContent, /Domain, per year/i);
   assert.deepEqual(errors, []);
 });
@@ -39,7 +39,7 @@ test('demo mode: social links reject unsafe values', async (t) => {
 });
 
 test('backend mode: sign in, profile, autosave, domain check, order, USDT payment review, status', async (t) => {
-  const sb = fakeSupabase({ domainStatus: (dm) => dm === 'taken.site' ? 'taken' : dm.endsWith('.co.ke') ? 'manual' : 'free' });
+  const sb = fakeSupabase({ domainStatus: (dm) => dm === 'taken.site' ? 'taken' : dm === 'uncertain.site' ? 'unknown' : dm.endsWith('.co.ke') ? 'manual' : 'free' });
   const { w, d, $, click, input, errors } = boot({ sb }); t.after(() => w.close());
   await tick(300);
   assert.equal(w.location.hash, '#landing');
@@ -79,15 +79,21 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
 
   // Domain availability: taken blocks, free proceeds
   w.location.hash = '#home'; await tick(30);
-  input($('dn'), 'taken'); await tick(1100);
+  assert.equal($('dchk').textContent, 'Check availability');
+  input($('dn'), 'taken'); click($('dchk')); await tick(1100);
   assert.ok($('dst').classList.contains('bad')); click($('reserve')); await tick(300);
   assert.equal(sb.calls.rpc.filter((c) => c[0] === 'create_order').length, 0, 'no order for a taken domain');
-  input($('dn'), 'alphatrades'); await tick(1100); assert.ok($('dst').classList.contains('ok'));
+  input($('dn'), 'alphatrades'); click($('dchk')); await tick(1100); assert.ok($('dst').classList.contains('ok'));
   assert.match(d.querySelector('#registrar-buy').href, /^https:\/\/www\.namecheap\.com\/domains\/registration\/results\.aspx\?domain=alphatrades\.site$/);
-  assert.match($('dsg').textContent, /return here/i);
+  assert.equal(d.querySelector('#registrar-buy').textContent, 'Buy now');
+  assert.equal($('dchk'), null, 'availability action becomes the purchase action after a free result');
+  assert.match($('dsg').textContent, /return and enter/i);
+  input($('dn'), 'uncertain'); click($('dchk')); await tick(1100);
+  assert.match($('dst').textContent, /could not verify/i); assert.equal($('dchk').textContent, 'Check availability'); assert.equal($('registrar-buy'), null);
+  input($('dn'), 'alphatrades'); click($('dchk')); await tick(1100);
 
   // The customer buys the new domain directly, then returns to connect a domain they own.
-  click(d.querySelector('#dmm [data-v="own"]')); input($('dow'), 'alpha-trades.com');
+  click(d.querySelector('#dmm button')); input($('dow'), 'alpha-trades.com');
 
   // Reserve -> server-priced order -> checkout page shows server totals
   click($('reserve')); await tick(1800);

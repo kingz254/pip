@@ -1377,26 +1377,26 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   }
   function sugg(){var d=dom(),nm=d.slice(0,d.length-st.e.length),box=$("dsg");box.innerHTML="";
     EX.filter(function(e){return e[0]!==st.e}).slice(0,8).forEach(function(e){rdap(nm+e[0]).then(function(s){if(s==="free"&&box.children.length<4&&dom()===d){var b=document.createElement("button");b.className="chip";b.textContent=nm+e[0];b.dataset.sg=e[0];box.appendChild(b)}})})}
+  function setDomainAction(available,d){$("domain-action").innerHTML=available?'<a class="btn" id="registrar-buy" target="_blank" rel="noopener noreferrer">Buy now</a>':'<button class="btn" id="dchk" type="button">Check availability</button>';if(available){$("registrar-buy").href="https://www.namecheap.com/domains/registration/results.aspx?domain="+encodeURIComponent(d)}}
   function show(d,s){if(d!==dom())return s;
-    if(s==="taken"){dstat("bad",d+" is already registered. Pick another name or ending.");sugg()}
+    if(s==="taken"){setDomainAction(false);dstat("bad",d+" is already registered. Pick another name or ending.");sugg()}
     else if(s==="free"){
       dstat("ok",d+" looks available. Availability is not a reservation; the registrar confirms it at checkout.");
-      $("dsg").innerHTML='<a class="btn" id="registrar-buy" target="_blank" rel="noopener noreferrer">Continue to Namecheap</a><p class="mini">Namecheap handles the domain purchase and renewal. After purchase, return here, choose “I already own a domain,” and enter it to continue Pipforge setup.</p>';
-      $("registrar-buy").href="https://www.namecheap.com/domains/registration/results.aspx?domain="+encodeURIComponent(d);
+      setDomainAction(true,d);$("dsg").innerHTML='<span class="mini">Namecheap will open with '+d+'. Buy it there, then return and enter the domain you own.</span>';
     }
-    else{dstat("neu","We could not verify availability. Try again shortly. The registrar makes the final availability decision at checkout.");$("dsg").innerHTML=""}
+    else{setDomainAction(false);dstat("neu",s==="manual"?"This domain ending cannot be checked automatically. Check it on Namecheap before buying.":"We could not verify availability. Try again shortly. The registrar makes the final availability decision at checkout.");$("dsg").innerHTML=""}
     return s}
-  function chk(){if(st.dm==="own")return Promise.resolve("own");var d=dom();if(dcache[d])return Promise.resolve(show(d,dcache[d]));
-    dstat("neu","Checking "+d+"\u2026");return rdap(d).then(function(s){dcache[d]=s;return show(d,s)})}
-  function dReset(){dstat("","");$("dsg").innerHTML="";clearTimeout(dtimer);if(st.dm==="new")dtimer=setTimeout(chk,800)}
+  function chk(){if(st.dm==="own")return Promise.resolve("own");var d=dom();if(dcache[d]&&dcache[d]!=="unknown")return Promise.resolve(show(d,dcache[d]));
+    dstat("neu","Checking "+d+"\u2026");return rdap(d).then(function(s){if(s!=="unknown")dcache[d]=s;return show(d,s)})}
+  function dReset(){dstat("","");$("dsg").innerHTML="";clearTimeout(dtimer);if(st.dm!=="own")setDomainAction(false)}
   var sp=cfg.querySelector('[data-p="site"]');
-    sp.insertAdjacentHTML("beforeend",'<div><span class="lab">Domain</span>'+cp("dmm",[["new","Find a domain to buy"],["own","I already own a domain"]],"new")+'</div><div id="dnew"><div><label for="dn">Domain name (without the ending)</label><input class="field" id="dn" maxlength="40" autocomplete="off"></div><div><button class="btn" id="dchk" style="padding:10px 18px;font-size:14px">Check availability</button></div><div class="dst" id="dst" role="status" aria-live="polite"></div><div class="row" id="dsg"></div><div class="dnote"><b>Buy the domain directly from the registrar.</b> You handle renewals directly and add DNS records we provide; never share your registrar password.</div></div><div id="down" style="display:none"><div><label for="dow">Your domain</label><input class="field" id="dow" placeholder="mybrand.com" autocomplete="off"></div><div class="dnote"><b>You own and renew this domain.</b> After checkout, we give you the DNS records to add at your registrar. Never share your registrar password.</div></div>');
+    sp.insertAdjacentHTML("beforeend",'<div><span class="lab">Domain</span><div class="row" id="dmm"><button class="chip" type="button" aria-pressed="false">I already own a domain</button></div></div><div id="dnew"><div><label for="dn">Domain name (without the ending)</label><input class="field" id="dn" maxlength="40" autocomplete="off"></div><div id="domain-action"><button class="btn" id="dchk" type="button">Check availability</button></div><div class="dst" id="dst" role="status" aria-live="polite"></div><div class="row" id="dsg"></div><div class="dnote"><b>Buy the domain directly from Namecheap.</b> You own it and handle renewals. We give you DNS records to connect it.</div></div><div id="down" style="display:none"><div><label for="dow">Your domain</label><input class="field" id="dow" placeholder="mybrand.com" autocomplete="off"></div><div class="dnote"><b>You own and renew this domain.</b> After checkout, we give you the DNS records to add at your registrar. Never share your registrar password.</div></div>');
   $("dn").parentNode.insertAdjacentElement("afterend",$("exts").parentNode);
-  pick("dmm",function(b){st.dm=b.dataset.v;dReset()});
+  $("dmm").addEventListener("click",function(){st.dm=st.dm==="own"?"new":"own";var b=this.querySelector("button");b.textContent=st.dm==="own"?"Check availability instead":"I already own a domain";b.setAttribute("aria-pressed",String(st.dm==="own"));dReset();render()});
   $("dn").addEventListener("input",function(){st.dn=this.value;dReset();render()});
   $("exts").addEventListener("click",dReset);
   $("dow").addEventListener("input",function(){st.own=this.value;render()});
-  $("dchk").addEventListener("click",function(){chk()});
+  $("domain-action").addEventListener("click",function(e){if(e.target.closest("#dchk"))chk()});
   $("dsg").addEventListener("click",function(e){var b=e.target.closest("[data-sg]");if(!b)return;var c=document.querySelector('#exts [data-e="'+b.dataset.sg+'"]');if(c)c.click()});
   function fillCk(){$("sD").textContent=dom();$("sTot").textContent="$200";$("dd").textContent=dom();
     $("ckn").innerHTML=st.dm==="own"?"<b>You own and renew your domain.</b> We give you DNS records to add at your registrar.":"<b>The domain is registered in your name.</b> You handle future renewals directly with the registrar. We give you DNS records to add."}
@@ -1647,7 +1647,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     rdap=function(d){return SB.functions.invoke("domain-check",{body:{domain:d}}).then(function(r){return r.error||!r.data?"unknown":r.data.status},function(){return "unknown"})};
     var show0=show;show=function(d,s){var r=show0(d,s);if(d===dom()){
       if(s==="unknown")dstat("neu","We could not verify this name right now. Check again in a moment.");
-      else if(s==="manual")dstat("neu","This ending cannot be checked automatically. We confirm it with the registry after you pay and refund you in full if it is taken.")}return r};
+      else if(s==="manual")dstat("neu","This ending cannot be checked automatically. Check it on Namecheap before buying.")}return r};
     var gate0=gate;gate=function(fn){gate0(function(){placeOrder().then(function(ok){if(ok)fn()})})};
     swapBtn("pay").addEventListener("click",function(){gate(startPayment)});
     $("pay").insertAdjacentHTML("afterend",'<div class="dst" id="pst" role="status" aria-live="polite"></div>');
