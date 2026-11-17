@@ -4,7 +4,7 @@
     ana: ['/apps/digits/', 'Digit Analysis'], smt: ['/apps/digits/?mode=smart', 'Smart Trading'],
     acc: ['/apps/accumulators/', 'Accumulators'], cht: ['/apps/rise-fall/', 'Charts'], tut: ['/apps/bot/#tutorial', 'Tutorials'] };
   var frame = null, current = '', observer = null, childObserver = null, botRunning = false;
-  var accounts = [];
+  var accounts = [], derivAuthenticated = false;
   function applyBranding(site) {
     if (!frame || !frame.contentDocument || !site) return;
     var doc = frame.contentDocument;
@@ -53,17 +53,25 @@
     }
   }
   function renderAccount(mode) {
-    var id=localStorage.getItem('active_loginid');
-    var selected=accounts.find(function(a){return mode?a.account_type===mode:a.account_id===id;}) || (!mode&&accounts.find(function(a){return a.account_type==='demo';}));
+    var id=localStorage.getItem('active_loginid'), savedMode=localStorage.getItem('pf-client-account-mode')||'demo';
+    var wanted=mode||savedMode, selected=accounts.find(function(a){return a.account_type===wanted&&a.status==='active';});
+    if(!mode&&!selected)selected=accounts.find(function(a){return a.account_id===id&&a.status==='active';})||accounts.find(function(a){return a.status==='active';});
     var balance=document.getElementById('account-balance-value'),label=document.getElementById('account-type-label');
+    var site=document.getElementById('site');
+    if(site)site.dataset.derivAuthenticated=String(derivAuthenticated);
     if(selected){localStorage.setItem('active_loginid',selected.account_id);localStorage.setItem('account_type',selected.account_type);}
-    if(balance)balance.textContent=selected?String(selected.balance)+' '+selected.currency:'—';
-    if(label)label.textContent=selected?selected.account_type.toUpperCase()+' ACCOUNT':'CONNECT YOUR ACCOUNT';
-    document.querySelectorAll('#site [data-account-mode]').forEach(function(button){button.setAttribute('aria-pressed',String(!!selected&&button.dataset.accountMode===selected.account_type));});
+    if(balance){try{balance.textContent=selected?new Intl.NumberFormat(undefined,{style:'currency',currency:selected.currency}).format(Number(selected.balance)):'Balance unavailable';}catch(ignore){balance.textContent=selected?String(selected.balance)+' '+selected.currency:'Balance unavailable';}}
+    if(label)label.textContent=selected?selected.account_type.toUpperCase()+' ACCOUNT':wanted.toUpperCase()+' ACCOUNT';
+    document.querySelectorAll('#site [data-account-mode]').forEach(function(button){button.setAttribute('aria-pressed',String(!!selected&&button.dataset.accountMode===selected.account_type));button.disabled=!accounts.some(function(a){return a.account_type===button.dataset.accountMode&&a.status==='active';});});
   }
   async function refreshAccount() {
-    try { var response=await fetch('/api/deriv/accounts',{cache:'no-store'}); accounts=response.ok?(await response.json()).data:[];renderAccount(); }
-    catch(ignore){renderAccount();}
+    try {
+      var session=await fetch('/api/deriv/session',{cache:'no-store'}), state=session.ok?await session.json():{authenticated:false};
+      derivAuthenticated=state.authenticated===true;
+      if(derivAuthenticated){var response=await fetch('/api/deriv/accounts',{cache:'no-store'});if(response.status===401)derivAuthenticated=false;accounts=response.ok?(await response.json()).data||[]:[];}
+      else accounts=[];
+      renderAccount();
+    } catch(ignore){renderAccount();}
   }
   window.addEventListener('DOMContentLoaded',refreshAccount);
   window.addEventListener('message', function(event){
@@ -73,7 +81,7 @@
     var login=event.target.closest('#site #account-connect,#site .s-acts .s-pill,#site .s-acts .s-sign');
     if(login){event.preventDefault();event.stopImmediatePropagation();var url=new URL('/api/deriv/login',window.location.origin);url.searchParams.set('return',window.location.href);if(login.classList.contains('s-sign'))url.searchParams.set('signup','1');window.location.assign(url.href);return;}
     var account=event.target.closest('#site [data-account-mode]');
-    if(account){event.preventDefault();event.stopImmediatePropagation();renderAccount(account.dataset.accountMode);if(frame)frame.src=frame.src;return;}
+    if(account){event.preventDefault();event.stopImmediatePropagation();try{localStorage.setItem('pf-client-account-mode',account.dataset.accountMode)}catch(ignore){}renderAccount(account.dataset.accountMode);if(frame)frame.src=frame.src;return;}
     var target=event.target.closest('#stabs [data-tab]');
     if(target && current==='bld' && target.dataset.tab!=='bld' && botRunning){
       if(!window.confirm('Leave Bot Builder and stop its strategy? Existing open contracts remain on your Deriv account.')){event.preventDefault();event.stopImmediatePropagation();}
