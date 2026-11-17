@@ -4,36 +4,106 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pipforge admin</title>
+<meta name="description" content="Private Pipforge payments and client handoff workspace.">
 <meta name="robots" content="noindex">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 <style>
-  :root{color-scheme:dark light;font-family:system-ui,sans-serif}
-  body{margin:0;padding:24px;background:#0e0e0e;color:#f4f4f6}
-  @media (prefers-color-scheme:light){body{background:#f4f5f7;color:#151717}}
-  h1{margin:0 0 16px;font-size:24px}
-  .card,.guide,.visits,.order-card{border:1px solid #8884;border-radius:14px;padding:16px;margin:0 0 14px;max-width:1040px}
-  .card h2,.guide h2,.visits h2,.order-card h2{margin:0 0 4px;font-size:18px}.muted{opacity:.7;font-size:14px}
-  .task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #8883;flex-wrap:wrap}
-  .task b{min-width:200px}.done{opacity:.55}
-  button{padding:8px 14px;border-radius:10px;border:0;background:#ff444f;color:#fff;font-weight:600;cursor:pointer}
-  input{padding:8px;border-radius:8px;border:1px solid #8886;background:transparent;color:inherit;min-width:180px}
+/* Hallmark · checked: 2026-11-18 · genre: modern-minimal · shape: app screen · theme: Coral · redesign: full · v2.0.0 */
+/* Before: functional admin checklist, but plain dark browser-default styling obscures payment and handoff priorities. */
+/* Built: the project · redesign: full · scope: app · nav: compact operations masthead · footer: none */
+:root{
+  color-scheme:light;
+  --paper:oklch(97% .006 55);--paper-raised:oklch(98.8% .0045 80);--paper-soft:oklch(94.5% .007 55);
+  --ink:oklch(21% .012 38);--ink-soft:oklch(29% .013 40);--muted:oklch(47% .013 45);
+  --rule:oklch(87% .009 55);--rule-strong:oklch(81% .011 55);--accent:oklch(54% .165 29);--accent-pale:oklch(92% .045 30);
+  --success:oklch(43% .11 145);--warning:oklch(42% .12 65);--focus:oklch(54% .17 30);--danger:oklch(48% .17 25);
+  --font-body:"General Sans",ui-sans-serif,system-ui,sans-serif;--font-figure:ui-monospace,SFMono-Regular,Consolas,monospace;
+  --radius:10px;--space-1:4px;--space-2:8px;--space-2b:12px;--space-3:16px;--space-4:24px;--space-5:32px;--space-6:40px;--space-7:48px;--content:1440px;
+  --shadow:0 2px 10px oklch(25% .02 45 / .07);--shadow-hover:0 4px 14px oklch(25% .02 45 / .09);
+}
+html,body{overflow-x:clip}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--font-body)}
+a{color:var(--ink-soft);text-underline-offset:3px}a:hover{color:var(--accent)}
+button,input{font:inherit}
+button{min-height:40px;padding:0 var(--space-3);border:1px solid var(--ink);border-radius:var(--radius);background:var(--ink);color:var(--paper-raised);font-weight:600;cursor:pointer;transition:transform 140ms ease,background-color 140ms ease}
+button:hover{background:var(--ink-soft)}button:active{transform:translateY(1px)}button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+input{min-width:min(220px,100%);min-height:40px;padding:var(--space-2) var(--space-2b);border:1px solid var(--rule-strong);border-radius:7px;background:var(--paper-raised);color:var(--ink);outline:2px solid transparent;outline-offset:-3px}
+input:focus-visible{outline-color:var(--focus)}input::placeholder{color:var(--muted)}
+.shell{width:min(100% - 40px,var(--content));margin-inline:auto}
+.masthead{border-bottom:1px solid var(--rule);background:var(--paper-raised)}
+.masthead-inner{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:var(--space-2b);font-size:18px;font-weight:600;letter-spacing:-.02em}
+.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--ink);color:var(--paper-raised);font-size:14px;font-weight:600}
+.access{display:flex;align-items:center;gap:var(--space-2b);color:var(--muted);font-size:14px}
+.access::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--success)}
+.page{padding-block:var(--space-6) 64px}
+.page-heading{display:flex;align-items:end;justify-content:space-between;gap:var(--space-4);margin-bottom:28px}
+h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:600;overflow-wrap:break-word;min-width:0;text-wrap:balance}
+.page-heading p{margin:var(--space-2) 0 0;color:var(--muted);max-width:65ch}
+#auth{margin:0 0 var(--space-4)}#auth button{min-height:44px}
+#msg{min-height:24px;margin:0 0 var(--space-3);color:var(--muted);font-size:14px}
+#msg:not(:empty){padding:var(--space-2) var(--space-3);border-left:2px solid var(--rule-strong);background:var(--paper-soft)}
+#portal[hidden]{display:none}
+.overview{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:20px;align-items:start;margin-bottom:var(--space-4)}
+.panel{min-width:0;padding:var(--space-4) var(--space-5);border:1px solid var(--rule);border-radius:var(--radius);background:var(--paper-raised);box-shadow:var(--shadow)}
+.panel h2{margin:0 0 var(--space-2);font-size:19px;line-height:1.25;letter-spacing:-.02em;font-weight:600;text-wrap:balance}
+.panel>p{margin:0 0 var(--space-3)}
+.muted{color:var(--muted);font-size:14px}
+.guide{background:var(--paper-soft);box-shadow:none}
+.guide details{border-top:1px solid var(--rule-strong)}
+.guide summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:var(--space-2b);cursor:pointer;font-size:14px;font-weight:600;list-style:none}
+.guide summary::-webkit-details-marker{display:none}.guide summary::after{content:"+";font-size:18px;font-weight:400}.guide details[open] summary::after{content:"−"}
+.task{display:flex;align-items:center;gap:var(--space-2b);flex-wrap:wrap;padding:var(--space-2b) 0;border-top:1px solid var(--rule)}
+.task b{flex:0 0 190px;font-size:14px;font-weight:600}.task .muted{flex:1 1 300px;line-height:1.55}
+.guide .task{align-items:flex-start}.guide .task b{flex-basis:190px}.guide a{font-weight:500}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--space-3);margin:var(--space-5) 0 var(--space-2b)}
+.section-head h2{margin:0;font-size:21px;font-weight:600;letter-spacing:-.025em;text-wrap:balance}
+.section-head p{margin:0}
+.queue{border-top:1px solid var(--rule-strong)}
+.order-card,.card{padding:20px 0;border-bottom:1px solid var(--rule)}
+.order-card h2,.card h2{margin:0 0 var(--space-1);font-size:17px;font-weight:600;overflow-wrap:anywhere}
+.order-card p,.card .muted{margin:0 0 var(--space-2b)}
+.order-card>a{display:inline-block;margin:0 var(--space-2b) var(--space-2b) 0}
+.order-card button{display:block}
+.card{padding-block:20px}
+.card>.muted{line-height:1.6}
+.done{color:var(--muted)}
+#visits,#orders,#list{min-width:0}
+[hidden]{display:none!important}
+@media(max-width:760px){
+ .shell{width:min(100% - 28px,var(--content))}.masthead-inner{min-height:64px}.page{padding-block:var(--space-4) var(--space-7)}
+ .page-heading{align-items:flex-start;flex-direction:column;margin-bottom:var(--space-4)}h1{font-size:28px}
+ .overview{grid-template-columns:1fr;gap:var(--space-3)}.panel{padding:var(--space-3)}.section-head{align-items:flex-start;flex-direction:column;margin-top:28px}
+ .task{align-items:flex-start}.task b{flex:1 1 100%}.task .muted{flex-basis:100%}
+}
+@media(hover:hover){.panel{transition:box-shadow 140ms ease}.panel:hover{box-shadow:var(--shadow-hover)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 <script src="config.js"></script>
 </head>
 <body>
-<h1>Pipforge admin</h1>
-<div id="auth"></div>
-<p id="msg" class="muted" role="status"></p>
-<div id="portal" hidden>
-  <section class="visits"><h2>Site visits</h2><p class="muted">Page views in the last 30 days. This counts page loads and does not identify visitors.</p><div id="visits" class="muted">Loading visits…</div></section>
-  <section class="guide"><h2>Simple handoff guide</h2>
-    <div class="task"><b>1. Confirm payment</b><span class="muted">Open the TRONSCAN link. Check it is confirmed, successful, USDT (TRC20), for the full order amount, and sent to TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY. A screenshot alone is not proof. Never ask for a wallet recovery phrase.</span></div>
-    <div class="task"><b>2. Connect the customer’s domain</b><span class="muted">The customer owns the domain, pays its renewals, and adds the DNS records we provide. Never ask them for their registrar password.</span></div>
-    <div class="task"><b>3. Set up Deriv login</b><span class="muted">The customer registers their own Deriv app, chooses their markup there, and gives Pipforge the app ID. Set the callback to https://their-domain/api/deriv/callback. <a href="https://developers.deriv.com/dashboard/" target="_blank" rel="noreferrer">Open Deriv app dashboard</a>.</span></div>
-    <div class="task"><b>4. Check and hand over</b><span class="muted">Wait for DNS and SSL to become ready, open the live domain, test Deriv login, then mark the remaining setup steps done below.</span></div>
-  </section>
-  <section><h2>Payments waiting for confirmation</h2><p class="muted">Check the transaction on its blockchain before confirming it here.</p><div id="orders"></div></section>
-</div>
-<div id="list"></div>
+<header class="masthead"><div class="shell masthead-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">P</span><span>Pipforge</span></div><div class="access">Private admin workspace</div></div></header>
+<main class="shell page">
+  <div class="page-heading"><div><h1>Admin workspace</h1><p>Review incoming payments and move each client site through handoff.</p></div></div>
+  <div id="auth"></div>
+  <p id="msg" role="status" aria-live="polite"></p>
+  <div id="portal" hidden>
+    <div class="overview">
+      <section class="panel visits"><h2>Site visits</h2><p class="muted">Page views in the last 30 days. This counts page loads and does not identify visitors.</p><div id="visits" class="muted">Loading visits…</div></section>
+      <section class="panel guide"><h2>Client handoff</h2><p class="muted">Follow these checks before a client launches.</p>
+        <details><summary>Confirm payment</summary><div class="task"><span class="muted">Open the TRONSCAN link. Check it is confirmed, successful, USDT (TRC20), for the full order amount, and sent to TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY. A screenshot alone is not proof. Never ask for a wallet recovery phrase.</span></div></details>
+        <details><summary>Connect the customer’s domain</summary><div class="task"><span class="muted">The customer owns the domain, pays its renewals, and adds the DNS records we provide. Never ask them for their registrar password.</span></div></details>
+        <details><summary>Set up Deriv login</summary><div class="task"><span class="muted">The customer registers their own Deriv app, chooses their markup there, and gives Pipforge the app ID. Set the callback to https://their-domain/api/deriv/callback. <a href="https://developers.deriv.com/dashboard/" target="_blank" rel="noreferrer">Open Deriv app dashboard</a>.</span></div></details>
+        <details><summary>Check and hand over</summary><div class="task"><span class="muted">Wait for DNS and SSL to become ready, open the live domain, test Deriv login, then mark the remaining setup steps done below.</span></div></details>
+      </section>
+    </div>
+    <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
+    <section><div class="section-head"><h2>Client site handoff</h2><p class="muted">Complete each setup step as it is verified.</p></div><div id="list" class="queue"></div></section>
+  </div>
+</main>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); }, SB = null;
