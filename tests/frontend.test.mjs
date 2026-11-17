@@ -30,6 +30,7 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
 test('demo mode: social links reject unsafe values', async (t) => {
   const { w, d, $, click, input, errors } = boot(); t.after(() => w.close());
   await tick(200);
+  assert.equal(d.querySelectorAll('#socs .soc-field svg').length, 10, 'every social input has its platform icon');
   click($('gsi')); input($('ge'), 'x@gmail.com'); click($('gct')); input($('gn'), 'Xx Test'); input($('gp'), '0700000001'); $('gc').checked = true; click($('gdo')); await tick(50);
   for (const k of ['ig', 'x', 'ml', 'wa', 'tg']) input(d.querySelector(`#socs input[data-k="${k}"]`), 'javascript:alert(1)');
   const hrefs = [...d.querySelectorAll('#sh a')].map((a) => a.getAttribute('href'));
@@ -145,6 +146,7 @@ test('tenant mode: a client domain shows only the live site, with working social
   t.after(() => w.close());
   await tick(500);
   assert.ok(w.document.documentElement.classList.contains('tenant'));
+  assert.ok(sb.calls.rpc.some(([name, args]) => name === 'record_public_site_visit' && args.p_domain === 'zedtrades.com'), 'live tenant page records a visit');
   assert.equal(d.body.lastElementChild === $('site') || $('site').parentNode === d.body, true, 'site is a direct child of body');
   assert.equal($('sname').textContent, 'Zed Trades'); assert.equal(d.title, 'Zed Trades');
   assert.equal($('site').dataset.bg, 'waves'); assert.equal($('site').dataset.h, 'dock');
@@ -175,7 +177,8 @@ test('tenant mode: unknown or unpublished domain shows a plain not-live message'
 test('app host and missing APP_HOSTS both keep the builder app', async (t) => {
   const a = boot({ sb: fakeSupabase(), url: 'https://app.pipforge.test/', config: { APP_HOSTS: ['app.pipforge.test'] } });
   const b = boot({ sb: fakeSupabase(), url: 'https://anything.vercel.app/', config: {} });
-  t.after(() => { a.w.close(); b.w.close(); });
+  const c = boot({ sb: fakeSupabase(), url: 'https://www.app.pipforge.test/', config: { APP_HOSTS: ['app.pipforge.test'] } });
+  t.after(() => { a.w.close(); b.w.close(); c.w.close(); });
   await tick(400);
-  for (const x of [a, b]) { assert.ok(!x.d.documentElement.classList.contains('tenant')); assert.equal(x.w.location.hash, '#landing'); }
+  for (const x of [a, b, c]) { assert.ok(!x.d.documentElement.classList.contains('tenant')); assert.equal(x.w.location.hash, '#landing'); }
 });

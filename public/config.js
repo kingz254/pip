@@ -1,5 +1,6 @@
 // Supabase publishable keys are public; never put a secret or service_role key here.
 window.PF_CONFIG = {
+  APP_HOSTS: ['pip-coral-seven.vercel.app', 'pip-kingz254.vercel.app'],
   SUPABASE_URL: 'https://gwdpwhotxeoiqaejbcnr.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_fp5swfyDJl8C8LRTj3MYmQ_nWr4j8Y8',
   DERIV_OAUTH_CLIENT_ID: '34UIHrhpdq0VwgvjwFvjp',

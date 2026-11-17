@@ -273,7 +273,7 @@ body{background:transparent}
 .b1{background:var(--a1)}.b2{background:var(--a2)}.b3{background:var(--a1);opacity:.85;margin-left:22px}
 .s-tag{position:absolute;right:10px;top:8px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--sl);color:var(--sm)}
 .s-bbn{font-size:12px;color:var(--sm);margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.cfg summary{padding:8px 0}#socs{display:grid;gap:8px;margin-top:8px}
+.cfg summary{padding:8px 0}#socs{display:grid;gap:8px;margin-top:8px}.soc-field{display:flex;align-items:center;gap:9px;min-width:0;padding:0 10px;border:1px solid var(--line);border-radius:12px;background:var(--glass)}.soc-field:focus-within{border-color:var(--red);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 18%,transparent)}.soc-field svg{width:18px;height:18px;flex:none;color:var(--muted);fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.soc-field input.field{width:100%;min-width:0;border:0;background:transparent;box-shadow:none;outline:0;padding-inline:0}
 .hero{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
 .hero>*,.cfg>*,.two>*,.cards>*{min-width:0}
 .cfg{grid-template-columns:minmax(0,1fr)}
@@ -1195,7 +1195,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   $("logo-generate").addEventListener("click",function(){var label=($("logo-mark").value||st.n||"NT").trim().slice(0,4).replace(/[&<>\"']/g,"");if(!label)label="NT";var color=$("logo-color").value||"#ff4d5d",svg='<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect width="256" height="256" rx="58" fill="'+color+'"/><text x="128" y="145" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-size="'+(label.length>2?82:112)+'" font-weight="700" fill="#fff">'+label+'</text></svg>';setLogo("data:image/svg+xml;base64,"+btoa(unescape(encodeURIComponent(svg))))});
   $("logo-remove").addEventListener("click",function(){setLogo("")});
   $("bgs").parentNode.insertAdjacentHTML("afterend",'<div><span class="lab">Header style</span>'+cp("hds",[["classic","Trader desk"],["split","Split brand"],["market","Market marquee"],["stacked","Stacked studio"],["editorial","Editorial masthead"],["signal","Signal terminal"],["edge","Edge-to-edge"],["aurora","Aurora glass"],["dock","Docked toolbar"],["slab","Gradient slab"],["rail","Market rail"],["focus","Focus masthead"],["ticker","Ticker banner"],["compact","Compact console"],["brand","Brand first"],["canvas","Open canvas"],["halo","Neon halo"],["corner","Corner cut"],["mono","Mono signal"],["social","Social showcase"]],"classic")+'</div><div><label for="ann">Announcement text (used by the announcement bar)</label><input class="field" id="ann" maxlength="60" value="Free bots, updated weekly"></div><div><span class="lab">Social icons</span>'+cp("shp",[["round","Round"],["square","Square"],["plain","Plain"]],"round")+'<div style="height:8px"></div>'+cp("spl",[["both","Header and footer"],["header","Header only"],["footer","Footer only"]],"both")+'<details><summary>Your social profiles</summary><div id="socs"></div></details></div>');
-  $("socs").innerHTML=PL.map(function(p){return '<input class="field" data-k="'+p[0]+'" aria-label="'+p[1]+'" placeholder="'+p[1]+': '+p[2]+'">'}).join("");
+  $("socs").innerHTML=PL.map(function(p){return '<label class="soc-field"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[p[0]]+'</svg><input class="field" data-k="'+p[0]+'" aria-label="'+p[1]+'" placeholder="'+p[1]+': '+p[2]+'"></label>'}).join("");
   pick("hds",function(b){st.h=b.dataset.v});pick("shp",function(b){st.sh=b.dataset.v});pick("spl",function(b){st.sp=b.dataset.v});
   $("ann").addEventListener("input",function(){st.ann=this.value;render()});$("ann").addEventListener("change",showPreviewAfterEdit);
   $("socs").addEventListener("input",function(e){var k=e.target.dataset.k;if(k){st.soc[k]=e.target.value;render()}});
@@ -1691,10 +1691,10 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   // ───── tenant mode: the same page, served on a client's own domain, shows only their live site ─────
   var COMING=[];   // all client-facing sections are available in the site navigation
   function tenantHost(){
-    var app=(window.PF_CONFIG&&window.PF_CONFIG.APP_HOSTS)||[],h=location.hostname.toLowerCase(),q=(new URLSearchParams(location.search).get("site")||"").toLowerCase();
+    var app=(window.PF_CONFIG&&window.PF_CONFIG.APP_HOSTS)||[],h=location.hostname.toLowerCase().replace(/^www\./,""),q=(new URLSearchParams(location.search).get("site")||"").toLowerCase();
     if(!app.length)return "";                                       // no APP_HOSTS configured -> always the builder app
     if(app.indexOf(h)>-1||h==="localhost"||h==="127.0.0.1")return q;  // on the app host, ?site=domain previews a live site
-    return h.replace(/^www\./,"")}
+    return h}
   function initTenant(host){
     document.documentElement.classList.add("tenant");
     try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}

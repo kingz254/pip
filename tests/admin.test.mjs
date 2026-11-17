@@ -27,11 +27,18 @@ test('non-admin accounts see nothing', async () => {
 
 test('admin sees the queue, client details are text not HTML, and finishing the last task makes the site live', async () => {
   const sb = fakeSupabase(); seed(sb); sb.setAdmin(true); sb.signInAs({ id: 'admin', email: 'a@gmail.com' });
+  sb.db.sites[0].status = 'live';
+  sb.db.site_visits.push({ site_id: 's1', day: new Date().toISOString().slice(0, 10), views: 7 });
   const { w, d, errors } = open(sb); await tick(200);
-  assert.equal(d.querySelectorAll('.card').length, 1);
-  assert.equal(d.querySelector('.card h2').textContent, 'alpha.com');
-  assert.ok(d.querySelector('.card .muted').textContent.includes('<img src=x'), 'shown literally');
+  assert.equal(d.querySelectorAll('#list .card').length, 1);
+  assert.equal(d.querySelector('#list .card h2').textContent, 'alpha.com');
+  assert.ok(d.querySelector('#list .card .muted').textContent.includes('<img src=x'), 'shown literally');
   assert.equal(d.querySelector('.card img'), null, 'no injected element');
+  assert.equal(d.querySelectorAll('#clients .card').length, 1);
+  assert.ok(d.querySelector('#clients').textContent.includes('jane@gmail.com'));
+  assert.equal(d.querySelector('#clients a[href="mailto:jane@gmail.com"]').textContent, 'jane@gmail.com');
+  assert.equal(d.querySelector('#clients a[href="tel:+254700000000"]').textContent, '+254700000000');
+  assert.match(d.querySelector('#visits').textContent, /7 views/);
   for (let i = 0; i < 4; i++) {
     const btn = d.querySelector('.task button'); assert.ok(btn, 'task ' + i); btn.click(); await tick(120);
     assert.equal(sb.db.sites[0].status, i === 3 ? 'live' : 'provisioning');

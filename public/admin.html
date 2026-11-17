@@ -71,7 +71,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 .card{padding-block:20px}
 .card>.muted{line-height:1.6}
 .done{color:var(--muted)}
-#visits,#orders,#list{min-width:0}
+#visits,#orders,#clients,#list{min-width:0}
 [hidden]{display:none!important}
 @media(max-width:760px){
  .shell{width:min(100% - 28px,var(--content))}.masthead-inner{min-height:64px}.page{padding-block:var(--space-4) var(--space-7)}
@@ -101,6 +101,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
       </section>
     </div>
     <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
+    <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Name, email, and phone clients provided for account setup, beside their site and domain status.</p></div><div id="clients" class="queue"></div></section>
     <section><div class="section-head"><h2>Client site handoff</h2><p class="muted">Complete each setup step as it is verified.</p></div><div id="list" class="queue"></div></section>
   </div>
 </main>
@@ -122,7 +123,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
   function check() {
     SB.rpc('is_admin').then(function (r) {
       if (r.data !== true) { msg('This account is not an admin.'); return; }
-      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders();
+      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders(); loadClients();
     });
   }
   function load() {
@@ -149,12 +150,34 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
     ]).then(function (res) {
       if (res[0].error || res[1].error) { $('visits').textContent = 'Visit totals are not available yet. Apply the latest database update first.'; return; }
       var sites = index(res[1].data), totals = {}, total = 0;
-      (res[0].data || []).forEach(function (row) { totals[row.site_id] = (totals[row.site_id] || 0) + Number(row.views || 0); total += Number(row.views || 0); });
+      (res[0].data || []).forEach(function (row) { if (!sites[row.site_id] || sites[row.site_id].status !== 'live') return; totals[row.site_id] = (totals[row.site_id] || 0) + Number(row.views || 0); total += Number(row.views || 0); });
       var box = $('visits'), cards = Object.keys(sites).filter(function (id) { return sites[id].status === 'live'; }).map(function (id) {
         var site = sites[id]; return el('div', 'task', (site.name || site.domain || 'Client site') + ' · ' + (site.domain || '') + ' — ' + (totals[id] || 0) + ' views');
       });
       box.replaceChildren(el('p', null, 'All live sites: ' + total + ' page views'), ...cards);
-      if (!cards.length) box.appendChild(el('p', 'muted', 'Live-site visit totals will appear here once tracking is enabled on a live site.'));
+      if (!cards.length) box.appendChild(el('p', 'muted', 'Tracking is active. Counts begin when a client site is live and receives visits.'));
+      else if (!total) box.appendChild(el('p', 'muted', 'Tracking is active, but no page views have been recorded in this 30-day window.'));
+    });
+  }
+  function loadClients() {
+    SB.from('sites').select('id,owner,name,domain,status,created_at').then(function (r) {
+      var box = $('clients'), sites = r.data || [];
+      if (r.error) { box.textContent = 'Could not load client contacts: ' + r.error.message; return; }
+      if (!sites.length) { box.textContent = 'Client contact details will appear here after someone signs in and saves a site.'; return; }
+      SB.from('profiles').select('id,email,full_name,phone').in('id', uniq(sites.map(function (s) { return s.owner; }))).then(function (p) {
+        if (p.error) { box.textContent = 'Could not load client contacts: ' + p.error.message; return; }
+        var people = index(p.data), rows = sites.slice().sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); }).map(function (s) {
+          var person = people[s.owner] || {}, card = el('article', 'card');
+          card.appendChild(el('h2', null, (person.full_name || 'Client name not provided') + ' · ' + (s.name || s.domain || 'Site')));
+          card.appendChild(el('div', 'muted', (s.domain || 'Domain not selected') + ' · site status: ' + (s.status || 'unknown')));
+          var contact = el('div', 'muted');
+          if (person.email) { var email = el('a', null, person.email); email.href = 'mailto:' + person.email; contact.appendChild(email); }
+          if (person.phone) { if (person.email) contact.appendChild(document.createTextNode(' · ')); var phone = el('a', null, person.phone); phone.href = 'tel:' + person.phone.replace(/[^+\d]/g, ''); contact.appendChild(phone); }
+          if (!person.email && !person.phone) contact.textContent = 'Client contact details have not been completed.';
+          card.appendChild(contact); return card;
+        });
+        box.replaceChildren.apply(box, rows);
+      });
     });
   }
   function loadOrders() {
