@@ -626,8 +626,8 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 </footer>
 <div class="glass toast" id="toast" role="status"></div>
 
-<link rel="stylesheet" href="/deriv-apps.css?v=client-preview-fit-16">
-<script src="/deriv-apps.js?v=client-preview-fit-16"></script>
+<link rel="stylesheet" href="/deriv-apps.css?v=client-preview-fit-18">
+<script src="/deriv-apps.js?v=client-preview-fit-18"></script>
 <script>
 (function(){
   document.documentElement.classList.add("js");
@@ -1174,16 +1174,14 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     var B={tg:"https://t.me/",ig:"https://instagram.com/",tt:"https://tiktok.com/@",yt:"https://youtube.com/@",x:"https://x.com/",fb:"https://facebook.com/","in":"https://linkedin.com/in/"};
     return h?B[k]+encodeURIComponent(h):""}
   function buildSoc(){
-    var l=[],demo=false;PL.forEach(function(p){var u=su(p[0],st.soc[p[0]]);if(u)l.push([p[0],u])});
-    if(!l.length){demo=true;["ig","tg","tt","yt","wa"].forEach(function(k){l.push([k,"#"])})}
+    var l=[];PL.forEach(function(p){var u=su(p[0],st.soc[p[0]]);if(u)l.push([p[0],u])});
     ["sh","sf"].forEach(function(id){var box=$(id);box.textContent="";l.forEach(function(it){var a=document.createElement("a");a.href=it[1];a.setAttribute("aria-label",nm(it[0]));
-      if(!demo){a.target="_blank";a.rel="noopener noreferrer"}a.dataset.demo=demo?"1":"";
+      a.target="_blank";a.rel="noopener noreferrer";
       var s=document.createElementNS("http://www.w3.org/2000/svg","svg");s.setAttribute("viewBox","0 0 24 24");s.innerHTML=IC[it[0]];a.appendChild(s);box.appendChild(a)})})}
   function setBB(){}
   var sc2=site.querySelector(".sc");
   sc2.insertAdjacentHTML("afterbegin",'<div class="s-ann" id="sann"></div>');
   sc2.querySelector(".s-top").insertAdjacentHTML("beforeend",'<span class="s-soc" id="sh"></span>');
-  sc2.querySelector(".s-foot").insertAdjacentHTML("beforebegin",'<div class="s-soc s-socf" id="sf"></div>');
 
   function cp(id,arr,cur){return '<div class="row" id="'+id+'">'+arr.map(function(a){return '<button class="chip" data-v="'+a[0]+'" aria-pressed="'+(a[0]===cur)+'">'+a[1]+'</button>'}).join("")+'</div>'}
   $("name").parentNode.insertAdjacentHTML("afterend",'<div class="logo-settings"><span class="lab">Your site logo</span><img class="logo-preview" id="logo-preview" alt="Logo preview"><label>Upload an image<input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp"></label><span class="mini">Use a transparent PNG, JPG or WebP. Images are resized for fast loading. Or create an initials mark.</span><label>Initials or short mark<input class="field" id="logo-mark" maxlength="4" value="NT"></label><label>Mark color<input id="logo-color" type="color" value="#ff4d5d"></label><div class="logo-actions"><button class="chip" id="logo-generate" type="button">Create initials logo</button><button class="chip" id="logo-remove" type="button">Remove logo</button></div></div>');
