@@ -1,8 +1,6 @@
 // A small in-memory stand-in for the parts of supabase-js the front-end uses.
-import { normalizeKePhone } from '../../supabase/functions/_shared/mpesa.ts';
-
 export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } = {}) {
-  const db = { profiles: [], sites: [], orders: [], payments: [], fulfilment_tasks: [], commission_daily: [] };
+  const db = { profiles: [], sites: [], orders: [], payments: [], fulfilment_tasks: [], commission_daily: [], site_visits: [] };
   const calls = { rpc: [], invoke: [], signOut: 0, oauth: 0 };
   let authCb = null, session = null, id = 0; const state = { admin: false };
   const uid = () => 'id-' + (++id);
@@ -46,6 +44,15 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
       const o = { id: uid(), owner: s.owner, site_id: s.id, domain: s.domain, domain_mode: s.domain_mode, setup_usd: 200, domain_usd: dom, connection_usd: conn, total_usd: 200 + dom + conn, status: 'pending' };
       db.orders.push(o); s.status = 'pending_payment'; return { data: o, error: null };
     },
+    submit_crypto_payment({ p_order, p_txid }) {
+      const o = db.orders.find((x) => x.id === p_order); if (!o || o.owner !== session.user.id) return { error: { message: 'order not found' } };
+      if (!/^[a-f0-9]{64}$/.test(p_txid)) return { error: { message: 'invalid transaction ID' } };
+      const pay = { id: uid(), order_id: o.id, provider: 'crypto_manual', provider_ref: p_txid, currency: 'USDT', status: 'initiated' };
+      db.payments.push(pay);
+      setTimeout(() => { pay.status = 'succeeded'; o.status = 'paid'; db.sites.find((s) => s.id === o.site_id).status = 'paid';
+        ['register_domain', 'connect_dns', 'issue_ssl', 'go_live'].forEach((t) => db.fulfilment_tasks.push({ site_id: o.site_id, task: t, status: 'todo' })); }, payAfterMs);
+      return { data: pay, error: null };
+    },
     is_admin() { return { data: !!state.admin, error: null }; },
     admin_complete_task({ p_task, p_notes }) {
       const tk = db.fulfilment_tasks.find((x) => x.id === p_task); Object.assign(tk, { status: 'done', notes: p_notes });
@@ -57,6 +64,7 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
       const pick = ['name', 'template', 'background', 'header', 'announcement', 'icon_shape', 'icon_place', 'social', 'menu', 'bot_mode', 'embed_url', 'markup', 'deriv_app_id', 'referral_url', 'domain'];
       return { data: s ? Object.fromEntries(pick.map((k) => [k, s[k]])) : null, error: null };
     },
+    record_public_site_visit() { return { data: null, error: null }; },
   };
 
   const client = {
@@ -73,14 +81,6 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
       invoke: async (name, { body }) => {
         calls.invoke.push([name, body]);
         if (name === 'domain-check') return { data: { domain: body.domain, status: domainStatus(body.domain) }, error: null };
-        if (name === 'checkout') {
-          const o = db.orders.find((x) => x.id === body.order_id);
-          if (!normalizeKePhone(body.phone)) return { data: null, error: { message: 'bad phone', context: { json: async () => ({ error: 'Enter a valid Safaricom number, for example 0712345678' }) } } };
-          const pay = { id: uid(), order_id: o.id, status: 'initiated' }; db.payments.push(pay);
-          setTimeout(() => { pay.status = 'succeeded'; o.status = 'paid'; db.sites.find((s) => s.id === o.site_id).status = 'paid';
-            ['register_domain', 'connect_dns', 'issue_ssl', 'go_live'].forEach((t) => db.fulfilment_tasks.push({ site_id: o.site_id, task: t, status: 'todo' })); }, payAfterMs);
-          return { data: { ok: true }, error: null };
-        }
       },
     },
     // test controls

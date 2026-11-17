@@ -7,6 +7,7 @@ import { PGlite } from '@electric-sql/pglite';
 
 const migration = readFileSync(new URL('../supabase/migrations/20261107000000_init.sql', import.meta.url), 'utf8');
 const oauthMigration = readFileSync(new URL('../supabase/migrations/20261116153130_deriv_oauth_sessions.sql', import.meta.url), 'utf8');
+const adminMigration = readFileSync(new URL('../supabase/migrations/20261117120000_client_owned_domains_admin_visits.sql', import.meta.url), 'utf8');
 
 // Minimal stand-in for Supabase's auth schema + roles.
 const supabaseStub = `
@@ -25,6 +26,7 @@ const supabaseStub = `
 const db = new PGlite();
 await db.exec(supabaseStub);
 await db.exec(migration);
+await db.exec(adminMigration);
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
@@ -142,13 +144,32 @@ test('payment confirmation is service-role only, idempotent, and creates fulfilm
   assert.equal((await db.query(`select status from public.sites where owner='${A}'`)).rows[0].status, 'paid');
 });
 
+test('crypto payment submission is owner-only and admin verification starts fulfilment', async () => {
+  const C = '55555555-5555-5555-5555-555555555555';
+  await db.exec(`insert into auth.users(id,email) values ('${C}','c@gmail.com')`);
+  ok(await as('authenticated', C, `insert into public.sites(owner,name,domain) values ('${C}','Gamma','gamma.com')`), 'insert client site');
+  const sid = (await db.query(`select id from public.sites where owner='${C}'`)).rows[0].id;
+  const order = await as('authenticated', C, 'select * from public.create_order($1)', [sid]); ok(order, 'create order');
+  const id = order.rows[0].id, txid = 'a'.repeat(64);
+  denied(await as('anon', null, `select * from public.submit_crypto_payment('${id}','${txid}')`), 'anonymous tx submission');
+  denied(await as('authenticated', B, `select * from public.submit_crypto_payment('${id}','${txid}')`), 'another client submits tx');
+  denied(await as('authenticated', C, `select * from public.submit_crypto_payment('${id}','bad')`), 'invalid tx hash');
+  const submitted = await as('authenticated', C, `select * from public.submit_crypto_payment('${id}','${txid}')`);
+  ok(submitted, 'submit transaction'); assert.equal(submitted.rows[0].currency, 'USDT'); assert.equal(submitted.rows[0].status, 'initiated');
+  denied(await as('authenticated', C, `select public.admin_confirm_crypto_payment('${id}','${txid}')`), 'client confirms payment');
+  const paid = await as('authenticated', ADMIN, `select * from public.admin_confirm_crypto_payment('${id}','${txid}')`);
+  ok(paid, 'admin confirms payment'); assert.equal(paid.rows[0].status, 'paid');
+  assert.equal((await db.query(`select count(*)::int n from public.fulfilment_tasks where order_id='${id}'`)).rows[0].n, 4);
+  assert.equal((await db.query(`select status from public.payments where order_id='${id}'`)).rows[0].status, 'succeeded');
+});
+
 test('after payment the domain is locked for the client', async () => {
   denied(await as('authenticated', A, `update public.sites set domain='other.com' where owner='${A}'`), 'domain change after paid');
   ok(await as('authenticated', A, `update public.sites set name='Alpha 2' where owner='${A}'`), 'design edits still allowed');
 });
 
 test('fulfilment: only admins complete tasks; site goes live after the last one', async () => {
-  const tasks = (await db.query(`select id from public.fulfilment_tasks order by task`)).rows.map(r => r.id);
+  const tasks = (await db.query(`select id from public.fulfilment_tasks where site_id=(select id from public.sites where owner='${A}') order by task`)).rows.map(r => r.id);
   denied(await as('authenticated', A, 'select public.admin_complete_task($1)', [tasks[0]]), 'client completes task');
   assert.equal((await as('authenticated', A, 'select id from public.fulfilment_tasks')).rows.length, 4, 'client can see their tasks');
   assert.equal((await as('authenticated', B, 'select id from public.fulfilment_tasks')).rows.length, 0, 'other client cannot');
@@ -157,6 +178,13 @@ test('fulfilment: only admins complete tasks; site goes live after the last one'
     const st = (await db.query(`select status from public.sites where owner='${A}'`)).rows[0].status;
     assert.equal(st, i === tasks.length - 1 ? 'live' : 'provisioning');
   }
+});
+
+test('public page views are counted without exposing analytics to clients', async () => {
+  const visit = await as('anon', null, `select public.record_public_site_visit('alpha.com')`); ok(visit, 'record public visit');
+  const totals = await as('authenticated', ADMIN, 'select sum(views)::int n from public.site_visits');
+  ok(totals, 'admin reads visits'); assert.ok(totals.rows[0].n >= 1);
+  assert.equal((await as('authenticated', B, 'select * from public.site_visits')).rows.length, 0, 'client cannot read visitor stats');
 });
 
 test('public_site exposes only live sites and no private fields', async () => {

@@ -4,5 +4,10 @@
 window.PF_CONFIG = {
   SUPABASE_URL: '',
   SUPABASE_ANON_KEY: '',
-  DERIV_OAUTH_CLIENT_ID: '34UIHrhpdq0VwgvjwFvjp'
+  DERIV_OAUTH_CLIENT_ID: '34UIHrhpdq0VwgvjwFvjp',
+  CRYPTO_PAYMENT: {
+    asset: 'USDT',
+    network: 'TRC20',
+    address: 'TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY'
+  }
 };

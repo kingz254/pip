@@ -22,7 +22,7 @@ export function boot({ sb, fetchImpl, storage, url = 'https://pipforge.test/', c
       w.addEventListener('error', (e) => errors.push('window.onerror: ' + e.message));
       if (storage) for (const [k, v] of Object.entries(storage)) w.localStorage.setItem(k, v);
       w.eval(appsScript);
-      if (config) w.PF_CONFIG = config;
+      w.PF_CONFIG = config || { CRYPTO_PAYMENT: { asset: 'USDT', network: 'TRC20', address: 'TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY' } };
       if (sb) w.PF_SB = sb;
     },
   });

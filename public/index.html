@@ -467,7 +467,6 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
         <div class="row" id="exts">
           <button class="chip" data-e=".site" data-f="8" aria-pressed="true">.site</button>
           <button class="chip" data-e=".com" data-f="15" aria-pressed="false">.com</button>
-          <button class="chip" data-e=".co.ke" data-f="12" aria-pressed="false">.co.ke</button>
           <button class="chip" data-e=".online" data-f="10" aria-pressed="false">.online</button>
         </div>
       </div>
@@ -550,8 +549,8 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       <ul class="list"><li>Your template and site name</li><li>Your own domain with SSL</li><li>Free bot library</li><li>Your Deriv referral link</li><li>Locked risk warnings</li></ul>
       <button class="btn" data-go="checkout">Reserve my site</button></div>
     <div class="glass card"><h3>Domain, per year</h3>
-      <ul class="list"><li>.site <span>$8</span></li><li>.online <span>$10</span></li><li>.co.ke <span>$12</span></li><li>.com <span>$15</span></li></ul>
-      <p>The yearly fee depends on the name and ending you choose. Renewals are billed once a year.</p></div>
+      <ul class="list"><li>.site <span>$8</span></li><li>.online <span>$10</span></li><li>.store <span>$8</span></li><li>.com <span>$15</span></li></ul>
+      <p>Your domain is registered in your name. You handle yearly renewals directly with the registrar.</p></div>
   </div>
 </div>
 
@@ -559,7 +558,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   <div class="ph"><h1>How it works</h1><p>From idea to a live site in four steps.</p></div>
   <ol class="steps">
     <li class="glass"><b class="num">1</b><div><h3>Pick a template and a name</h3><p>Choose the look and type your site name. You see the result as you go.</p></div></li>
-    <li class="glass"><b class="num">2</b><div><h3>Choose your domain</h3><p>Pick an ending. We register it and set up SSL for you.</p></div></li>
+    <li class="glass"><b class="num">2</b><div><h3>Choose your domain</h3><p>Use a domain you own or arrange its first registration in your name. You add the DNS records and pay future renewals directly to the registrar.</p></div></li>
     <li class="glass"><b class="num">3</b><div><h3>Add your Deriv details</h3><p>Enter your Deriv app ID and referral link in your dashboard.</p></div></li>
     <li class="glass"><b class="num">4</b><div><h3>Go live</h3><p>Your site and bot library go online. Share it and start trading or bringing clients.</p></div></li>
   </ol>
@@ -568,10 +567,10 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 <div class="page" id="p-faq" hidden>
   <div class="ph"><h1>Questions, answered.</h1><p>Can’t find yours? Send us a message below.</p></div>
   <details class="glass"><summary>Is Pipforge part of Deriv?</summary><p>No. Pipforge is independent and not affiliated with Deriv. Your site links to Deriv, and Deriv’s own terms apply to your account there.</p></details>
-  <details class="glass"><summary>Do I keep my earnings?</summary><p>Yes. We charge a setup fee and a yearly domain fee. We take no share of your trading results or referral commissions, which Deriv pays under its own partner terms.</p></details>
+  <details class="glass"><summary>Do I keep my earnings?</summary><p>Yes. Pipforge charges for setup and any first-time domain registration you ask us to arrange. You pay future domain renewals directly to your registrar. We take no share of your trading results or referral commissions.</p></details>
   <details class="glass"><summary>Will the bots make me money?</summary><p>We can’t promise that, and nobody honestly can. Most retail traders lose money. Test every bot on a demo account first.</p></details>
   <details class="glass"><summary>Can I bring my own domain?</summary><p>You choose a name and ending when you order. Tell us in your message if you want to use one you already own.</p></details>
-  <details class="glass"><summary>What happens when my domain renews?</summary><p>The yearly domain fee is billed each year. If it isn’t paid, the site goes offline until it is.</p></details>
+  <details class="glass"><summary>What happens when my domain renews?</summary><p>You renew directly with the registrar and pay its renewal price. If the domain expires, the site may stop working.</p></details>
   <details class="glass"><summary>Can I remove the risk warnings?</summary><p>No. They protect you and your visitors, and every template keeps them.</p></details>
   <div class="glass cfg" style="margin:28px 0 40px;animation:none;opacity:1">
     <div class="fgrid"><div><label for="cn">Your name</label><input class="field" id="cn" autocomplete="name"></div>
@@ -604,16 +603,25 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 </div>
 
 <div class="page" id="p-checkout" hidden>
-  <div class="ph"><h1>Reserve your site</h1><p>Check your order, then choose how to pay.</p></div>
+  <div class="ph"><h1>Reserve your site</h1><p>Pay by USDT on the TRON network (TRC20).</p></div>
   <div class="two">
     <div class="glass card"><h3>Your order</h3>
       <ul class="list"><li>Site name <span id="sN"></span></li><li>Domain <span id="sD"></span></li><li>Template <span id="sT"></span></li><li>Setup <span>$200</span></li><li>Domain, first year <span id="sF"></span></li></ul>
       <div class="total"><span>Due today</span><strong id="sTot"></strong></div></div>
     <div class="glass cfg" style="animation:none;opacity:1">
-      <div><span class="lab">Pay with</span><div class="row" id="pm"><button class="chip" aria-pressed="true">M-Pesa</button><button class="chip" aria-pressed="false">Card</button><button class="chip" aria-pressed="false">Crypto</button></div></div>
+      <div><span class="lab">Payment method</span><div class="row" id="pm"><button class="chip" aria-pressed="true" disabled>USDT · TRC20</button></div></div>
       <div><label for="pe">Email</label><input class="field" id="pe" type="email" autocomplete="email"></div>
-      <div><label for="pp">M-Pesa phone number</label><div class="phone-row"><select class="field country-picker" id="pmcountry" aria-label="Phone country"></select><div class="phone-number"><span class="dial-code" id="pmcode"></span><input class="field" id="pp" type="tel" inputmode="tel" autocomplete="tel" placeholder="Enter your number"></div></div><span class="mini">Choose your country to add its calling code.</span></div>
-      <button class="btn" id="pay">Pay now</button>
+      <button class="btn" id="pay">Show payment details</button>
+      <div id="crypto-invoice" class="dnote" hidden>
+        <b>Send the exact amount below in USDT using the TRON (TRC20) network.</b>
+        <p>Amount: <strong id="crypto-amount"></strong></p>
+        <p>Wallet address: <code id="crypto-address"></code></p>
+        <button class="btn ghost" id="crypto-copy" type="button">Copy address</button>
+        <p>Crypto transfers cannot be reversed. Confirm the network and address before sending. Network fees are separate. After sending, paste the 64-character transaction ID below. Your order goes live only after Pipforge manually verifies the transfer.</p>
+        <label for="crypto-txid">TRON transaction ID</label><input class="field" id="crypto-txid" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="64-character transaction ID">
+        <button class="btn" id="crypto-submit" type="button">Submit transfer for review</button>
+        <div id="crypto-status" class="dst" role="status" aria-live="polite"></div>
+      </div>
       <span class="mini">By paying you accept the terms and risk disclosure.</span>
     </div>
   </div>
@@ -829,7 +837,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   $("included").insertAdjacentHTML("beforebegin",'<section><h2>Why own your Deriv site?</h2><div class="grid"><div class="glass tile t1"><h3>Earn on contracts your visitors place</h3><p>Deriv lets an app owner add a markup of up to 3% to contracts placed through their app. That markup goes to you, not to us.</p></div><div class="glass tile t2"><h3>Your brand</h3><p>Your name, your domain, your audience.</p></div><div class="glass tile t3"><h3>No revenue share</h3><p>One setup fee. We take no cut of your earnings.</p></div><div class="glass tile t4"><h3>Free bots give people a reason to return</h3><p>A bot library turns a one-time visit into a site people come back to.</p></div></div><div class="glass note" style="margin-top:16px"><h2>How you get paid.</h2><div>'+earn+'</div></div></section>');
   $("p-pricing").insertAdjacentHTML("beforeend",'<div class="glass note" style="margin-bottom:40px"><h2>What you earn is yours.</h2><div><p>The setup fee pays for your site. Your markup and referral commissions come from Deriv and go to you. We take no share of either.</p></div></div>');
   $("p-how").insertAdjacentHTML("beforeend",'<div class="ph" style="padding-top:8px"><h1>How you get paid</h1></div><ol class="steps"><li class="glass"><b class="num">1</b><div><h3>A visitor places a contract</h3><p>They trade on your site, which runs on your own Deriv app ID.</p></div></li><li class="glass"><b class="num">2</b><div><h3>Your markup is added</h3><p>You set the rate from 0 to 3%, and it is shown to your visitors.</p></div></li><li class="glass"><b class="num">3</b><div><h3>Deriv pays you</h3><p>Markup commission goes to you under Deriv’s terms. We never touch it.</p></div></li><li class="glass"><b class="num">4</b><div><h3>You track it</h3><p>Your dashboard shows your site, your markup and your commission.</p></div></li></ol>');
-  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Why have my own site instead of just sharing a referral link?</summary><p>A referral link earns partner commission when people trade on Deriv’s own platforms. A site of your own can also earn markup on contracts placed through your app, carries your brand, and gives your audience somewhere to return to.</p></details><details class="glass"><summary>How exactly do I get paid?</summary><p>Deriv pays markup commission to the owner of the app ID a contract was placed through. On Pipforge that is your own app ID, so it goes straight to you.</p></details><details class="glass"><summary>Does Pipforge take a share?</summary><p>No. You pay a one-time setup fee and a yearly domain fee. We take no part of your markup or referral commissions.</p></details>');
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Why have my own site instead of just sharing a referral link?</summary><p>A referral link earns partner commission when people trade on Deriv’s own platforms. A site of your own can also earn markup on contracts placed through your app, carries your brand, and gives your audience somewhere to return to.</p></details><details class="glass"><summary>How exactly do I get paid?</summary><p>Deriv pays markup commission to the owner of the app ID a contract was placed through. You configure your app and markup directly with Deriv.</p></details><details class="glass"><summary>Does Pipforge take a share?</summary><p>No. Pipforge charges its setup price and any first-year domain registration you ask it to arrange. You pay later renewals directly to your registrar.</p></details>');
   $("pay").insertAdjacentHTML("beforebegin",'<span class="mini">You keep 100% of the markup your site earns. We take no share.</span>');
   function mkPage(id,html){var d=document.createElement("div");d.className="page";d.id="p-"+id;d.hidden=true;d.innerHTML=html;document.querySelector("main").appendChild(d);pages.push(id)}
   mkPage("why",'<div class="ph"><h1>Why have your own third-party Deriv site?</h1><p>A referral link sends people to Deriv. Your own site gives them a place to come back to, and gives you more ways to earn.</p></div><div class="cards"><div class="glass card"><h3>Earn markup</h3><p>Add up to 3% to contracts placed through your app. It is paid to you.</p></div><div class="glass card"><h3>Build a brand</h3><p>Your name and domain, so people remember you and not a link.</p></div><div class="glass card"><h3>Stand apart from scams</h3><p>Locked risk warnings, a visible markup rate and a verify page show visitors you are genuine.</p></div><div class="glass card"><h3>Keep what you earn</h3><p>One setup fee. No revenue share.</p></div></div><div class="glass note"><h2>How you get paid.</h2><div>'+earn+'</div></div><div class="cmpw"><div class="cmp"><div class="h"></div><div class="h">Pipforge site</div><div class="h">Referral link only</div><div class="h">Site bought from a stranger</div><div>Your own brand and domain</div><div class="y">Yes</div><div>No</div><div>Varies</div><div>Markup on contracts</div><div class="y">Yes, to your app ID</div><div>No</div><div>Check the app ID</div><div>You set the markup rate</div><div class="y">Yes, 0 to 3%</div><div>Not applicable</div><div>Varies</div><div>Risk warnings built in</div><div class="y">Locked on</div><div>Not applicable</div><div>Varies</div><div>Share of your earnings taken</div><div class="y">None</div><div>None</div><div>Varies</div></div></div><div class="row" style="margin-bottom:40px"><button class="btn" data-go="templates">See templates</button><button class="btn" data-go="checkout">Reserve my site</button></div>');
@@ -966,12 +974,12 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     return '<div class="glass card">'+thumb+'<span class="tag">'+(im?"Still image":b[0]==="none"?"No background":"Animation")+'</span><h3>'+b[1]+'</h3><button class="btn" data-bgu="'+b[0]+'">Use this</button></div>'}).join("");
   document.addEventListener("click",function(ev){var u=ev.target.closest("[data-bgu]");if(!u)return;st.b=u.dataset.bgu;
     document.querySelectorAll("#bgs button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.b===st.b))});render();swap();location.hash="#home";showPreviewAfterEdit()});
-  var EX=[[".com",15],[".net",14],[".org",14],[".site",8],[".online",10],[".store",8],[".app",18],[".dev",14],[".pro",15],[".live",12],[".xyz",4],[".co.ke",12],[".co.za",8],[".com.ng",12],[".com.gh",12],[".co.ug",12],[".co.tz",12],[".co.zm",12],[".co.zw",12],[".co.uk",10],[".in",8],[".ae",30],[".com.au",14],[".ca",15],[".com.br",12],[".com.mx",12],[".com.pk",12],[".com.bd",12],[".co.id",12],[".com.ph",12],[".com.my",12],[".co.th",12],[".com.vn",12],[".com.tr",12],[".com.eg",12],[".co.ma",12],[".com.ar",12],[".com.co",12],[".com.pe",12],[".co.jp",12],[".co.kr",12]];
+  var EX=[[".com",15],[".net",14],[".org",14],[".site",8],[".online",10],[".store",8],[".app",18],[".dev",14],[".pro",15],[".live",12],[".xyz",4]];
   $("exts").innerHTML=EX.map(function(e){return '<button class="chip" data-e="'+e[0]+'" data-f="'+e[1]+'" aria-pressed="'+(e[0]===".site")+'">'+e[0]+'</button>'}).join("");
-  $("exts").previousElementSibling.textContent="Country and global domain endings";
+  $("exts").previousElementSibling.textContent="Common domain endings";
   var pl=document.querySelector("#p-pricing .two .card:nth-child(2) .list");
   pl.innerHTML=EX.map(function(e){return '<li>'+e[0]+' <span>$'+e[1]+'</span></li>'}).join("");pl.style.maxHeight="300px";pl.style.overflowY="auto";
-  pl.insertAdjacentHTML("afterend",'<p>Some country endings have local residency rules.</p>');
+  pl.insertAdjacentHTML("afterend",'<p>Your domain is yours. You register it in your name and pay renewal fees directly to your registrar. We provide the DNS records to connect it.</p>');
   pb.parentNode.removeChild(pb);
   function calm(c,W,H,T,dt,k,s){
     var dk=!(document.documentElement.getAttribute("data-theme")?document.documentElement.getAttribute("data-theme")==="light":mm.matches),i,x,y,g,ink=dk?"255,255,255":"20,20,30",R=Math.max(W,H);
@@ -1391,7 +1399,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     dstat("neu","Checking "+d+"\u2026");return rdap(d).then(function(s){dcache[d]=s;return show(d,s)})}
   function dReset(){dstat("","");$("dsg").innerHTML="";clearTimeout(dtimer);if(st.dm==="new")dtimer=setTimeout(chk,800)}
   var sp=cfg.querySelector('[data-p="site"]');
-  sp.insertAdjacentHTML("beforeend",'<div><span class="lab">Domain</span>'+cp("dmm",[["new","Get a new domain"],["own","I already have a domain"]],"new")+'</div><div id="dnew"><div><label for="dn">Domain name (without the ending)</label><input class="field" id="dn" maxlength="40" autocomplete="off"></div><div><button class="btn" id="dchk" style="padding:10px 18px;font-size:14px">Check availability</button></div><div class="dst" id="dst" role="status" aria-live="polite"></div><div class="row" id="dsg"></div><div class="dnote"><b>Your payment covers everything.</b> We register the domain, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or setting up DNS.</div></div><div id="down" style="display:none"><div><label for="dow">Your domain</label><input class="field" id="dow" placeholder="mybrand.com" autocomplete="off"></div><div class="dnote"><b>Keep your domain where it is.</b> After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone.</div></div>');
+    sp.insertAdjacentHTML("beforeend",'<div><span class="lab">Domain</span>'+cp("dmm",[["new","Arrange first registration"],["own","I already own a domain"]],"new")+'</div><div id="dnew"><div><label for="dn">Domain name (without the ending)</label><input class="field" id="dn" maxlength="40" autocomplete="off"></div><div><button class="btn" id="dchk" style="padding:10px 18px;font-size:14px">Check availability</button></div><div class="dst" id="dst" role="status" aria-live="polite"></div><div class="row" id="dsg"></div><div class="dnote"><b>The domain belongs to you.</b> If we arrange its first registration, it is registered in your name. You handle renewals directly with the registrar. We give you DNS records to add; never share your registrar password.</div></div><div id="down" style="display:none"><div><label for="dow">Your domain</label><input class="field" id="dow" placeholder="mybrand.com" autocomplete="off"></div><div class="dnote"><b>You own and renew this domain.</b> After checkout, we give you the DNS records to add at your registrar. Never share your registrar password.</div></div>');
   $("dn").parentNode.insertAdjacentElement("afterend",$("exts").parentNode);
   pick("dmm",function(b){st.dm=b.dataset.v;dReset()});
   $("dn").addEventListener("input",function(){st.dn=this.value;dReset();render()});
@@ -1400,7 +1408,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   $("dchk").addEventListener("click",function(){chk()});
   $("dsg").addEventListener("click",function(e){var b=e.target.closest("[data-sg]");if(!b)return;var c=document.querySelector('#exts [data-e="'+b.dataset.sg+'"]');if(c)c.click()});
   function fillCk(){var fee=st.dm==="own"?0:st.f;$("sD").textContent=dom();$("sF").textContent=st.dm==="own"?"$0":"$"+fee;$("sTot").textContent="$"+(200+fee);$("dd").textContent=dom();
-    $("ckn").innerHTML=st.dm==="own"?"<b>You keep your domain.</b> After you pay, we show you the DNS records to add at your registrar, or guide you step by step.":"<b>Your domain is fully handled.</b> After you pay, we register it, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or touching DNS."}
+    $("ckn").innerHTML=st.dm==="own"?"<b>You own and renew your domain.</b> We give you DNS records to add at your registrar.":"<b>The domain is registered in your name.</b> You handle future renewals directly with the registrar. We give you DNS records to add."}
   $("pay").insertAdjacentHTML("beforebegin",'<div class="dnote" id="ckn"></div>');
   window.addEventListener("hashchange",fillCk);
   var r8=render;render=function(){r8();var d=dom();$("hsd").textContent=d;$("url").textContent=d;$("dn").placeholder=slug(st.n);
@@ -1414,9 +1422,9 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   var rb2=$("reserve"),nb2=rb2.cloneNode(true);rb2.parentNode.replaceChild(nb2,rb2);nb2.addEventListener("click",function(){gate(function(){location.hash="#checkout"})});
   var pb2=$("pay"),np2=pb2.cloneNode(true);pb2.parentNode.replaceChild(np2,pb2);np2.addEventListener("click",function(){gate(function(){toast("Payments connect in the next build")})});
   pl.insertAdjacentHTML("beforebegin",'<div class="dnote"><b>Everything is included.</b> The domain fee covers registration, connecting the domain to our servers and SSL. You never visit a registrar or set up DNS. Already own a domain? Connect it instead of buying a new one.</div>');
-  document.querySelector("#p-how .steps li:nth-child(2) p").textContent="Pick an ending and we check that it is free. We register it, connect it to our servers and switch on SSL, so you never touch DNS.";
-  document.querySelector("#included .t2 p").textContent="We check the name is free, register it, connect it and switch on SSL. No registrar, no DNS.";
-  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Do I need to buy my domain somewhere else?</summary><p>No. Choose it here. We check it is free, register it, connect it to our servers and switch on SSL, so there is no registrar to visit and no DNS to set up.</p></details><details class="glass"><summary>Can I use a domain I already own?</summary><p>Yes. Choose “I already have a domain” and enter it. After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone.</p></details>');
+  document.querySelector("#p-how .steps li:nth-child(2) p").textContent="Use a domain you already own or ask us to arrange its first registration in your name. You add the DNS records we provide and pay renewal fees directly to your registrar.";
+  document.querySelector("#included .t2 p").textContent="Your domain stays yours. You add the DNS records we provide and handle renewals directly with the registrar.";
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Who owns the domain?</summary><p>You do. If we arrange its first registration, it is registered in your name. You pay future renewal costs directly to the registrar.</p></details><details class="glass"><summary>Who connects the domain?</summary><p>We give you the DNS records for your domain. You add them at your registrar; we then check the connection and SSL. Never share your registrar password.</p></details>');
   var CONN=10,ME=null,PUB=["landing","why","pricing","how","faq","legal","testimonials","verify","client-preview"],mem={};
   function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
   function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
@@ -1424,7 +1432,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function uSave(r){var u=lsGet("pf_users_v1")||{};u[r.email]=r;if(!lsSet("pf_users_v1",u))mem[r.email]=r}
   ME=lsGet("pf_session_v1");if(!ME||!ME.name)ME=null;
   function usd(n){return "$"+n.toFixed(2)}
-  mkPage("landing",'<div class="lp"><div><span class="eyebrow">Deriv site builder</span><h1>Your own Deriv site, live in a day.</h1><p class="lead">Sign in, pick a template, name your site, and we handle the domain and the servers. You keep the markup your visitors generate.</p><ul class="lpl"><li><b>One setup fee.</b> We take no share of your earnings.</li><li><b>Domain handled.</b> We register it in your name, connect it and switch on SSL.</li><li><b>Free bots included.</b> Always with clear risk warnings.</li></ul></div><div class="glass lp-r" id="auth"><div id="a1" style="display:grid;gap:12px"><h2>Sign in or create an account</h2><button class="gbtn" id="gsi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Continue with Google</button><span class="mini">Preview sign-in. On the live site this opens Google\u2019s own sign-in window.</span><div id="a1f" style="display:none"><label for="ge">Gmail address (preview only)</label><input class="field" id="ge" type="email" placeholder="you@gmail.com" autocomplete="email"><div style="height:10px"></div><button class="btn" id="gct" style="width:100%">Continue</button></div><div class="dst" id="ae" role="alert"></div></div><div id="a2" style="display:none;gap:12px"><h2>Almost there</h2><span class="mini">Signed in as <b id="gem"></b></span><div><label for="gn">Your name</label><input class="field" id="gn" autocomplete="name" maxlength="60"></div><div><label for="gp">Phone number</label><div class="phone-row"><select class="field country-picker" id="gncountry" aria-label="Phone country"></select><div class="phone-number"><span class="dial-code" id="gncode"></span><input class="field" id="gp" type="tel" inputmode="tel" autocomplete="tel" placeholder="Enter your number"></div></div><span class="mini">Choose your country to add its calling code. Deriv product availability varies by country.</span></div><div class="chk consent"><span>I agree that Pipforge stores my name, Gmail address and phone number to run my account. <a href="#legal">Privacy</a></span><input type="checkbox" id="gc" aria-label="Consent"></div><button class="btn" id="gdo">Create my account</button><button class="btn ghost" id="gbk">Back</button><div class="dst" id="ae2" role="alert"></div></div></div></div><div class="grid" style="margin-bottom:40px"><div class="glass tile t2"><h3>Earn on contracts</h3><p>Add up to 3% markup. It goes to you, not to us.</p></div><div class="glass tile t2"><h3>Domain handled</h3><p>Registered in your name, connected for you, no DNS work.</p></div><div class="glass tile t2"><h3>Built to look trusted</h3><p>35 templates, 35 animated backgrounds and type themes, 20 header compositions, locked risk warnings and a verify page.</p></div></div>');
+  mkPage("landing",'<div class="lp"><div><span class="eyebrow">Deriv site builder</span><h1>Your own Deriv site, live in a day.</h1><p class="lead">Sign in, pick a template, name your site, and connect a domain that you own. You keep the markup your visitors generate.</p><ul class="lpl"><li><b>One setup fee.</b> We take no share of your earnings.</li><li><b>Your domain, your account.</b> You register and renew it; we provide DNS records and check the connection.</li><li><b>Free bots included.</b> Always with clear risk warnings.</li></ul></div><div class="glass lp-r" id="auth"><div id="a1" style="display:grid;gap:12px"><h2>Sign in or create an account</h2><button class="gbtn" id="gsi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Continue with Google</button><span class="mini">Preview sign-in. On the live site this opens Google\u2019s own sign-in window.</span><div id="a1f" style="display:none"><label for="ge">Gmail address (preview only)</label><input class="field" id="ge" type="email" placeholder="you@gmail.com" autocomplete="email"><div style="height:10px"></div><button class="btn" id="gct" style="width:100%">Continue</button></div><div class="dst" id="ae" role="alert"></div></div><div id="a2" style="display:none;gap:12px"><h2>Almost there</h2><span class="mini">Signed in as <b id="gem"></b></span><div><label for="gn">Your name</label><input class="field" id="gn" autocomplete="name" maxlength="60"></div><div><label for="gp">Phone number</label><div class="phone-row"><select class="field country-picker" id="gncountry" aria-label="Phone country"></select><div class="phone-number"><span class="dial-code" id="gncode"></span><input class="field" id="gp" type="tel" inputmode="tel" autocomplete="tel" placeholder="Enter your number"></div></div><span class="mini">Choose your country to add its calling code. Deriv product availability varies by country.</span></div><div class="chk consent"><span>I agree that Pipforge stores my name, Gmail address and phone number to run my account. <a href="#legal">Privacy</a></span><input type="checkbox" id="gc" aria-label="Consent"></div><button class="btn" id="gdo">Create my account</button><button class="btn ghost" id="gbk">Back</button><div class="dst" id="ae2" role="alert"></div></div></div></div><div class="grid" style="margin-bottom:40px"><div class="glass tile t2"><h3>Earn on contracts</h3><p>Set up markup directly in your Deriv app.</p></div><div class="glass tile t2"><h3>Domain stays yours</h3><p>Register it in your name, add DNS records, and renew it directly with the registrar.</p></div><div class="glass tile t2"><h3>Built to look trusted</h3><p>35 templates, 35 animated backgrounds and type themes, 20 header compositions, locked risk warnings and a verify page.</p></div></div>');
   $("p-landing").classList.add("pub");PUB.slice(1).forEach(function(i){$("p-"+i).classList.add("pub")});
   var LS=[["1. Create your account",["Open the landing page and choose Continue with Google.","Enter your name and phone number, tick the consent box and create your account.","Next time, Continue with Google signs you straight in."]],
    ["2. Name your site and choose a domain",["In the builder, open the Site tab and type your site name.","Choose Get a new domain, type the name you want and pick an ending. We check it is free.","If it is taken, pick one of the suggested endings. A taken domain cannot be bought.","Already own one? Choose I already have a domain and enter it. There is no domain fee, only a one-time $"+CONN+" connection fee."]],
@@ -1433,7 +1441,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
    ["5. Set your header, menu and social links",["In the Fonts & theme tab, choose a typeface. In the Header tab, try one of 20 header compositions and set your announcement.","In the Menu tab, tick the pages you want in your site\u2019s menu.","In the Social tab, enter your profile names or links. Only the ones you fill in show as icons."]],
    ["6. Add your Deriv details",["Open the Dashboard and enter your Deriv app ID and referral link.","Set your markup from 0 to 3%. Your site shows this rate to visitors.","Optionally paste a read-only token so we can show your commission."]],
    ["7. Bot builder and free bots",["Use the Bot Builder workspace to set up a strategy, save it, or export the setup file.","Load existing Deriv XML bot files from the workspace and open the original in Deriv Bot to run it.","Always tell visitors to test bots on a demo account first."]],
-   ["8. Reserve your site and go live",["Press Reserve this site and check your order.","Pay. We register your domain in your name, connect it to our servers and switch on SSL.","Your site goes live without you visiting a registrar or touching DNS."]],
+   ["8. Reserve your site and go live",["Press Reserve this site and check your order.","After payment, register the domain in your name or confirm that you own it. Add the DNS records we provide.","We check the domain and SSL, then finish the handoff. You handle future renewals directly with the registrar."]],
    ["9. Track your earnings",["Open Earnings to see your markup over the last 30 days and the most recent days.","Connect a read-only Deriv token to see real numbers."]],
    ["10. Stay safe",["Never share your registrar or Deriv password with anyone, including us.","Use tokens with read access only.","Be open about your markup rate and never promise profits."]]];
   mkPage("tutorials",'<div class="ph"><h1>How to use Pipforge</h1><p>Follow these lessons from sign-up to your first earnings.</p></div>'+LS.map(function(l,i){return '<details class="glass"'+(i===0?' open':'')+'><summary>'+l[0]+'</summary><ol class="steps2">'+l[1].map(function(s){return '<li>'+s+'</li>'}).join("")+'</ol></details>'}).join("")+'<div class="row" style="margin:24px 0 40px"><button class="btn" data-go="home">Open the builder</button><button class="btn ghost" data-go="earnings">See my earnings</button></div>');
@@ -1515,15 +1523,15 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function fix(){var own=st.dm==="own",fee=own?CONN:st.f;
     $("sF").textContent="$"+fee;$("sF").parentNode.firstChild.textContent=own?"Domain connection ":"Domain, first year ";$("sTot").textContent="$"+(200+fee);
     if(own)$("ren").textContent="One-time $"+CONN+" connection fee. No domain fee.";
-    $("ckn").innerHTML=own?"<b>You keep your domain.</b> After you pay, we show you the DNS records to add at your registrar, or guide you step by step. The $"+CONN+" connection fee is one-time.":"<b>Your domain is fully handled.</b> After you pay, we register it in your name, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or touching DNS.";
+    $("ckn").innerHTML=own?"<b>You own and renew your domain.</b> We give you DNS records to add at your registrar.":"<b>The domain is registered in your name.</b> You handle future renewals directly with the registrar. We give you DNS records to add.";
     ern()}
   window.addEventListener("hashchange",fix);
   var r9=render;render=function(){r9();fix()};
-  $("down").querySelector(".dnote").innerHTML="<b>Keep your domain where it is.</b> There is no domain fee, only a one-time $"+CONN+" connection fee. After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone.";
-  $("dnew").querySelector(".dnote").innerHTML="<b>Your payment covers everything.</b> We register the domain in your name, connect it to our servers and switch on SSL, so your site goes live without you visiting a registrar or setting up DNS. You can transfer it to another registrar once the standard 60-day lock on new domains ends.";
-  pl.previousElementSibling.innerHTML="<b>Everything is included.</b> The domain fee covers registration in your name, connecting it to our servers and SSL. You never visit a registrar or set up DNS. Already own a domain? Connect it for a one-time $"+CONN+" fee, with no domain fee.";
-  document.querySelectorAll("#p-faq details").forEach(function(d){if(d.querySelector("summary").textContent.indexOf("already own")>-1)d.querySelector("p").textContent="Yes. Choose \u201cI already have a domain\u201d and enter it. There is no domain fee, only a one-time $"+CONN+" connection fee. After checkout we show you the DNS records to add at your registrar, or guide you step by step. Never share your registrar password with anyone."});
-  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Whose name is my domain registered in?</summary><p>Yours. We register it in your name, and you can transfer it to another registrar once the standard 60-day lock on new domains ends.</p></details>');
+  $("down").querySelector(".dnote").innerHTML="<b>You own and renew this domain.</b> There is no domain fee, only a one-time $"+CONN+" connection fee. We give you the DNS records to add at your registrar. Never share your registrar password.";
+  $("dnew").querySelector(".dnote").innerHTML="<b>The domain belongs to you.</b> If we arrange its first registration, it is registered in your name. You add the DNS records we provide and pay renewals directly to the registrar. Never share your registrar password.";
+  pl.previousElementSibling.innerHTML="<b>Your domain stays yours.</b> If you ask us to arrange the first registration, it is registered in your name. You add the DNS records we provide and pay renewals directly to your registrar.";
+  document.querySelectorAll("#p-faq details").forEach(function(d){if(d.querySelector("summary").textContent.indexOf("already own")>-1)d.querySelector("p").textContent="Yes. Choose \u201cI already own a domain\u201d and enter it. There is no domain fee, only a one-time $"+CONN+" connection fee. We give you DNS records to add at your registrar. Never share your registrar password."});
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Whose name is my domain registered in?</summary><p>Yours. You handle future renewal payments directly with the registrar.</p></details>');
   var h0=(location.hash||"").slice(1);
   if(!ME&&PUB.indexOf(h0||"home")<0)location.replace("#landing");else if(ME&&(!h0||h0==="landing"))location.replace("#home");
   navUI();
@@ -1584,11 +1592,13 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     BK.loading=true;
     return SB.from("sites").select("*").eq("owner",BK.uid).maybeSingle().then(function(r){
       if(r.error){toast("Could not load your site");return}
-      if(r.data){BK.site=r.data;fromRow(r.data);render();setSv("Saved");return loadStatus().then(loadEarn)}
+      if(r.data){BK.site=r.data;fromRow(r.data);render();setSv("Saved");return loadStatus().then(loadEarn).then(loadOpenOrder)}
     }).then(function(){BK.loading=false},function(){BK.loading=false})}
+  function loadOpenOrder(){if(!BK.site)return Promise.resolve();return SB.from("orders").select("*").eq("site_id",BK.site.id).eq("status","pending").order("created_at",{ascending:false}).limit(1).maybeSingle().then(function(r){if(!r.error&&r.data){BK.order=r.data;fix2()}})}
   function placeOrder(){
     return flushSave().then(function(){
       if(!BK.site){toast("Your site could not be saved yet");return false}
+      if(BK.order&&BK.order.status==="pending")return true;
       return SB.rpc("create_order",{p_site:BK.site.id}).then(function(r){
         if(r.error){toast(r.error.message);return false}
         BK.order=r.data;BK.site.status="pending_payment";fix2();return true})})}
@@ -1599,16 +1609,25 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       if(r.data&&r.data.status==="paid"){BK.order.status="paid";BK.site.status="paid";pst.className="dst ok";pst.textContent="Payment received. We are registering your domain and setting up your site. Follow progress in your dashboard.";$("pay").disabled=false;loadStatus();return}
       return SB.from("payments").select("status").eq("order_id",BK.order.id).order("created_at",{ascending:false}).limit(1).then(function(p){
         if(p.data&&p.data[0]&&p.data[0].status==="failed"){pst.className="dst bad";pst.textContent="The payment was cancelled or failed. You have not been charged. Please try again.";$("pay").disabled=false;return}
-        if(n>=40){pst.className="dst bad";pst.textContent="We have not received a confirmation yet. If you were charged, contact us and we will sort it out.";$("pay").disabled=false;return}
+        if(n>=40){pst.className="dst neu";pst.textContent="Your transfer is still waiting for a manual check. Do not send another payment. You can check your dashboard later.";return}
         BK.poll=setTimeout(function(){pollOrder(n+1)},3000)})})}
   function startPayment(){
-    var sel=document.querySelector('#pm [aria-pressed="true"]'),ph=phoneE164("pmcountry","pp"),pst=$("pst");
-    if(!sel||sel.textContent!=="M-Pesa"){toast("Only M-Pesa is available right now");return}
-    if(!ph){toast("Enter your M-Pesa phone number");return}
-    pst.className="dst neu";pst.textContent="Sending the M-Pesa prompt\u2026";$("pay").disabled=true;
-    SB.functions.invoke("checkout",{body:{order_id:BK.order.id,method:"mpesa",phone:ph}}).then(function(r){
-      if(r.error)return errMsg(r.error).then(function(m){pst.className="dst bad";pst.textContent=m;$("pay").disabled=false});
-      pst.className="dst neu";pst.textContent="Check your phone and enter your M-Pesa PIN. Waiting for confirmation\u2026";pollOrder(0)})}
+    var p=(window.PF_CONFIG||{}).CRYPTO_PAYMENT,pst=$("pst");
+    if(!p||p.asset!=="USDT"||p.network!=="TRC20"||p.address!=="TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY"){
+      pst.className="dst bad";pst.textContent="Crypto payment details are not configured. Contact Pipforge before sending any funds.";return}
+    $("crypto-amount").textContent=Number(BK.order.total_usd).toFixed(2)+" USDT";
+    $("crypto-address").textContent=p.address;$("crypto-invoice").hidden=false;$("pay").hidden=true;
+    pst.className="dst neu";pst.textContent="Send the amount shown, then submit the transaction ID for review."}
+  $("crypto-copy").addEventListener("click",function(){if(!navigator.clipboard){toast("Copy the wallet address manually");return}navigator.clipboard.writeText($("crypto-address").textContent).then(function(){toast("Wallet address copied")},function(){toast("Copy the wallet address manually")})});
+  $("crypto-submit").addEventListener("click",function(){
+    var tx=$("crypto-txid").value.trim().toLowerCase(),status=$("crypto-status");
+    if(!/^[a-f0-9]{64}$/.test(tx)){status.className="dst bad";status.textContent="Enter the 64-character TRON transaction ID.";return}
+    $("crypto-submit").disabled=true;status.className="dst neu";status.textContent="Submitting for review…";
+    SB.rpc("submit_crypto_payment",{p_order:BK.order.id,p_txid:tx}).then(function(r){
+      if(r.error){status.className="dst bad";status.textContent=r.error.message;$("crypto-submit").disabled=false;return}
+      status.className="dst ok";status.textContent="Submitted. Your site will go live after Pipforge verifies this transfer.";pollOrder(0)
+    })
+  });
   function swapBtn(id){var b=$(id),c=b.cloneNode(true);b.parentNode.replaceChild(c,b);return c}
   function applySession(s){
     if(!s){return}
@@ -1685,6 +1704,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     SB.rpc("public_site",{p_domain:host}).then(function(r){
       var s=r.data;
       if(!s){var m=document.createElement("p");m.style.cssText="position:fixed;inset:0;z-index:50;margin:0;display:grid;place-items:center;background:#0e0e0e;color:#f4f4f6;font:16px sans-serif;text-align:center;padding:40px";m.textContent=host+" is not live yet.";document.body.appendChild(m);return}
+      SB.rpc("record_public_site_visit",{p_domain:host});
       BK.loading=true;
       fromRow({name:s.name,logo_data:s.logo_data,loader_style:s.loader_style,template:s.template,background:s.background,header:s.header,font_theme:s.font_theme,announcement:s.announcement,icon_shape:s.icon_shape,icon_place:s.icon_place,social:s.social,menu:s.menu,markup:s.markup,domain_mode:"new",domain:s.domain,deriv_app_id:s.deriv_app_id,referral_url:s.referral_url});
       COMING.forEach(function(k){st.menu[k]=false});

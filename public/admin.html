@@ -10,8 +10,8 @@
   body{margin:0;padding:24px;background:#0e0e0e;color:#f4f4f6}
   @media (prefers-color-scheme:light){body{background:#f4f5f7;color:#151717}}
   h1{margin:0 0 16px;font-size:24px}
-  .card{border:1px solid #8884;border-radius:14px;padding:16px;margin:0 0 14px;max-width:760px}
-  .card h2{margin:0 0 4px;font-size:18px}.muted{opacity:.7;font-size:14px}
+  .card,.guide,.visits,.order-card{border:1px solid #8884;border-radius:14px;padding:16px;margin:0 0 14px;max-width:1040px}
+  .card h2,.guide h2,.visits h2,.order-card h2{margin:0 0 4px;font-size:18px}.muted{opacity:.7;font-size:14px}
   .task{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid #8883;flex-wrap:wrap}
   .task b{min-width:200px}.done{opacity:.55}
   button{padding:8px 14px;border-radius:10px;border:0;background:#ff444f;color:#fff;font-weight:600;cursor:pointer}
@@ -20,9 +20,19 @@
 <script src="config.js"></script>
 </head>
 <body>
-<h1>Fulfilment queue</h1>
+<h1>Pipforge admin</h1>
 <div id="auth"></div>
 <p id="msg" class="muted" role="status"></p>
+<div id="portal" hidden>
+  <section class="visits"><h2>Site visits</h2><p class="muted">Page views in the last 30 days. This counts page loads and does not identify visitors.</p><div id="visits" class="muted">Loading visits…</div></section>
+  <section class="guide"><h2>Simple handoff guide</h2>
+    <div class="task"><b>1. Confirm payment</b><span class="muted">Open the TRONSCAN link. Check it is confirmed, successful, USDT (TRC20), for the full order amount, and sent to TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY. A screenshot alone is not proof. Never ask for a wallet recovery phrase.</span></div>
+    <div class="task"><b>2. Connect the customer’s domain</b><span class="muted">The customer owns the domain, pays its renewals, and adds the DNS records we provide. Never ask them for their registrar password.</span></div>
+    <div class="task"><b>3. Set up Deriv login</b><span class="muted">The customer registers their own Deriv app, chooses their markup there, and gives Pipforge the app ID. Set the callback to https://their-domain/api/deriv/callback. <a href="https://developers.deriv.com/dashboard/" target="_blank" rel="noreferrer">Open Deriv app dashboard</a>.</span></div>
+    <div class="task"><b>4. Check and hand over</b><span class="muted">Wait for DNS and SSL to become ready, open the live domain, test Deriv login, then mark the remaining setup steps done below.</span></div>
+  </section>
+  <section><h2>Payments waiting for confirmation</h2><p class="muted">Check the transaction on its blockchain before confirming it here.</p><div id="orders"></div></section>
+</div>
 <div id="list"></div>
 <script>
 (function () {
@@ -42,7 +52,7 @@
   function check() {
     SB.rpc('is_admin').then(function (r) {
       if (r.data !== true) { msg('This account is not an admin.'); return; }
-      $('auth').replaceChildren(); load();
+      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders();
     });
   }
   function load() {
@@ -58,6 +68,56 @@
         SB.from('profiles').select('id,email,full_name,phone').in('id', owners).then(function (p) {
           draw(rows, index(res[0].data), index(res[1].data), index(p.data)); msg('');
         });
+      });
+    });
+  }
+  function loadVisits() {
+    var since = new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10);
+    Promise.all([
+      SB.from('site_visits').select('site_id,day,views').gte('day', since),
+      SB.from('sites').select('id,name,domain,status')
+    ]).then(function (res) {
+      if (res[0].error || res[1].error) { $('visits').textContent = 'Visit totals are not available yet. Apply the latest database update first.'; return; }
+      var sites = index(res[1].data), totals = {}, total = 0;
+      (res[0].data || []).forEach(function (row) { totals[row.site_id] = (totals[row.site_id] || 0) + Number(row.views || 0); total += Number(row.views || 0); });
+      var box = $('visits'), cards = Object.keys(sites).filter(function (id) { return sites[id].status === 'live'; }).map(function (id) {
+        var site = sites[id]; return el('div', 'task', (site.name || site.domain || 'Client site') + ' · ' + (site.domain || '') + ' — ' + (totals[id] || 0) + ' views');
+      });
+      box.replaceChildren(el('p', null, 'All live sites: ' + total + ' page views'), ...cards);
+      if (!cards.length) box.appendChild(el('p', 'muted', 'Live-site visit totals will appear here once tracking is enabled on a live site.'));
+    });
+  }
+  function loadOrders() {
+    SB.from('orders').select('id,owner,site_id,domain,total_usd,created_at').eq('status', 'pending').then(function (r) {
+      var box = $('orders'), rows = r.data || [];
+      if (r.error) { box.textContent = 'Could not load orders: ' + r.error.message; return; }
+      if (!rows.length) { box.textContent = 'No unpaid orders.'; return; }
+      Promise.all([
+        SB.from('sites').select('id,name').in('id', uniq(rows.map(function (o) { return o.site_id; }))),
+        SB.from('profiles').select('id,email,full_name,phone').in('id', uniq(rows.map(function (o) { return o.owner; }))),
+        SB.from('payments').select('order_id,provider_ref,status,created_at').in('order_id', uniq(rows.map(function (o) { return o.id; }))).eq('provider', 'crypto_manual').order('created_at', { ascending: false })
+      ]).then(function (res) {
+        var sites = index(res[0].data), people = index(res[1].data), payments = res[2].data || [];
+        box.replaceChildren.apply(box, rows.map(function (o) {
+          var card = el('section', 'order-card'), person = people[o.owner] || {}, site = sites[o.site_id] || {};
+          card.appendChild(el('h2', null, (site.name || 'Client site') + ' · ' + o.domain));
+          card.appendChild(el('p', 'muted', (person.full_name || '') + ' · ' + (person.email || '') + ' · ' + (person.phone || '') + ' · due ' + Number(o.total_usd).toFixed(2) + ' USDT'));
+          var payment = payments.find(function (p) { return p.order_id === o.id && p.status === 'initiated'; });
+          if (!payment) { card.appendChild(el('p', 'muted', 'Waiting for the client to send USDT and submit its transaction ID.')); return card; }
+          var txid = payment.provider_ref, link = el('a', null, 'Check transaction on TRONSCAN');
+          link.href = 'https://tronscan.org/#/transaction/' + txid; link.target = '_blank'; link.rel = 'noreferrer';
+          card.appendChild(link);
+          var btn = el('button', null, 'Confirm payment & start setup');
+          btn.onclick = function () {
+            if (!window.confirm('Have you verified the correct network, amount, and receiving address?')) return;
+            btn.disabled = true;
+            SB.rpc('admin_confirm_crypto_payment', { p_order: o.id, p_txid: txid }).then(function (result) {
+              if (result.error) { msg(result.error.message); btn.disabled = false; }
+              else { msg('Payment confirmed. The setup checklist is ready.'); load(); loadOrders(); }
+            });
+          };
+          card.appendChild(btn); return card;
+        }));
       });
     });
   }

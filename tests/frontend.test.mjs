@@ -37,7 +37,7 @@ test('demo mode: social links reject unsafe values', async (t) => {
   assert.deepEqual(errors, []);
 });
 
-test('backend mode: sign in, profile, autosave, domain check, order, M-Pesa, status', async (t) => {
+test('backend mode: sign in, profile, autosave, domain check, order, USDT payment review, status', async (t) => {
   const sb = fakeSupabase({ domainStatus: (dm) => dm === 'taken.site' ? 'taken' : dm.endsWith('.co.ke') ? 'manual' : 'free' });
   const { w, d, $, click, input, errors } = boot({ sb }); t.after(() => w.close());
   await tick(300);
@@ -86,14 +86,14 @@ test('backend mode: sign in, profile, autosave, domain check, order, M-Pesa, sta
   click($('reserve')); await tick(1800);
   assert.equal(w.location.hash, '#checkout');
   assert.equal(sb.db.orders.length, 1); assert.equal($('sTot').textContent, '$208');
-  // Pay: bad phone shows the server message; good phone starts M-Pesa and polling confirms it
-  input($('pp'), '123'); click($('pay')); await tick(2200);
-  assert.match($('pst').textContent, /valid Safaricom number/);
-  input($('pp'), '0712345678'); click($('pay')); await tick(2200);
-  const co = sb.calls.invoke.filter((c) => c[0] === 'checkout').pop();
-  assert.equal(co[1].method, 'mpesa'); assert.equal(co[1].order_id, sb.db.orders.find((o) => o.status !== 'cancelled').id);
-  assert.equal(co[1].phone, '+254712345678');
-  assert.ok(!('amount' in co[1]) && !('total' in co[1]), 'browser never sends the price');
+  // Show the configured TRC20 invoice, submit the transaction ID, then wait for admin verification.
+  click($('pay')); await tick(20);
+  assert.equal($('crypto-amount').textContent, '208.00 USDT');
+  assert.equal($('crypto-address').textContent, 'TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY');
+  const txid = 'a'.repeat(64); input($('crypto-txid'), txid); click($('crypto-submit')); await tick(30);
+  const submitted = sb.calls.rpc.find((c) => c[0] === 'submit_crypto_payment');
+  assert.equal(submitted[1].p_order, sb.db.orders.find((o) => o.status !== 'cancelled').id);
+  assert.equal(submitted[1].p_txid, txid);
   await tick(3600);
   assert.match($('pst').textContent, /Payment received/);
   assert.equal(s.status, 'paid');
