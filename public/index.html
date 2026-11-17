@@ -392,6 +392,21 @@ body{background:transparent}
 .site{height:clamp(480px,calc(100vh - 150px),900px)}
 .dnote{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5}.dnote b{color:var(--ink)}
 .dst{font-size:14px;font-weight:600;min-height:20px;line-height:1.4}.dst.ok{color:#19d3a2}.dst.bad{color:#ff6b75}.dst.neu{color:var(--muted);font-weight:500;font-size:13px}
+#domain-action .btn{display:inline-flex;align-items:center;justify-content:center;min-width:160px;min-height:54px;padding:14px 28px;text-align:center;text-decoration:none;box-sizing:border-box}
+#p-pricing>.grid{grid-template-columns:minmax(0,520px)}
+.payment-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.payment-option{min-width:0;min-height:104px;padding:12px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr auto;align-items:center;gap:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--glass);box-sizing:border-box}
+.payment-option.available{border-color:color-mix(in srgb,#19b987 48%,var(--line));background:color-mix(in srgb,#19b987 8%,var(--glass))}
+.payment-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--glass2);color:var(--ink);flex:none}
+.payment-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.payment-copy{min-width:0}.payment-copy b,.payment-copy small{display:block}.payment-copy b{font-size:13px;line-height:1.25}.payment-copy small{margin-top:3px;color:var(--muted);font-size:11px}
+.payment-state{grid-column:1/-1;justify-self:start;padding:4px 8px;border-radius:999px;background:var(--glass2);color:var(--muted);font-size:10px;font-weight:700;white-space:nowrap}
+.payment-option.available .payment-state{background:rgba(25,185,135,.14);color:#0b8d67}
+#crypto-invoice{display:grid;gap:12px;width:100%;max-width:100%;box-sizing:border-box;padding:18px;overflow:hidden}
+#crypto-invoice[hidden]{display:none}
+#crypto-invoice>p{margin:0;color:var(--ink);overflow-wrap:anywhere}
+#crypto-address{overflow-wrap:anywhere;word-break:break-all}
+#crypto-copy,#crypto-submit,#pay{width:100%;min-height:48px}
 #dnew,#down{display:grid;gap:14px}
 .links{flex:1;min-width:0;justify-content:flex-start;overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.42) transparent;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}.links::-webkit-scrollbar{display:block;height:4px}.links::-webkit-scrollbar-thumb{background:rgba(255,255,255,.42);border-radius:999px}.links a{white-space:nowrap;flex:0 0 auto;scroll-snap-align:start}
 .logo{cursor:pointer}
@@ -411,7 +426,7 @@ p.hi{margin:0 0 8px;font-weight:600;color:var(--red);font-size:15px}
 .etb{width:100%;border-collapse:collapse;font-size:14px}.etb th,.etb td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line)}.etb th:first-child,.etb td:first-child{text-align:left}.etb th{color:var(--muted);font-weight:600;font-size:12px}
 .steps2{margin:0;padding:0 22px 18px 40px;color:var(--muted);font-size:15px;display:grid;gap:6px}
 @media (max-width:860px){.lp{grid-template-columns:1fr;padding-top:32px}.acct .hi2{display:none}nav .glass{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:10px 12px}nav .logo{grid-column:1;grid-row:1}.links{grid-column:1/-1;grid-row:2;width:100%;max-width:none!important;min-height:42px;justify-content:flex-start;scroll-snap-type:x proximity}.links a{padding:8px 10px}.acct{grid-column:2;grid-row:1;justify-self:end}}
-@media (max-width:520px){.phone-row{grid-template-columns:1fr}}
+@media (max-width:520px){.phone-row{grid-template-columns:1fr}.payment-methods{grid-template-columns:1fr}#p-pricing>.grid{grid-template-columns:minmax(0,1fr)}}
 html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenant .orbs{display:none!important}
 .tenantsite{position:fixed;inset:0;height:100vh!important;max-height:none!important;border-radius:0!important;z-index:5}
 @media (max-width:860px){.two,.dgrid{grid-template-columns:1fr}.logo{font-size:17px}}
@@ -607,7 +622,11 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       <ul class="list"><li>Site name <span id="sN"></span></li><li>Domain <span id="sD"></span></li><li>Template <span id="sT"></span></li><li>One-time setup <span>$200</span></li></ul>
       <div class="total"><span>Due today</span><strong id="sTot"></strong></div></div>
     <div class="glass cfg" style="animation:none;opacity:1">
-      <div><span class="lab">Payment method</span><div class="row" id="pm"><button class="chip" aria-pressed="true" disabled>USDT · TRC20</button></div></div>
+      <div><span class="lab">Payment method</span><div class="payment-methods" id="pm" role="list" aria-label="Payment methods">
+        <div class="payment-option available" role="listitem"><span class="payment-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7 7h10M12 7v10M8.5 10.5h7"/></svg></span><span class="payment-copy"><b>USDT</b><small>TRC20</small></span><span class="payment-state">Available</span></div>
+        <div class="payment-option" role="listitem" aria-label="Card payment, coming soon"><span class="payment-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></span><span class="payment-copy"><b>Card</b><small>Visa · Mastercard</small></span><span class="payment-state">Coming soon</span></div>
+        <div class="payment-option" role="listitem" aria-label="M-Pesa payment, coming soon"><span class="payment-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 6h4M10 17h4"/></svg></span><span class="payment-copy"><b>M-Pesa</b><small>Mobile money</small></span><span class="payment-state">Coming soon</span></div>
+      </div></div>
       <div><label for="pe">Email</label><input class="field" id="pe" type="email" autocomplete="email"></div>
       <button class="btn" id="pay">Show payment details</button>
       <div id="crypto-invoice" class="dnote" hidden>

@@ -99,6 +99,9 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   click($('reserve')); await tick(1800);
   assert.equal(w.location.hash, '#checkout');
   assert.equal(sb.db.orders.length, 1); assert.equal($('sTot').textContent, '$200');
+  assert.equal(d.querySelectorAll('#pm .payment-option').length, 3);
+  assert.equal(d.querySelectorAll('#pm .payment-option svg').length, 3);
+  assert.match($('pm').textContent, /USDT[\s\S]*TRC20[\s\S]*Card[\s\S]*Coming soon[\s\S]*M-Pesa[\s\S]*Coming soon/);
   // Show the configured TRC20 invoice, submit the transaction ID, then wait for admin verification.
   click($('pay')); await tick(20);
   assert.equal($('crypto-amount').textContent, '200.00 USDT');
