@@ -17,7 +17,7 @@ export function createCredentialStore({ url, serviceKey, encryptionKey, upstream
   const request=async(query,init={})=>{
     const response=await upstream(`${url}/rest/v1/deriv_oauth_sessions${query}`,{...init,headers:{...headers,...init.headers},signal:AbortSignal.timeout(15000)});
     if(!response.ok)throw new Error('Credential storage unavailable.');
-    return response.status===204?null:response.json();
+    return response.status===204 || init.method==='POST'?null:response.json();
   };
   return {
     async get(origin,kind,id){if(!id)return undefined;const rows=await request(`?id=eq.${rowId(origin,kind,id)}&select=payload`);return rows?.[0]?decrypt(rows[0].payload):undefined;},

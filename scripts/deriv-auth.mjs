@@ -91,7 +91,7 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
       } else {
         json(res, 200, { data: (data.data || []).map(({account_id,account_type,balance,currency,group,status}) => ({account_id,account_type,balance:String(balance),currency,group,status})) });
       }
-    } catch (error) { console.error('Deriv auth request failed', url.pathname, error?.name); if(url.pathname==='/api/deriv/callback')redirect(res,'/?deriv_login=failed',cookie('pf_deriv_pending','',0));else json(res, 502, { error: 'Could not connect to Deriv. Please try again.' }); }
+    } catch { if(url.pathname==='/api/deriv/callback')redirect(res,'/?deriv_login=failed',cookie('pf_deriv_pending','',0));else json(res, 502, { error: 'Could not connect to Deriv. Please try again.' }); }
     return true;
   };
 }
