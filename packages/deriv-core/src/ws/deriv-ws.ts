@@ -9,6 +9,14 @@ interface PendingRequest {
   reject: (error: Error) => void;
 }
 
+interface ProposalQuote {
+  id: string;
+  askPrice: number;
+  parameters: Record<string, unknown>;
+  subscriptionId: string | null;
+  createdAt: number;
+}
+
 /**
  * A Deriv API `error` payload, surfaced as a rejection.
  *
@@ -22,12 +30,14 @@ export class DerivApiError extends Error {
   readonly code: string;
   /** `msg_type` of the response the error arrived on, when the frame carried one. */
   readonly msgType: string | undefined;
+  readonly details: unknown;
 
-  constructor(code: string, message: string, msgType?: string) {
+  constructor(code: string, message: string, msgType?: string, details?: unknown) {
     super(message);
     this.name = 'DerivApiError';
     this.code = code;
     this.msgType = msgType;
+    this.details = details;
   }
 }
 
@@ -54,7 +64,8 @@ function toDerivApiError(data: Record<string, unknown>): DerivApiError {
   return new DerivApiError(
     readString(detail, 'code') ?? '',
     readString(detail, 'message') ?? '',
-    readString(data, 'msg_type')
+    readString(data, 'msg_type'),
+    detail.details
   );
 }
 
@@ -76,9 +87,9 @@ export class DerivWS {
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
   private pingInterval: ReturnType<typeof setInterval> | null = null;
   private url: string;
-  private isConnecting = false;
+  private connecting = false;
   private disposed = false;
-  private proposalIds = new Set<string>();
+  private proposalIds = new Map<string, ProposalQuote>();
 
   constructor(url?: string, private freshUrl?: () => Promise<string>) {
     this.url = url ?? getPublicWsUrl();
@@ -121,7 +132,7 @@ export class DerivWS {
     if (this.ws?.readyState === WebSocket.OPEN) {
       return Promise.resolve();
     }
-    if (this.isConnecting) {
+    if (this.connecting) {
       return new Promise((resolve) => {
         const check = setInterval(() => {
           if (this.ws?.readyState === WebSocket.OPEN) {
@@ -132,17 +143,17 @@ export class DerivWS {
       });
     }
 
-    this.isConnecting = true;
+    this.connecting = true;
     try { if (this.freshUrl) this.url = await this.freshUrl(); }
-    catch (error) { this.isConnecting = false; throw error; }
-    if (this.disposed) { this.isConnecting = false; throw new Error('Connection closed'); }
+    catch (error) { this.connecting = false; throw error; }
+    if (this.disposed) { this.connecting = false; throw new Error('Connection closed'); }
     this.proposalIds.clear();
 
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(this.url);
 
       this.ws.onopen = () => {
-        this.isConnecting = false;
+        this.connecting = false;
         this.reconnectAttempts = 0;
         this.startPing();
         this.notifyConnectionState(true);
@@ -154,12 +165,12 @@ export class DerivWS {
       };
 
       this.ws.onerror = () => {
-        this.isConnecting = false;
+        this.connecting = false;
         reject(new Error('WebSocket connection error'));
       };
 
       this.ws.onclose = () => {
-        this.isConnecting = false;
+        this.connecting = false;
         this.stopPing();
         this.subscriptionHandlers.clear();
         this.proposalIds.clear();
@@ -183,10 +194,14 @@ export class DerivWS {
 
       if (payload.buy) {
         const price = Number(payload.price);
-        if (!this.freshUrl || typeof payload.price !== 'number' || !this.proposalIds.has(String(payload.buy)) || !Number.isFinite(price) || price <= 0) {
+        const buyId = String(payload.buy);
+        const quote = buyId === '1'
+          ? [...this.proposalIds.values()].find((candidate) => this.matchesParameters(candidate.parameters, payload.parameters))
+          : this.proposalIds.get(buyId);
+        if (!this.freshUrl || !quote || Date.now() - quote.createdAt > 15_000 || typeof payload.price !== 'number' || !Number.isFinite(price) || price <= 0 || price > quote.askPrice || (buyId !== '1' && !quote.subscriptionId)) {
           reject(new Error('Get a fresh quote on your connected account before buying.')); return;
         }
-        this.proposalIds.delete(String(payload.buy));
+        this.proposalIds.delete(quote.id);
       }
       const reqId = ++this.reqIdCounter;
       const message = { ...payload, req_id: reqId };
@@ -277,9 +292,25 @@ export class DerivWS {
     return this.ws?.readyState === WebSocket.OPEN;
   }
 
+  get isReconnecting(): boolean {
+    return this.connecting || (this.reconnectAttempts > 0 && this.reconnectAttempts < this.maxReconnectAttempts);
+  }
+
   private handleMessage(data: Record<string, unknown>): void {
-    const quoted = data.proposal as { id?: string } | undefined;
-    if (quoted?.id) { if(this.proposalIds.size > 100) this.proposalIds.clear(); this.proposalIds.add(quoted.id); }
+    const quoted = data.proposal as { id?: string; ask_price?: number } | undefined;
+    const echo = data.echo_req as Record<string, unknown> | undefined;
+    if (quoted?.id && echo?.proposal === 1 && Number.isFinite(Number(quoted.ask_price))) {
+      if (this.proposalIds.size > 100) this.proposalIds.clear();
+      const previous = this.proposalIds.get(quoted.id);
+      const parameters = previous?.parameters ?? this.getProposalParameters(echo);
+      this.proposalIds.set(quoted.id, {
+        id: quoted.id,
+        askPrice: Number(quoted.ask_price),
+        parameters,
+        subscriptionId: (data.subscription as { id?: string } | undefined)?.id ?? previous?.subscriptionId ?? null,
+        createdAt: Date.now(),
+      });
+    }
     // Notify global handlers
     for (const handler of this.globalHandlers) {
       handler(data);
@@ -320,6 +351,20 @@ export class DerivWS {
       return (data.tick as Record<string, string>).id ?? null;
     }
     return null;
+  }
+
+  private getProposalParameters(request: Record<string, unknown>): Record<string, unknown> {
+    return Object.fromEntries(Object.entries(request).filter(([key, value]) => !['proposal', 'subscribe', 'req_id', 'passthrough'].includes(key) && value !== undefined));
+  }
+
+  private matchesParameters(expected: Record<string, unknown>, actual: unknown): boolean {
+    if (!isRecord(actual)) return false;
+    const sort = (value: unknown): unknown => {
+      if (Array.isArray(value)) return value.map(sort);
+      if (!isRecord(value)) return value;
+      return Object.fromEntries(Object.keys(value).sort().map((key) => [key, sort(value[key])]));
+    };
+    return JSON.stringify(sort(expected)) === JSON.stringify(sort(actual));
   }
 
   private startPing(): void {

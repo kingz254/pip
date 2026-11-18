@@ -4,18 +4,9 @@ class ChartAPI {
     api;
     chart_active_symbols = null; // Separate variable for chart-specific symbols
 
-    onsocketclose() {
-        this.reconnectIfNotConnected();
-    }
-
     init = async (force_create_connection = false) => {
         if (!this.api || force_create_connection) {
-            if (this.api?.connection) {
-                this.api.disconnect();
-                this.api.connection.removeEventListener('close', this.onsocketclose.bind(this));
-            }
             this.api = await generateDerivApiInstance();
-            this.api?.connection.addEventListener('close', this.onsocketclose.bind(this));
 
             // Intercept the send method to filter active_symbols responses for chart
             // this.interceptApiCalls();
@@ -33,12 +24,6 @@ class ChartAPI {
             }, 30000);
         }
     }
-
-    reconnectIfNotConnected = () => {
-        if (this.api?.connection?.readyState && this.api?.connection?.readyState > 1) {
-            this.init(true);
-        }
-    };
 
     // /**
     //  * Intercept API calls to filter active_symbols responses specifically for chart

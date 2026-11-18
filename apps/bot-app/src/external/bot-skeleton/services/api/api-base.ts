@@ -77,7 +77,7 @@ class APIBase {
                 if (subscription?.id) {
                     this.api?.send({
                         forget: subscription.id,
-                    });
+                    }).catch(() => {});
                 }
             });
         });
@@ -148,7 +148,9 @@ class APIBase {
 
     onsocketclose() {
         setConnectionStatus(CONNECTION_STATUS.CLOSED);
-        this.reconnectIfNotConnected();
+        this.current_auth_subscriptions = [];
+        this.is_authorized = false;
+        setIsAuthorized(false);
     }
 
     async init(force_create_connection = false) {
@@ -224,7 +226,7 @@ class APIBase {
 
     async createNewInstance(account_id: string) {
         if (this.account_id !== account_id) {
-            await this.init();
+            await this.init(true);
         }
     }
 

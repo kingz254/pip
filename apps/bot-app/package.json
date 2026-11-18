@@ -20,7 +20,7 @@
     "@deriv-com/translations": "^1.6.1",
     "@deriv-com/ui": "^1.37.1",
     "@deriv-com/utils": "latest",
-    "@deriv/deriv-api": "^1.0.15",
+    "@deriv/core": "*",
     "@deriv/js-interpreter": "^3.0.0",
     "@deriv/quill-icons": "2.4.16",
     "@svgr/core": "^8.1.0",
@@ -62,8 +62,7 @@
     "ua-parser-js": "^1.0.38",
     "usehooks-ts": "^3.1.0",
     "uuid": "^11.1.1",
-    "yup": "^1.4.0",
-    "@deriv/core": "*"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.6",

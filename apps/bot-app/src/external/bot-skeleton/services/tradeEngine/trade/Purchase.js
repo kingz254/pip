@@ -54,7 +54,8 @@ export default Engine =>
                 this.selectProposal(contract_type);
             }
 
-            const quote = await api_base.api.send(proposal);
+            const quoteRequest = { ...proposal, subscribe: 1 };
+            const quote = await api_base.api.send(quoteRequest);
             if (quote?.error) {
                 throw Object.assign(new Error(quote.error.message || 'Deriv could not price this contract.'), quote.error);
             }
@@ -71,8 +72,22 @@ export default Engine =>
                 data: askPrice,
             });
 
-            // Buy the exact quote. Never retry a purchase whose outcome may be unknown.
-            const response = await api_base.api.send({ buy: proposalId, price: askPrice });
+            // Streaming offers have buyable IDs; unary offers use the same fresh quote parameters.
+            const parameters = { ...quoteRequest };
+            ['proposal', 'subscribe', 'req_id', 'passthrough'].forEach(key => delete parameters[key]);
+            Object.keys(parameters).forEach(key => parameters[key] === undefined && delete parameters[key]);
+            const buyRequest = quote.subscription?.id
+                ? { buy: proposalId, price: askPrice }
+                : { buy: '1', price: askPrice, parameters };
+            let response;
+            try {
+                // Never retry a purchase whose outcome may be unknown.
+                response = await api_base.api.send(buyRequest);
+            } finally {
+                if (quote.subscription?.id) {
+                    await api_base.api.send({ forget: quote.subscription.id }).catch(() => {});
+                }
+            }
             if (response?.error) {
                 throw Object.assign(new Error(response.error.message || 'Deriv could not purchase this contract.'), response.error);
             }
