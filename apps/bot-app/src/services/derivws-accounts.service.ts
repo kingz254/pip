@@ -82,7 +82,7 @@ export class DerivWSAccountsService {
      */
     static getStoredAccounts(): DerivAccount[] | null {
         try {
-            const accountsStr = sessionStorage.getItem('deriv_accounts');
+            const accountsStr = localStorage.getItem('deriv_accounts') || sessionStorage.getItem('deriv_accounts');
             if (!accountsStr) {
                 return null;
             }
