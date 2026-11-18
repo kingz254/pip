@@ -1,7 +1,7 @@
 import { LogTypes } from '../../../constants/messages';
 import { api_base } from '../../api/api-base';
 import { contractStatus, info, log } from '../utils/broadcast';
-import { getUUID, tradeOptionToBuy } from '../utils/helpers';
+import { getUUID, tradeOptionToProposal } from '../utils/helpers';
 import { purchaseSuccessful } from './state/actions';
 import { BEFORE_PURCHASE } from './state/constants';
 
@@ -42,39 +42,44 @@ export default Engine =>
                 });
             };
 
-            if (this.is_proposal_subscription_required) {
-                this.selectProposal(contract_type);
-                const proposal = this.proposal_templates.find(item => item.contract_type === contract_type);
-                const quote = await api_base.api.send(proposal);
-                const askPrice = Number(quote?.proposal?.ask_price);
-                if (!Number.isFinite(askPrice) || askPrice <= 0) {
-                    throw new Error('Deriv did not return a current purchase quote.');
-                }
-                const buyRequest = tradeOptionToBuy(contract_type, this.tradeOptions, askPrice);
-                // New API proposal IDs are informational; parameter-based buys use the fresh quote as the price cap.
-                const action = () => api_base.api.send(buyRequest);
-
-                this.isSold = false;
-
-                contractStatus({
-                    id: 'contract.purchase_sent',
-                    data: askPrice,
-                });
-
-                // Never retry a purchase whose outcome may be unknown.
-                return action().then(onSuccess);
+            const proposal = this.proposal_templates?.find(item => item.contract_type === contract_type)
+                ?? tradeOptionToProposal(this.tradeOptions, this.getPurchaseReference()).find(
+                    item => item.contract_type === contract_type
+                );
+            if (!proposal) {
+                throw new Error('Could not prepare a quote for this contract.');
             }
-            const trade_option = tradeOptionToBuy(contract_type, this.tradeOptions);
-            const action = () => api_base.api.send(trade_option);
+
+            if (this.proposal_templates?.some(item => item.contract_type === contract_type)) {
+                this.selectProposal(contract_type);
+            }
+
+            const quote = await api_base.api.send(proposal);
+            if (quote?.error) {
+                throw Object.assign(new Error(quote.error.message || 'Deriv could not price this contract.'), quote.error);
+            }
+            const proposalId = quote?.proposal?.id;
+            const askPrice = Number(quote?.proposal?.ask_price);
+            if (!proposalId || !Number.isFinite(askPrice) || askPrice <= 0) {
+                throw new Error('Deriv did not return a current purchase quote.');
+            }
 
             this.isSold = false;
 
             contractStatus({
                 id: 'contract.purchase_sent',
-                data: this.tradeOptions.amount,
+                data: askPrice,
             });
 
-            return action().then(onSuccess);
+            // Buy the exact quote. Never retry a purchase whose outcome may be unknown.
+            const response = await api_base.api.send({ buy: proposalId, price: askPrice });
+            if (response?.error) {
+                throw Object.assign(new Error(response.error.message || 'Deriv could not purchase this contract.'), response.error);
+            }
+            if (!response?.buy) {
+                throw new Error('Deriv did not confirm the contract purchase.');
+            }
+            return onSuccess(response);
         }
         getPurchaseReference = () => purchase_reference;
         regeneratePurchaseReference = () => {
