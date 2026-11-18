@@ -101,6 +101,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
       </section>
     </div>
     <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
+    <section><div class="section-head"><h2>Payment receipts</h2><p class="muted">Confirmed crypto payments whose receipt email is still pending or needs a retry.</p></div><div id="receipts" class="queue"></div></section>
     <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Name, email, and phone clients provided for account setup, beside their site and domain status.</p></div><div id="clients" class="queue"></div></section>
     <section><div class="section-head"><h2>Client site handoff</h2><p class="muted">Complete each setup step as it is verified.</p></div><div id="list" class="queue"></div></section>
   </div>
@@ -123,7 +124,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
   function check() {
     SB.rpc('is_admin').then(function (r) {
       if (r.data !== true) { msg('This account is not an admin.'); return; }
-      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders(); loadClients();
+      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders(); loadReceipts(); loadClients();
     });
   }
   function load() {
@@ -206,13 +207,53 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
             btn.disabled = true;
             SB.rpc('admin_confirm_crypto_payment', { p_order: o.id, p_txid: txid }).then(function (result) {
               if (result.error) { msg(result.error.message); btn.disabled = false; }
-              else { msg('Payment confirmed. The setup checklist is ready.'); load(); loadOrders(); }
+              else {
+                msg('Payment confirmed. Sending the client receipt…');
+                SB.functions.invoke('send-payment-receipt', { body: { order_id: o.id } }).then(function (mail) {
+                  msg(mail.error ? 'Payment confirmed; receipt email could not be sent. Retry it in Payment receipts.' : mail.data && mail.data.in_progress ? 'Payment confirmed; receipt email is already being processed.' : 'Payment confirmed and receipt emailed to the client.');
+                  load(); loadOrders(); loadReceipts();
+                }).catch(function () { msg('Payment confirmed; receipt email could not be sent. Retry it in Payment receipts.'); load(); loadOrders(); loadReceipts(); });
+              }
             });
           };
           card.appendChild(btn); return card;
         }));
       });
     });
+  }
+  function loadReceipts() {
+    SB.from('payments').select('id,order_id,provider_ref,currency,receipt_email_status,receipt_email_attempted_at,receipt_email_error')
+      .eq('provider', 'crypto_manual').eq('status', 'succeeded').then(function (r) {
+        var box = $('receipts'), payments = (r.data || []).filter(function (p) { return p.receipt_email_status !== 'sent'; });
+        if (r.error) { box.textContent = 'Could not load receipt queue: ' + r.error.message; return; }
+        if (!payments.length) { box.textContent = 'All confirmed payment receipts have been emailed.'; return; }
+        SB.from('orders').select('id,owner,site_id,domain,total_usd,paid_at,status').in('id', uniq(payments.map(function (p) { return p.order_id; }))).then(function (orderResult) {
+          var orders = index(orderResult.data), paid = payments.filter(function (p) { return orders[p.order_id] && orders[p.order_id].status === 'paid'; });
+          if (!paid.length) { box.textContent = 'All confirmed payment receipts have been emailed.'; return; }
+          Promise.all([
+            SB.from('sites').select('id,name').in('id', uniq(paid.map(function (p) { return orders[p.order_id].site_id; }))),
+            SB.from('profiles').select('id,email,full_name').in('id', uniq(paid.map(function (p) { return orders[p.order_id].owner; })))
+          ]).then(function (res) {
+          var sites = index(res[0].data), profiles = index(res[1].data);
+          box.replaceChildren.apply(box, paid.map(function (p) {
+            var o = orders[p.order_id], card = el('article', 'order-card');
+            var person = profiles[o.owner] || {}, site = sites[o.site_id] || {};
+            card.appendChild(el('h2', null, (site.name || 'Client site') + ' · ' + o.domain));
+            card.appendChild(el('p', 'muted', (person.full_name || 'Client') + ' · ' + (person.email || 'No email') + ' · ' + Number(o.total_usd).toFixed(2) + ' USDT · ' + p.provider_ref));
+            card.appendChild(el('p', 'muted', p.receipt_email_status === 'sending' ? 'Receipt email is being sent.' : p.receipt_email_error || 'Receipt email has not been sent yet.'));
+            var retry = el('button', null, p.receipt_email_status === 'sending' ? 'Check / retry receipt' : 'Send receipt');
+            retry.onclick = function () {
+              retry.disabled = true;
+              SB.functions.invoke('send-payment-receipt', { body: { order_id: o.id } }).then(function (result) {
+                msg(result.error ? result.error.message : result.data && result.data.in_progress ? 'Receipt email is already being processed. Check again shortly.' : 'Receipt emailed to ' + (result.data && result.data.to || person.email) + '.');
+                loadReceipts();
+              }).catch(function () { msg('Receipt email could not be sent. Please retry.'); loadReceipts(); });
+            };
+            card.appendChild(retry); return card;
+          }));
+          });
+        });
+      });
   }
   function draw(rows, sites, orders, profiles) {
     var bySite = {}; rows.forEach(function (r) { (bySite[r.site_id] = bySite[r.site_id] || []).push(r); });

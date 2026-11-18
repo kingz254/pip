@@ -4,3 +4,6 @@ project_id = "pipforge"
 # It protects itself with a secret in the URL and re-verifies every payment with Safaricom.
 [functions.mpesa-callback]
 verify_jwt = false
+
+[functions.send-payment-receipt]
+verify_jwt = true
