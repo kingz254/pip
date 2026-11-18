@@ -82,6 +82,7 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
       invoke: async (name, { body }) => {
         calls.invoke.push([name, body]);
         if (name === 'domain-check') return { data: { domain: body.domain, status: domainStatus(body.domain) }, error: null };
+        if (name === 'send-domain-dns') return { data: { sent: true, to: 'jane@gmail.com' }, error: null };
       },
     },
     // test controls

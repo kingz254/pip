@@ -12,7 +12,7 @@ function open(sb) {
   return { w: dom.window, d: dom.window.document, errors };
 }
 function seed(sb) {
-  sb.db.sites.push({ id: 's1', owner: 'u1', name: 'Alpha', domain: 'alpha.com', domain_mode: 'new', status: 'paid' });
+  sb.db.sites.push({ id: 's1', owner: 'u1', name: 'Alpha', domain: 'alpha.com', domain_mode: 'new', status: 'paid', deriv_app_id: 'client-app-123' });
   sb.db.orders.push({ id: 'o1', total_usd: 215 });
   sb.db.profiles.push({ id: 'u1', email: 'jane@gmail.com', full_name: '<img src=x onerror=alert(1)>', phone: '+254700000000' });
   for (const task of ['register_domain', 'connect_dns', 'issue_ssl', 'go_live']) sb.db.fulfilment_tasks.push({ id: 't-' + task, site_id: 's1', order_id: 'o1', task, status: 'todo' });
@@ -38,6 +38,14 @@ test('admin sees the queue, client details are text not HTML, and finishing the 
   assert.ok(d.querySelector('#clients').textContent.includes('jane@gmail.com'));
   assert.equal(d.querySelector('#clients a[href="mailto:jane@gmail.com"]').textContent, 'jane@gmail.com');
   assert.equal(d.querySelector('#clients a[href="tel:+254700000000"]').textContent, '+254700000000');
+  assert.ok(d.querySelector('#clients').textContent.includes('Deriv App ID: client-app-123'));
+  d.querySelector('#clients textarea').value = 'A | @ | 76.76.21.21 | 60';
+  w.confirm = () => true;
+  d.querySelector('#clients button').click(); await tick(40);
+  const dnsCall = sb.calls.invoke.find(([name]) => name === 'send-domain-dns');
+  assert.equal(dnsCall[1].site_id, 's1');
+  assert.equal(dnsCall[1].dns_records, 'A | @ | 76.76.21.21 | 60');
+  assert.equal(d.querySelector('#clients textarea').value, '');
   assert.match(d.querySelector('#visits').textContent, /7 views/);
   for (let i = 0; i < 4; i++) {
     const btn = d.querySelector('.task button'); assert.ok(btn, 'task ' + i); btn.click(); await tick(120);

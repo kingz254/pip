@@ -7,3 +7,6 @@ verify_jwt = false
 
 [functions.send-payment-receipt]
 verify_jwt = true
+
+[functions.send-domain-dns]
+verify_jwt = true

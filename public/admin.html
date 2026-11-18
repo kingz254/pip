@@ -31,6 +31,7 @@ button{min-height:40px;padding:0 var(--space-3);border:1px solid var(--ink);bord
 button:hover{background:var(--ink-soft)}button:active{transform:translateY(1px)}button:disabled{opacity:.55;cursor:not-allowed}
 button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
 input{min-width:min(220px,100%);min-height:40px;padding:var(--space-2) var(--space-2b);border:1px solid var(--rule-strong);border-radius:7px;background:var(--paper-raised);color:var(--ink);outline:2px solid transparent;outline-offset:-3px}
+textarea{width:100%;min-height:120px;padding:var(--space-2b);border:1px solid var(--rule-strong);border-radius:7px;background:var(--paper-raised);color:var(--ink);font:400 14px/1.5 var(--font-figure);resize:vertical}
 input:focus-visible{outline-color:var(--focus)}input::placeholder{color:var(--muted)}
 .shell{width:min(100% - 40px,var(--content));margin-inline:auto}
 .masthead{border-bottom:1px solid var(--rule);background:var(--paper-raised)}
@@ -70,6 +71,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 .order-card button{display:block}
 .card{padding-block:20px}
 .card>.muted{line-height:1.6}
+.dns-compose{display:grid;gap:var(--space-2b);max-width:900px;margin-top:var(--space-3)}.dns-compose label{display:grid;gap:var(--space-2);font-size:14px;font-weight:600}.dns-compose p{margin:0}.dns-compose button{justify-self:start}
 .done{color:var(--muted)}
 #visits,#orders,#clients,#list{min-width:0}
 [hidden]{display:none!important}
@@ -95,14 +97,14 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
       <section class="panel visits"><h2>Site visits</h2><p class="muted">Page views in the last 30 days. This counts page loads and does not identify visitors.</p><div id="visits" class="muted">Loading visits…</div></section>
       <section class="panel guide"><h2>Client handoff</h2><p class="muted">Follow these checks before a client launches.</p>
         <details><summary>Confirm payment</summary><div class="task"><span class="muted">Open the TRONSCAN link. Check it is confirmed, successful, USDT (TRC20), for the full order amount, and sent to TRZPJcgHgm4d6v864CwAa4AogMog6RWuHY. A screenshot alone is not proof. Never ask for a wallet recovery phrase.</span></div></details>
-        <details><summary>Connect the customer’s domain</summary><div class="task"><span class="muted">The customer owns the domain, pays its renewals, and adds the DNS records we provide. Never ask them for their registrar password.</span></div></details>
-        <details><summary>Set up Deriv login</summary><div class="task"><span class="muted">The customer registers their own Deriv app, chooses their markup there, and gives Pipforge the app ID. Set the callback to https://their-domain/api/deriv/callback. <a href="https://developers.deriv.com/dashboard/" target="_blank" rel="noreferrer">Open Deriv app dashboard</a>.</span></div></details>
+        <details><summary>Connect the customer’s domain</summary><div class="task"><span class="muted">Add the domain to the Pipforge Vercel project and paste the exact website DNS records Vercel gives you into that client’s DNS box below. Send them from the client card. The client owns the domain, adds records at their registrar, and pays renewals. Tell them to replace only conflicting website records for @ or www; preserve email records such as MX, SPF, DKIM, and DMARC. Never ask for their registrar password.</span></div></details>
+        <details><summary>Verify the domain with Deriv</summary><div class="task"><span class="muted">The client registers their own Deriv OAuth app using https://their-domain/api/deriv/callback and saves its App ID in their Pipforge Dashboard. If Deriv shows domain-ownership TXT or CNAME records, the client must add those exact records at their registrar too. Keep Deriv verification records alongside the Vercel website records; don’t replace one set with the other. <a href="https://developers.deriv.com/dashboard/" target="_blank" rel="noreferrer">Open Deriv app dashboard</a>.</span></div></details>
         <details><summary>Check and hand over</summary><div class="task"><span class="muted">Wait for DNS and SSL to become ready, open the live domain, test Deriv login, then mark the remaining setup steps done below.</span></div></details>
       </section>
     </div>
     <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
     <section><div class="section-head"><h2>Payment receipts</h2><p class="muted">Confirmed crypto payments whose receipt email is still pending or needs a retry.</p></div><div id="receipts" class="queue"></div></section>
-    <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Name, email, and phone clients provided for account setup, beside their site and domain status.</p></div><div id="clients" class="queue"></div></section>
+    <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Client details, saved Deriv App ID, and a place to prepare and email that client’s DNS instructions.</p></div><div id="clients" class="queue"></div></section>
     <section><div class="section-head"><h2>Client site handoff</h2><p class="muted">Complete each setup step as it is verified.</p></div><div id="list" class="queue"></div></section>
   </div>
 </main>
@@ -161,7 +163,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
     });
   }
   function loadClients() {
-    SB.from('sites').select('id,owner,name,domain,status,created_at').then(function (r) {
+    SB.from('sites').select('id,owner,name,domain,status,created_at,deriv_app_id').then(function (r) {
       var box = $('clients'), sites = r.data || [];
       if (r.error) { box.textContent = 'Could not load client contacts: ' + r.error.message; return; }
       if (!sites.length) { box.textContent = 'Client contact details will appear here after someone signs in and saves a site.'; return; }
@@ -175,7 +177,29 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
           if (person.email) { var email = el('a', null, person.email); email.href = 'mailto:' + person.email; contact.appendChild(email); }
           if (person.phone) { if (person.email) contact.appendChild(document.createTextNode(' · ')); var phone = el('a', null, person.phone); phone.href = 'tel:' + person.phone.replace(/[^+\d]/g, ''); contact.appendChild(phone); }
           if (!person.email && !person.phone) contact.textContent = 'Client contact details have not been completed.';
-          card.appendChild(contact); return card;
+          card.appendChild(contact);
+          card.appendChild(el('p', 'muted', 'Deriv App ID: ' + (s.deriv_app_id || 'Not saved yet')));
+          var form = el('div', 'dns-compose'), label = el('label', null, 'Website DNS records to send');
+          var records = el('textarea'); records.placeholder = 'Paste the exact records shown in Vercel, for example: Type | Name | Value | TTL';
+          records.setAttribute('aria-label', 'Website DNS records for ' + (s.domain || s.name || 'client site'));
+          label.appendChild(records);
+          form.appendChild(label);
+          form.appendChild(el('p', 'muted', 'The email explains which conflicting web records to replace, which email records to preserve, and how to add any separate Deriv verification records.'));
+          var sendDns = el('button', null, 'Email DNS instructions');
+          sendDns.disabled = !person.email || !s.domain;
+          sendDns.title = !person.email ? 'Client email is missing' : !s.domain ? 'Client domain is missing' : '';
+          sendDns.onclick = function () {
+            var value = records.value.trim();
+            if (!value) { msg('Paste the client’s website DNS records first.'); records.focus(); return; }
+            if (!window.confirm('Email the DNS instructions to ' + person.email + '?')) return;
+            sendDns.disabled = true;
+            SB.functions.invoke('send-domain-dns', { body: { site_id: s.id, dns_records: value } }).then(function (result) {
+              if (result.error) { msg(result.error.message || 'DNS instructions could not be sent.'); sendDns.disabled = false; return; }
+              msg('DNS instructions emailed to ' + (result.data && result.data.to || person.email) + '.');
+              records.value = ''; sendDns.disabled = false;
+            }).catch(function () { msg('DNS instructions could not be sent. Please try again.'); sendDns.disabled = false; });
+          };
+          form.appendChild(sendDns); card.appendChild(form); return card;
         });
         box.replaceChildren.apply(box, rows);
       });
