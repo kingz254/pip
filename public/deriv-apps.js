@@ -100,6 +100,13 @@
     } catch(ignore){renderAccount();}
   }
   window.addEventListener('DOMContentLoaded',refreshAccount);
+  window.addEventListener('pf:account-balance', function (event) {
+    var detail = event.detail || {}, account = accounts.find(function (item) { return item.account_id === detail.accountId; });
+    if (!account || account.currency !== detail.currency || !Number.isFinite(detail.balance)) return;
+    account.balance = detail.balance;
+    localStorage.setItem('deriv_accounts', JSON.stringify(accounts));
+    renderAccount();
+  });
   window.addEventListener('pageshow',refreshAccount);
   window.addEventListener('focus',refreshAccount);
   document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshAccount();});
