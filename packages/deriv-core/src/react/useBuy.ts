@@ -30,7 +30,6 @@ export function useBuy(
     if (!ws || !isConnected || pending.current) return;
     const price = Number(proposal.askPrice);
     if (!Number.isFinite(price) || price <= 0) { setBuyError('Quote unavailable.'); return; }
-    if (!window.confirm(`Buy this contract for ${price}? Check the account and contract details before confirming.`)) return;
     pending.current = true;
 
     setIsBuying(true);
