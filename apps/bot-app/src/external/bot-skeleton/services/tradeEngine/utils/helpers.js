@@ -44,10 +44,10 @@ export const tradeOptionToProposal = (trade_option, purchase_reference) =>
         return proposal;
     });
 
-export const tradeOptionToBuy = (contract_type, trade_option) => {
+export const tradeOptionToBuy = (contract_type, trade_option, maxPrice = trade_option.amount) => {
     const buy = {
         buy: '1',
-        price: Number(trade_option.amount),
+        price: Number(maxPrice),
         parameters: {
             amount: Number(trade_option.amount),
             basis: trade_option.basis,

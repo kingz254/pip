@@ -65,6 +65,11 @@ const getDefaultServerURL = () => {
  */
 export const getSocketURL = async (): Promise<string> => {
     try {
+        const activeAccountId = localStorage.getItem('active_loginid');
+        if (activeAccountId && activeAccountId !== 'null') {
+            return await DerivWSAccountsService.fetchOTPWebSocketURL('', activeAccountId);
+        }
+
         const authInfo = getAuthInfo();
         if (!authInfo || !authInfo.access_token) {
             return getDefaultServerURL();
@@ -74,6 +79,7 @@ export const getSocketURL = async (): Promise<string> => {
         return wsUrl;
     } catch (error) {
         console.error('[DerivWS] Error in getSocketURL:', error);
+        if (localStorage.getItem('active_loginid')) throw error;
         return getDefaultServerURL();
     }
 };

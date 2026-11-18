@@ -9,7 +9,7 @@ let purchase_reference;
 
 export default Engine =>
     class Purchase extends Engine {
-        purchase(contract_type) {
+        async purchase(contract_type) {
             // Prevent calling purchase twice
             if (this.store.getState().scope !== BEFORE_PURCHASE) {
                 return Promise.resolve();
@@ -43,9 +43,16 @@ export default Engine =>
             };
 
             if (this.is_proposal_subscription_required) {
-                const { id, askPrice } = this.selectProposal(contract_type);
-
-                const action = () => api_base.api.send({ buy: id, price: askPrice });
+                this.selectProposal(contract_type);
+                const proposal = this.proposal_templates.find(item => item.contract_type === contract_type);
+                const quote = await api_base.api.send(proposal);
+                const askPrice = Number(quote?.proposal?.ask_price);
+                if (!Number.isFinite(askPrice) || askPrice <= 0) {
+                    throw new Error('Deriv did not return a current purchase quote.');
+                }
+                const buyRequest = tradeOptionToBuy(contract_type, this.tradeOptions, askPrice);
+                // New API proposal IDs are informational; parameter-based buys use the fresh quote as the price cap.
+                const action = () => api_base.api.send(buyRequest);
 
                 this.isSold = false;
 

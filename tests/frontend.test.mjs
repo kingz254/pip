@@ -113,8 +113,10 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   await tick(3600);
   assert.match($('pst').textContent, /Payment received/);
   assert.equal(s.status, 'paid');
-  // After payment the domain is no longer sent in saves
-  input($('name'), 'Alpha Pro'); await tick(1700);
+  // After payment design changes require an explicit confirmation before saving.
+  input($('name'), 'Alpha Pro'); await tick(1300);
+  w.confirm = () => true;
+  click(d.querySelector('[data-confirm-design]')); await tick(300);
   assert.equal(s.name, 'Alpha Pro');
   // Dashboard shows setup progress
   w.location.hash = '#dashboard'; await tick(300);
