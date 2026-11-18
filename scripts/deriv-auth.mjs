@@ -27,6 +27,7 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
   const safeReturn = value => {
     try { const url = new URL(value || '/', origin); return url.origin === origin && !url.pathname.startsWith('/api/') ? url.pathname + url.search + url.hash : '/'; } catch { return '/'; }
   };
+  const loginResult = (target, result) => { const url=new URL(safeReturn(target),origin);url.searchParams.set('deriv_login',result);return url.pathname+url.search+url.hash; };
   return async function handle(req, res, url) {
     if (!url.pathname.startsWith('/api/deriv/')) return false;
     for (const [id, item] of transactions) if (item.expires <= now()) transactions.delete(id);
@@ -52,10 +53,10 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
         const id = cookies(req).pf_deriv_pending, tx = await take(id);
         if (!tx || tx.expires<=now() || url.searchParams.get('state') !== tx.state) { redirect(res, '/?deriv_login=failed', cookie('pf_deriv_pending','',0)); return true; }
         const clear = cookie('pf_deriv_pending', '', 0);
-        if (url.searchParams.has('error') || !url.searchParams.get('code')) { redirect(res, tx.returnTo, clear); return true; }
+        if (url.searchParams.has('error') || !url.searchParams.get('code')) { redirect(res, loginResult(tx.returnTo,url.searchParams.get('error')==='access_denied'?'cancelled':'failed'), clear); return true; }
         const tokenResponse = await upstream(`${AUTH}/token`, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ grant_type: 'authorization_code', client_id: clientId, redirect_uri: redirectUri, code: url.searchParams.get('code'), code_verifier: tx.verifier }), signal: AbortSignal.timeout(15000) });
-        if (!tokenResponse.ok) { redirect(res, tx.returnTo, clear); return true; }
+        if (!tokenResponse.ok) { redirect(res, loginResult(tx.returnTo,'failed'), clear); return true; }
         const token = await tokenResponse.json();
         if (typeof token.access_token !== 'string' || !Number.isFinite(token.expires_in) || token.expires_in <= 0) throw new Error('Invalid token response');
         if (sessions.size >= 1000) throw new Error('Session capacity reached');

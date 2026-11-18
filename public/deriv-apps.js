@@ -89,6 +89,10 @@
     } catch(ignore){renderAccount();}
   }
   window.addEventListener('DOMContentLoaded',refreshAccount);
+  window.addEventListener('pageshow',refreshAccount);
+  window.addEventListener('focus',refreshAccount);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshAccount();});
+  window.setInterval(function(){if(!document.hidden)refreshAccount();},30000);
   window.addEventListener('message', function(event){
     if(event.origin===window.location.origin && frame && event.source===frame.contentWindow && event.data && event.data.type==='pf:bot-running')botRunning=event.data.running===true;
   });

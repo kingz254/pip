@@ -6,6 +6,8 @@
 <title>Pipforge – Build your own Deriv site</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/config.js"></script>
+<script>(function(){var c=window.PF_CONFIG||{},h=location.hostname.toLowerCase().replace(/^www\./,""),hosts=(c.APP_HOSTS||[]).map(function(x){return x.toLowerCase().replace(/^www\./,"")});if(hosts.length&&h!=="localhost"&&h!=="127.0.0.1"&&hosts.indexOf(h)<0){document.documentElement.classList.add("tenant-pending");document.title="Loading client site…"}})();</script>
 <style>
 :root{
   color-scheme:dark;
@@ -25,6 +27,7 @@
   --shadow:rgba(255,68,79,.2);--orbA:.4}
 *{box-sizing:border-box}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px);scroll-behavior:smooth;background:var(--bg)}
+html.tenant-pending body>*{visibility:hidden!important}html.tenant-pending body:before{content:"Loading your site…";position:fixed;inset:0;z-index:99999;display:grid;place-items:center;visibility:visible;background:var(--bg);color:var(--ink);font-size:15px;font-weight:600}
 body{margin:0;font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.55;overflow-x:hidden;transition:background .4s,color .4s}
 .orbs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
 .orbs i{position:absolute;border-radius:50%;filter:blur(70px);opacity:var(--orbA)}
@@ -437,7 +440,6 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .rise>*,.cfg{opacity:1;transform:none}.js .reveal{opacity:1;transform:none}}
 </style>
-<script src="config.js"></script>
 <script>window.addEventListener("pageshow",function(e){var pending=sessionStorage.getItem("pf-oauth-pending");if(e.persisted&&pending){location.reload();return}if(!e.persisted&&pending)sessionStorage.removeItem("pf-oauth-pending")});</script>
 <script type="module">
   // Creates the Supabase client when config.js has real keys. Without keys the page runs in demo mode.
@@ -1269,7 +1271,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
    +P("frb",ph("Free bot library","Ready-made bots. Test each one on a demo account first.",'<span class="tag">Preview</span>')+'<div class="s-grid2">'+bots.map(function(b){return '<div class="s-box"><b>'+b[0]+'</b><span>'+b[1]+'</span><br><button class="s-btn" data-load="1" style="border:0;margin-top:8px;cursor:pointer">Load in DBot</button></div>'}).join("")+'</div>')
    +P("cht",ph("Charts","Watch a market while your bot runs.")+'<div class="s-box"><svg viewBox="0 0 400 160" style="width:100%;height:auto"><polyline fill="none" style="stroke:var(--a1)" stroke-width="2.5" stroke-linejoin="round" points="0,120 30,110 60,125 90,90 120,100 150,70 180,85 210,55 240,70 270,40 300,60 330,35 360,50 400,25"/></svg><div class="row"><span class="tag">1m</span><span class="tag">5m</span><span class="tag">1h</span></div></div>')
    +P("cpy",gp("Copy trading","Follow another trader\u2019s strategy.",[["Find traders","Browse by results and risk"],["Set limits","Choose how much to copy"],["Stop any time","Pause or stop copying"]]));
-  var shell='<div class="s-ann" id="sann"></div><div class="s-top"><span class="s-name" id="sname"></span><span class="s-soc" id="sh"></span><span class="s-acts"><span class="s-pill">Log in</span><span class="s-btn s-sign">Sign up</span></span><div class="client-account" aria-label="Deriv account balance" aria-live="polite"><div class="account-switch" role="group" aria-label="Select Deriv account"><button type="button" data-account-mode="demo" aria-label="Demo account" aria-pressed="false"><span aria-hidden="true">◉</span> Demo</button><button type="button" data-account-mode="real" aria-label="Real account" aria-pressed="false"><span aria-hidden="true">◆</span> Real</button></div><div class="account-balance"><small id="account-type-label">—</small><b id="account-balance-value">Balance unavailable</b></div></div></div><div class="s-tabs" id="stabs" role="tablist"></div><div class="s-main">'+panels+'</div>';
+  var shell='<div class="s-ann" id="sann"></div><div class="s-top"><span class="s-name" id="sname"></span><span class="s-soc" id="sh"></span><span class="s-acts"><button type="button" class="s-pill">Connect Deriv</button><button type="button" class="s-btn s-sign">Sign up</button></span><div class="client-account" aria-label="Deriv account balance" aria-live="polite"><div class="account-switch" role="group" aria-label="Select Deriv account"><button type="button" data-account-mode="demo" aria-label="Demo account" aria-pressed="false"><span aria-hidden="true">◉</span> Demo</button><button type="button" data-account-mode="real" aria-label="Real account" aria-pressed="false"><span aria-hidden="true">◆</span> Real</button></div><div class="account-balance"><small id="account-type-label">—</small><b id="account-balance-value">Connect Deriv to view balance</b></div></div></div><div class="s-tabs" id="stabs" role="tablist"></div><div class="s-main">'+panels+'</div>';
   site.querySelector(".sc").innerHTML=shell;
   site.insertAdjacentHTML("beforeend",'<dialog class="s-risk-dialog" aria-labelledby="risk-title"><form method="dialog"><button class="s-risk-close" aria-label="Close risk warning">Close</button></form><h2 id="risk-title">Risk warning</h2><p>Deriv Options and Multipliers trading carries a high level of risk and may result in rapid and total loss of your invested capital. Do not trade money you cannot afford to lose. Bots do not guarantee profits. This site is independently operated and does not provide financial advice.</p><a href="https://deriv.com/terms-and-conditions/risk-disclosure" target="_blank" rel="noopener noreferrer">Read Deriv’s full Risk Disclosure</a></dialog>');
   // Replace preview-only cards with a compact, native Deriv market workspace.
@@ -1710,16 +1712,19 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       if(ev.target.closest(".s-soc a"))return ev.stopPropagation();   // let social links open normally
       if(ev.target.closest("[data-fab=help]")){ev.stopPropagation();ev.preventDefault();toast("Workspace guides are available from Deriv’s Help Centre.")}
     },true);
+    function tenantUnavailable(message){var m=document.createElement("p");m.style.cssText="position:fixed;inset:0;z-index:50;margin:0;display:grid;place-items:center;background:#0e0e0e;color:#f4f4f6;font:16px sans-serif;text-align:center;padding:40px";m.textContent=message;document.body.appendChild(m);document.documentElement.classList.remove("tenant-pending")}
     SB.rpc("public_site",{p_domain:host}).then(function(r){
       var s=r.data;
-      if(!s){var m=document.createElement("p");m.style.cssText="position:fixed;inset:0;z-index:50;margin:0;display:grid;place-items:center;background:#0e0e0e;color:#f4f4f6;font:16px sans-serif;text-align:center;padding:40px";m.textContent=host+" is not live yet.";document.body.appendChild(m);return}
+      if(!s){tenantUnavailable(host+" is not live yet.");return}
       SB.rpc("record_public_site_visit",{p_domain:host});
       BK.loading=true;
       fromRow({name:s.name,logo_data:s.logo_data,loader_style:s.loader_style,template:s.template,background:s.background,header:s.header,font_theme:s.font_theme,announcement:s.announcement,icon_shape:s.icon_shape,icon_place:s.icon_place,social:s.social,menu:s.menu,markup:s.markup,domain_mode:"new",domain:s.domain,deriv_app_id:s.deriv_app_id,referral_url:s.referral_url});
       COMING.forEach(function(k){st.menu[k]=false});
       st.tab="home";render();
       var el=$("site");document.body.appendChild(el);el.classList.add("tenantsite");
-      document.title=s.name})}
+      document.title=s.name;document.documentElement.classList.remove("tenant-pending");
+      var authResult=new URLSearchParams(location.search).get("deriv_login");if(authResult){history.replaceState(null,"",location.pathname+location.hash);toast(authResult==="cancelled"?"Deriv sign-in was cancelled.":"Deriv sign-in could not finish. Check that your Deriv OAuth app has the exact callback URL for this domain: "+location.origin+"/api/deriv/callback.")}
+    }).catch(function(){tenantUnavailable("This site is temporarily unavailable. Please try again shortly.")})}
   function start(){SB=window.PF_SB;var h=tenantHost();if(h)initTenant(h);else initBackend()}
   if(window.PF_SB)start();else window.addEventListener("pf:ready",start);
   render();route();

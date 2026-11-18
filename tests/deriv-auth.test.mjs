@@ -54,6 +54,14 @@ test('one shared server session keeps provider tokens private, checks account ow
   clock+=3600001;
 });
 
+test('OAuth callback returns a clear result to the tenant site',async()=>{
+  const {send}=harness();
+  const login=await send('/api/deriv/login?return='+encodeURIComponent('/?tab=charts#client-preview'));
+  const auth=new URL(login.headers.Location),cookie=cookieValue(login.headers['Set-Cookie']);
+  const callback=await send('/api/deriv/callback?error=access_denied&state='+auth.searchParams.get('state'),{cookie});
+  assert.equal(callback.headers.Location,'/?tab=charts&deriv_login=cancelled#client-preview');
+});
+
 test('login requires an explicitly registered callback, and unauthenticated account data is gated',async()=>{
   const {send}=harness({redirectUri:undefined});
   assert.equal((await send('/api/deriv/login')).status,503);

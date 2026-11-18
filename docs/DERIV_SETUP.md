@@ -47,7 +47,7 @@ You do not need to buy a domain first. The callback is a backend route in this r
 
 ## A paid customer's domain
 
-After registering and connecting the customer's domain, create or edit their New API OAuth app with `https://their-domain/api/deriv/callback`. Save that customer's issued client ID in their site's Deriv settings, then complete fulfilment so the domain is live. The Vercel handler resolves the ID through `public_site(domain)`; an unregistered domain or arbitrary query parameter cannot choose someone else's app identity. Register the exact canonical hostname you serve, including `www` if used.
+Domain verification and OAuth callback registration are separate Deriv settings. After registering and connecting the customer's domain, add `https://their-domain/api/deriv/callback` to that New API OAuth app's redirect/callback URLs. Save that customer's issued client ID in their site's Deriv settings, then complete fulfilment so the domain is live. The Vercel handler resolves the ID through `public_site(domain)`; an unregistered domain or arbitrary query parameter cannot choose someone else's app identity. Register the exact canonical hostname you serve, including `www` if used.
 
 Each domain gets host-scoped session cookies. The site configuration must be live and the callback must be registered before customer account login works. Referral reporting, commission ingestion, domain provisioning and verified payment fulfilment are separate platform concerns; this integration does not claim to complete them.
 
