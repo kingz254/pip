@@ -802,7 +802,7 @@ const AppWrapper = observer(() => {
         
         return (
             <iframe
-                src={analysisToolUrl}
+                src={'/'+analysisToolUrl+'/index.html'}
                 width='100%'
                 height='600px'
                 style={{ border: 'none', display: 'block' }}

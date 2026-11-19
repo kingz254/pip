@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import templateThemes from './template-themes.json';
+import templateThemes from './template-themes.json' with { type: 'json' };
 
 export type PipforgeSiteBranding = {
     domain?: string;
@@ -77,6 +77,7 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     fontLink.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, '+')}&display=swap`;
     document.head.append(fontLink);
     window.__PF_SITE_BRANDING__ = site;
+    document.querySelectorAll('iframe').forEach(frame => brandEmbeddedTool(frame, site));
     window.dispatchEvent(new Event('pf:branding'));
     const bg = (window as any).PipforgeBackground;
     if (bg) bg.update(site.background, theme.accent, theme.secondary);
@@ -115,3 +116,22 @@ window.addEventListener('theme-changed', (event: Event) => {
     const base = site.palette || templateThemes[site.template as keyof typeof templateThemes] || templateThemes.midnight;
     applySiteBranding({ ...site, palette: { ...base, light, page: light ? '#f3f4f6' : '#10131b', ink: light ? '#151717' : '#f4f4f6', muted: light ? '#5a606b' : '#b9bdc9', glass: light ? 'rgba(255,255,255,.7)' : 'rgba(20,25,35,.65)', edge: light ? 'rgba(20,20,30,.15)' : 'rgba(255,255,255,.2)' } });
 });
+
+
+function brandEmbeddedTool(frame: HTMLIFrameElement, site: PipforgeSiteBranding) {
+    try {
+        const doc = frame.contentDocument;
+        if (!doc?.head || !doc.body) return;
+        const root = document.documentElement;
+        frame.style.colorScheme = root.dataset.pfTheme || 'dark';
+        doc.documentElement.style.colorScheme = frame.style.colorScheme;
+        for (const property of Array.from(root.style)) if (property.startsWith('--pf-client-')) doc.documentElement.style.setProperty(property,root.style.getPropertyValue(property));
+        let style = doc.getElementById('pf-tool-theme') as HTMLStyleElement;
+        if (!style) { style=doc.createElement('style');style.id='pf-tool-theme';doc.head.append(style); }
+        style.textContent = 'html,body{background:transparent!important;color:var(--pf-client-ink)!important;font-family:var(--pf-client-font)!important}header,section,.menu,.settings-panel{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}input,select,button{font-family:var(--pf-client-font)}';
+        if (doc.title === 'Binaryfx' || doc.documentElement.dataset.pfBrandHeading === 'true') { doc.documentElement.dataset.pfBrandHeading='true';doc.title=site.name; const heading=doc.querySelector('h1');if(heading)heading.textContent=site.name; }
+    } catch { /* External charts retain their provider's own rendering. */ }
+}
+document.addEventListener('load', event => {
+    if(event.target instanceof HTMLIFrameElement && window.__PF_SITE_BRANDING__)brandEmbeddedTool(event.target,window.__PF_SITE_BRANDING__);
+},true);
