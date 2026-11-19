@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" dir="auto">
+    <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23377cfc'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='sans-serif' font-size='30' font-weight='700'%3ET%3C/text%3E%3C/svg%3E" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="title" content="Trading workspace" />
+        <meta
+            name="description"
+            content="Import your current bot or learn how to create a trading bot from scratch with our detailed guides, FAQs, and tutorials. Start with a quick strategy!"
+        />
+        <meta property="og:title" content="Trading workspace" />
+        <meta
+            property="og:description"
+            content="Import your current bot or learn how to create a trading bot from scratch with our detailed guides, FAQs, and tutorials. Start with a quick strategy!"
+        />
+        <title>Trading workspace</title>
+        <style>
+            :root {
+                font-size: 62.5%;
+            }
+            
+            /* CSS Chunk Loading Error Handler Styles */
+            .css-chunk-error-loading {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #f5f5f5;
+                z-index: 10001;
+                align-items: center;
+                justify-content: center;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            }
+            
+            .css-chunk-error-loading.show {
+                display: flex;
+            }
+            
+            .css-chunk-error-content {
+                background: white;
+                padding: 40px;
+                border-radius: 8px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                max-width: 500px;
+                text-align: center;
+            }
+            
+            .css-chunk-error-content h1 {
+                color: #d32f2f;
+                margin: 0 0 15px 0;
+                font-size: 24px;
+            }
+            
+            .css-chunk-error-content p {
+                color: #666;
+                margin: 10px 0;
+                line-height: 1.5;
+            }
+            
+            .css-chunk-error-actions {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+                margin-top: 25px;
+            }
+            
+            .css-chunk-error-btn {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .css-chunk-error-btn.primary {
+                background: #b1913e;
+                color: white;
+            }
+            
+            .css-chunk-error-btn.primary:hover {
+                background: #ceb159;
+            }
+            
+            .css-chunk-error-btn.secondary {
+                background: #f0f0f0;
+                color: #333;
+            }
+            
+            .css-chunk-error-btn.secondary:hover {
+                background: #e0e0e0;
+            }
+        </style>
+        <script>
+            // Handle CSS chunk loading errors at the HTML level
+            window.addEventListener('error', function(event) {
+                if (event.message && event.message.includes('Loading CSS chunk')) {
+                    console.error('CSS Chunk Loading Error:', event);
+                    // Show error overlay
+                    var errorDiv = document.getElementById('css-chunk-error');
+                    if (errorDiv) {
+                        errorDiv.classList.add('show');
+                    }
+                }
+            }, true);
+            
+            // Also handle as promise rejection
+            window.addEventListener('unhandledrejection', function(event) {
+                if (event.reason && event.reason.message && event.reason.message.includes('Loading CSS chunk')) {
+                    console.error('CSS Chunk Promise Rejection:', event.reason);
+                    var errorDiv = document.getElementById('css-chunk-error');
+                    if (errorDiv) {
+                        errorDiv.classList.add('show');
+                    }
+                }
+            });
+        </script>
+    </head>
+
+    <body class="body theme theme--light">
+        <div id="modal_root" class="modal-root"></div>
+        <div id="popup_root" class="popup-root"></div>
+        <div id="root"></div>
+        
+        <!-- CSS Chunk Loading Error Handler -->
+        <div id="css-chunk-error" class="css-chunk-error-loading">
+            <div class="css-chunk-error-content">
+                <h1>⚠️ Loading Failed</h1>
+                <p>We encountered an issue loading CSS resources.</p>
+                <p style="font-size: 12px; color: #999;">This usually happens due to network issues or browser cache corruption.</p>
+                <div class="css-chunk-error-actions">
+                    <button class="css-chunk-error-btn primary" onclick="location.reload()">Reload</button>
+                    <button class="css-chunk-error-btn secondary" onclick="clearCacheAndReload()">Clear Cache & Reload</button>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function clearCacheAndReload() {
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        Promise.all(names.map(name => caches.delete(name))).then(() => {
+                            localStorage.clear();
+                            sessionStorage.clear();
+                            location.reload();
+                        });
+                    });
+                } else {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    location.reload();
+                }
+            }
+        </script>
+        
+        <!-- LiveChat script -->
+        <script type="text/javascript" defer>
+            window.__lc = window.__lc || {};
+            window.__lc.license = 12049137;
+            window.__lc.asyncInit = true;
+            (function (n, t, c) {
+                function i(n) {
+                    return e._h ? e._h.apply(null, n) : e._q.push(n);
+                }
+                var e = {
+                    _q: [],
+                    _h: null,
+                    _v: '2.0',
+                    on: function () {
+                        i(['on', c.call(arguments)]);
+                    },
+                    once: function () {
+                        i(['once', c.call(arguments)]);
+                    },
+                    off: function () {
+                        i(['off', c.call(arguments)]);
+                    },
+                    get: function () {
+                        if (!e._h) throw new Error('[LiveChatWidget] You can’t use getters before load.');
+                        return i(['get', c.call(arguments)]);
+                    },
+                    call: function () {
+                        i(['call', c.call(arguments)]);
+                    },
+                    init: function () {
+                        setTimeout(() => {
+                            var n = t.createElement('script');
+                            (n.async = !0),
+                                (n.type = 'text/javascript'),
+                                (n.src = 'https://cdn.livechatinc.com/tracking.js'),
+                                t.head.appendChild(n);
+                        }, 3000);
+                    },
+                };
+                !n.__lc.asyncInit && e.init(), (n.LiveChatWidget = n.LiveChatWidget || e);
+            })(window, document, [].slice);
+        </script>
+        <!-- End LiveChat script -->
+    </body>
+</html>

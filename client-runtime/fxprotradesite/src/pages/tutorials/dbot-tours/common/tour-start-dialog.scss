@@ -1,0 +1,73 @@
+@use 'components/shared/styles/mixins' as *;
+
+.tour-dialog {
+    transition: unset;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+
+    .dc-dialog__dialog {
+        transform: unset;
+        opacity: unset;
+        transition: unset;
+        pointer-events: auto;
+        position: relative;
+        z-index: 999;
+        background: var(--general-main-1);
+
+        @include mobile-screen {
+            width: 90vw;
+            padding: 1.6rem;
+        }
+    }
+
+    .dc-dialog__content {
+        pointer-events: auto;
+        
+        &__header {
+            text-align: start;
+            margin-bottom: 2.4rem;
+            pointer-events: auto;
+        }
+
+        &__description {
+            text-align: start;
+            pointer-events: auto;
+
+            &__text {
+                margin-bottom: 1.6rem;
+                pointer-events: auto;
+            }
+        }
+    }
+
+    .dc-dialog__footer {
+        @include mobile-screen {
+            display: flex;
+            flex-direction: column;
+            height: unset;
+            align-content: flex-end;
+
+            button {
+                &:first-child {
+                    margin-bottom: unset;
+                    margin-inline-end: 0.8rem;
+                }
+            }
+        }
+
+        @include tablet-screen {
+            button {
+                flex-basis: unset;
+                margin-bottom: unset;
+            }
+        }
+    }
+}

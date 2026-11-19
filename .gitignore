@@ -15,3 +15,5 @@ public/apps/
 public/vendor/
 .next-build/
 coverage/
+
+*.log

@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Deriv Tick Data</title>
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f4f7fc;
+                text-align: center;
+                margin: 0;
+                padding: 10px;
+                padding-bottom: 30px;
+            }
+
+            h2 {
+                color: #222;
+                margin-bottom: 15px;
+                font-size: 24px;
+            }
+
+            table {
+                width: 90%;
+                max-width: 800px;
+                margin: 12px auto;
+                border-collapse: collapse;
+                background: white;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            th,
+            td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+                font-size: 14px;
+            }
+
+            th {
+                background-color: #ffffff;
+                color: rgb(0, 0, 0);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .signal-box {
+                padding-right: 3px;
+                padding-left: 3px;
+                font-weight: 600;
+                border-radius: 4px;
+                display: inline-block;
+                width: 65px;
+                text-transform: initial;
+                font-size: 14px;
+            }
+
+            .rise,
+            .fall,
+            .over {
+                background-color: #b9f4ca;
+                color: rgb(0, 0, 0);
+            }
+
+            .under {
+                background-color: #b9f4ca;
+                color: rgb(0, 0, 0);
+            }
+
+            .neutral {
+                background-color: #ffb2b2;
+                color: rgb(0, 0, 0);
+            }
+
+            /* Enhanced signal boxes */
+            .rise {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            }
+
+            .fall {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+            }
+
+            .over,
+            .under {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                color: white;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+            }
+
+            .neutral {
+                background-color: #e9ecef;
+                color: #6c757d;
+                font-weight: 500;
+            }
+
+            /* Combined table for desktop */
+            .combined-table {
+                display: block;
+            }
+
+            .combined-table table {
+                width: 95%;
+                max-width: 1400px;
+                margin: 20px auto;
+            }
+
+            .combined-table th {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 12px 8px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            .combined-table td {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+
+            .combined-table td:first-child {
+                text-align: left;
+                padding-left: 15px;
+                font-weight: 500;
+                color: #333;
+            }
+
+            .combined-table .signal-box {
+                width: 70px;
+                padding: 6px 8px;
+                font-size: 13px;
+            }
+
+            .combined-table tbody tr:hover {
+                background-color: #f8f9fa;
+                transition: background-color 0.2s ease;
+            }
+
+            .combined-table tbody tr {
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .mobile-tables {
+                display: none;
+            }
+
+            @media (max-width: 768px) {
+                /* Hide combined table on mobile */
+                .combined-table {
+                    display: none;
+                }
+
+                /* Show separate tables on mobile */
+                .mobile-tables {
+                    display: block;
+                }
+            }
+
+            @media (max-width: 600px) {
+                table {
+                    width: 100%;
+                }
+
+                th,
+                td {
+                    padding: 5px;
+                    font-size: 14px;
+                }
+
+                .signal-box {
+                    width: 70px;
+                }
+            }
+            @media (max-width: 460px) {
+                body {
+                    padding-bottom: 100px;
+                }
+                h2 {
+                    font-size: 20px;
+                }
+
+                th,
+                td {
+                    font-size: 12px;
+                }
+
+                .signal-box {
+                    width: 60px;
+                }
+            }
+
+            /* Signal Bot Buttons */
+            .signal-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                margin: 20px auto;
+                max-width: 600px;
+            }
+
+            .signal-btn {
+                flex: 1;
+                padding: 12px 24px;
+                font-family: 'Poppins', sans-serif;
+                font-size: 15px;
+                font-weight: 600;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .o-signal-btn {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                color: white;
+            }
+
+            .u-signal-btn {
+                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                color: white;
+            }
+
+            .signal-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            }
+
+            .signal-btn:active {
+                transform: translateY(0);
+            }
+
+            @media (max-width: 600px) {
+                .signal-buttons {
+                    flex-direction: column;
+                    gap: 10px;
+                    padding: 0 15px;
+                }
+
+                .signal-btn {
+                    padding: 10px 20px;
+                    font-size: 14px;
+                }
+            }
+        </style>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    </head>
+    <body>
+        <h2>Trading Signals Monitor</h2>
+        
+        <!-- Signal Bot Button -->
+        <div class="signal-buttons">
+            <button class="signal-btn o-signal-btn" onclick="loadSignalBot()">🤖 Load Signal Bot</button>
+        </div>
+        
+        <!-- Telegram Configuration Panel -->
+        <div style="background: white; margin: 10px auto; padding: 15px; max-width: 800px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);">
+            <h3 style="margin-top: 0; color: #333;">Telegram Configuration</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                <input type="text" id="botToken" placeholder="Bot Token (123456789:ABC...)" style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="text" id="chatId" placeholder="Chat ID (@channel or -1001234567890)" style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="updateTelegramConfig()" style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Update Config</button>
+                <button onclick="testTelegramMessage()" style="padding: 8px 16px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Message</button>
+                <button onclick="testTelegramFile()" style="padding: 8px 16px; background: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">Test Bot File</button>
+                <button onclick="testBinaryfxChannel()" style="padding: 8px 16px; background: #9C27B0; color: white; border: none; border-radius: 4px; cursor: pointer;">Test @binaryfx_site</button>
+                <button onclick="activateSignalsNow()" style="padding: 8px 16px; background: #F44336; color: white; border: none; border-radius: 4px; cursor: pointer;">⚡ Activate Signals Now</button>
+                <button onclick="sendTestSignal()" style="padding: 8px 16px; background: #795548; color: white; border: none; border-radius: 4px; cursor: pointer;">🧪 Send Test Signal</button>
+                <span id="configStatus" style="align-self: center; font-weight: bold;"></span>
+            </div>
+        </div>
+
+        <h2>Signal Status: <span id="signalStatus" style="color: #F44336;">⏸️ INACTIVE</span></h2>
+        
+        <!-- Combined Table for Desktop -->
+        <div class="combined-table">
+            <h2>All Trading Signals</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>MARKET</th>
+                        <th>OVER 2</th>
+                        <th>UNDER 7</th>
+                        <th>RISE 📈</th>
+                        <th>FALL 📉</th>
+                    </tr>
+                </thead>
+                <tbody id="combinedTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Separate Tables for Mobile -->
+        <div class="mobile-tables">
+            <h2>Over 2 / Under 7</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>MARKET</th>
+                        <th>Over 2</th>
+                        <th>Under 7</th>
+                    </tr>
+                </thead>
+                <tbody id="overUnderTable"></tbody>
+            </table>
+
+            <h2>Rise/Fall</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>MARKET</th>
+                        <th>RISE 📈</th>
+                        <th>FALL 📉</th>
+                    </tr>
+                </thead>
+                <tbody id="riseFallTable"></tbody>
+            </table>
+        </div>
+
+        <script src="signals-detector/signals.js" type="text/javascript"></script>
+        <script>
+            // Load Signal Bot into bot builder
+            function loadSignalBot() {
+                window.parent.postMessage({
+                    action: 'load_bot_file',
+                    fileName: 'Market Legend v2.xml'
+                }, '*');
+            }
+        </script>
+    </body>
+</html>

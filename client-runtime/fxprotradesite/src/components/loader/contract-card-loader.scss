@@ -1,0 +1,131 @@
+// Contract Card Loader Styles
+.contract-card-loader {
+    background: var(--surface-container);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-primary);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    
+    // Shimmer effect overlay
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(59, 130, 246, 0.1) 50%,
+            transparent 100%
+        );
+        animation: shimmer 2s infinite;
+    }
+}
+
+.loader-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.loader-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.loader-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.loader-line {
+    height: 12px;
+    background: var(--skeleton-bg, #e5e7eb);
+    border-radius: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    
+    &--short {
+        width: 30%;
+    }
+    
+    &--medium {
+        width: 60%;
+    }
+    
+    &--long {
+        width: 80%;
+    }
+}
+
+.loader-circle {
+    width: 24px;
+    height: 24px;
+    background: var(--skeleton-bg, #e5e7eb);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loader-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--primary-blue);
+    border-radius: 50%;
+    animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+// Dark theme support
+[data-theme='dark'] {
+    .contract-card-loader {
+        --skeleton-bg: #374151;
+        --surface-container: #1f2937;
+        --border-primary: #374151;
+    }
+}
+
+// Animations
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes dotPulse {
+    0%, 80%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}

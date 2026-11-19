@@ -1,0 +1,138 @@
+html[data-pf-tenant='true'], html[data-pf-tenant='true'] body {
+    color-scheme: dark;
+    background: transparent !important;
+}
+
+html[data-pf-tenant='true'][data-pf-theme='light'],
+html[data-pf-tenant='true'][data-pf-theme='light'] body { color-scheme: light; }
+
+html[data-pf-tenant='true'] body {
+    --general-main-1: transparent;
+    --general-main-2: transparent;
+    --general-main-3: transparent;
+    --general-section-1: var(--pf-client-glass);
+    --general-section-2: var(--pf-client-glass);
+    --general-section-3: var(--pf-client-glass);
+    --general-section-4: var(--pf-client-glass);
+    --general-section-5: var(--pf-client-glass);
+    --general-section-6: var(--pf-client-glass);
+    --general-hover: var(--pf-client-glass);
+    --general-active: var(--pf-client-edge);
+    --text-general: var(--pf-client-ink);
+    --text-prominent: var(--pf-client-ink);
+    --text-less-prominent: var(--pf-client-muted);
+    --text-primary: var(--pf-client-ink);
+    --text-hint: var(--pf-client-muted);
+    --brand-red-coral: var(--pf-client-accent);
+    --brand-primary: var(--pf-client-accent);
+    font-family: var(--pf-client-font) !important;
+    color: var(--pf-client-ink) !important;
+    background: transparent !important;
+}
+
+html[data-pf-tenant='true'] #root,
+html[data-pf-tenant='true'] .layout,
+html[data-pf-tenant='true'] .main,
+html[data-pf-tenant='true'] .main-body,
+html[data-pf-tenant='true'] .main__container,
+html[data-pf-tenant='true'] .dc-tabs__content,
+html[data-pf-tenant='true'] .bot-dashboard,
+html[data-pf-tenant='true'] .tab__dashboard,
+html[data-pf-tenant='true'] .tab__dashboard__content,
+html[data-pf-tenant='true'] .bot-builder,
+html[data-pf-tenant='true'] .tutorials-wrapper,
+html[data-pf-tenant='true'] .tutorials-mobile__guide {
+    color: var(--pf-client-ink) !important;
+    background: transparent !important;
+    font-family: var(--pf-client-font) !important;
+}
+
+html[data-pf-tenant='true'] .tab__dashboard__content,
+html[data-pf-tenant='true'] .bot-builder,
+html[data-pf-tenant='true'] .tutorials-wrapper,
+html[data-pf-tenant='true'] .tutorials-mobile__guide,
+html[data-pf-tenant='true'] .dc-drawer,
+html[data-pf-tenant='true'] .dc-dialog__dialog {
+    background: var(--pf-client-glass) !important;
+    border-color: var(--pf-client-edge) !important;
+    backdrop-filter: blur(var(--pf-client-blur)) saturate(135%);
+    -webkit-backdrop-filter: blur(var(--pf-client-blur)) saturate(135%);
+}
+
+html[data-pf-tenant='true'] body::before {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 16% 18%, color-mix(in srgb, var(--pf-client-accent) 28%, transparent), transparent 42%),
+        radial-gradient(ellipse at 84% 74%, color-mix(in srgb, var(--pf-client-secondary) 22%, transparent), transparent 46%),
+        var(--pf-client-page);
+    filter: blur(var(--pf-client-blur));
+}
+
+html[data-pf-tenant='true'][data-pf-background='none'] body::before { background: var(--pf-client-page); filter: none; }
+html[data-pf-tenant='true'][data-pf-background='candles'] body::before {
+    background: repeating-linear-gradient(90deg, transparent 0 5.5vw, color-mix(in srgb, var(--pf-client-accent) 35%, transparent) 5.6vw 5.8vw, transparent 5.9vw 8vw), var(--pf-client-page);
+}
+html[data-pf-tenant='true'][data-pf-background='digits'] body::before {
+    background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--pf-client-accent) 19%, transparent) 0 1px, transparent 1px 7vw), repeating-linear-gradient(0deg, transparent 0 42px, color-mix(in srgb, var(--pf-client-secondary) 13%, transparent) 43px 44px), var(--pf-client-page);
+}
+html[data-pf-tenant='true'][data-pf-background='pulse'] body::before,
+html[data-pf-tenant='true'][data-pf-background='waves'] body::before {
+    background: radial-gradient(ellipse at 50% 60%, transparent 0 32%, color-mix(in srgb, var(--pf-client-accent) 34%, transparent) 33% 34%, transparent 35%), var(--pf-client-page);
+}
+html[data-pf-tenant='true'][data-pf-background='arrows'] body::before,
+html[data-pf-tenant='true'][data-pf-background='trend'] body::before {
+    background: repeating-linear-gradient(135deg, transparent 0 12vw, color-mix(in srgb, var(--pf-client-accent) 22%, transparent) 12.1vw 12.3vw, transparent 12.4vw 20vw), var(--pf-client-page);
+}
+html[data-pf-tenant='true'][data-pf-background='img-chart'] body::before,
+html[data-pf-tenant='true'][data-pf-background='img-grid'] body::before {
+    background: linear-gradient(0deg, transparent 49.8%, color-mix(in srgb, var(--pf-client-accent) 25%, transparent) 50%, transparent 50.2%), linear-gradient(90deg, transparent 49.8%, color-mix(in srgb, var(--pf-client-accent) 25%, transparent) 50%, transparent 50.2%), var(--pf-client-page);
+    background-size: 56px 56px, 56px 56px, auto;
+}
+
+html[data-pf-tenant='true'] .app-header__logo {
+    gap: 8px;
+    color: var(--pf-client-ink);
+    font: 600 16px/1.2 var(--pf-client-font);
+}
+
+html[data-pf-tenant='true'] .app-header__logo-image { max-width: 40px; }
+
+html[data-pf-tenant='true'] .app-header {
+    color: var(--pf-client-ink) !important;
+    background: var(--pf-client-glass) !important;
+    border-bottom: 1px solid var(--pf-client-edge);
+    backdrop-filter: blur(var(--pf-client-blur)) saturate(135%);
+    -webkit-backdrop-filter: blur(var(--pf-client-blur)) saturate(135%);
+}
+html[data-pf-tenant='true'][data-pf-header='brand'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='center'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='editorial'] .app-header { justify-content: center; }
+html[data-pf-tenant='true'][data-pf-header='minimal'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='edge'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='canvas'] .app-header { border-color: transparent; background: transparent !important; backdrop-filter: none; }
+html[data-pf-tenant='true'][data-pf-header='banner'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='ticker'] .app-header { border-bottom: 2px solid var(--pf-client-accent); }
+html[data-pf-tenant='true'][data-pf-header='pill'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='dock'] .app-header { margin: 8px 12px 0; border: 1px solid var(--pf-client-edge); border-radius: 999px; }
+html[data-pf-tenant='true'][data-pf-header='aurora'] .app-header,
+html[data-pf-tenant='true'][data-pf-header='halo'] .app-header { box-shadow: 0 8px 36px color-mix(in srgb, var(--pf-client-accent) 20%, transparent); }
+
+.pf-social-glyph { display: inline-grid; width: 24px; height: 24px; place-items: center; border: 1px solid currentColor; border-radius: 6px; font-size: 10px; font-weight: 750; }
+
+@media (prefers-reduced-motion: no-preference) {
+    html[data-pf-tenant='true'][data-pf-background='digits'] body::before,
+    html[data-pf-tenant='true'][data-pf-background='candles'] body::before,
+    html[data-pf-tenant='true'][data-pf-background='arrows'] body::before,
+    html[data-pf-tenant='true'][data-pf-background='pulse'] body::before {
+        animation: pf-tenant-background-drift 18s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes pf-tenant-background-drift {
+    from { background-position: 0 0, 100% 100%, 0 0; }
+    to { background-position: 9% 12%, 90% 88%, 0 0; }
+}

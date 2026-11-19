@@ -1,0 +1,16 @@
+{
+    "name": "Fx Pro - Where Strategy Meets Success",
+    "short_name": "Fx Pro",
+    "theme_color": "#414652",
+    "description": "Professional automated trading platform where strategy meets success. Powered by Deriv.",
+    "background_color": "#414652",
+    "display": "standalone",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "deriv-logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

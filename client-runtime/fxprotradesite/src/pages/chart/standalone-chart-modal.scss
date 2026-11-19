@@ -1,0 +1,36 @@
+.standalone-chart-modal-dialog {
+    --modal-height: calc(100% - 54px);
+    
+    height: var(--modal-height);
+    max-height: var(--modal-height);
+    padding: 0 0.8rem;
+    position: relative;
+    overflow: hidden;
+    
+    .standalone-chart-container {
+        height: 100%;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        
+        // Ensure the SmartChart takes full available space within the padded container
+        .smartcharts {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0; // Important for flex child
+        }
+        
+        // Make sure chart canvas adapts to container
+        .smartcharts-app {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        // Chart wrapper should fill the container
+        .ciq-chart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+}

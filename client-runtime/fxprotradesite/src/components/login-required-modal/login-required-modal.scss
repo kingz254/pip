@@ -1,0 +1,249 @@
+﻿@use 'components/shared/styles/mixins' as *;
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap");
+
+// Pure white background - only when modal is open
+.modal-backdrop {
+    position: fixed;
+    background: transparent 40%;
+    pointer-events: none; // Allow clicks to pass through
+}
+
+#modal_root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    pointer-events: none; // Allow clicks to pass through when empty
+    
+    // Only capture clicks when modal is actually open
+    &:has(.modal__container, .dc-modal__container) {
+        pointer-events: all;
+    }
+}
+
+// Remove all modal backgrounds
+.login-required-modal,
+.dc-modal__container,
+.modal__container,
+.modal__content,
+.dc-modal__content {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+}
+
+// Main login card - gold theme on white
+.login-card {
+    position: relative;
+    width: 580px;
+    background: linear-gradient(145deg, #3e3e3c 0%, #3e3e3c  100%);
+    border-radius: 24px;
+    padding: 2.5rem;
+    text-align: center;
+    color: #ffffff;
+    font-family: "Quicksand", sans-serif;
+    border: 2px solid #b1913e;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 215, 0, 0.3),
+        inset 0 0 60px rgba(255, 215, 0, 0.05);
+    pointer-events: all; // Ensure card captures clicks
+
+    &__emoji {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+        animation: bounce 2s infinite;
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    }
+
+    &__title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #b1913e 0%, #b1913e 50%, #FFFFFF 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+    }
+
+    &__message {
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #F4E4BC;
+        line-height: 1.4;
+    }
+
+    &__description {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.15rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    &__btn {
+        width: 100%;
+        padding: 14px 24px;
+        border-radius: 50px;
+        font-size: 1.18rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Quicksand", sans-serif;
+        border: none;
+
+        &--primary {
+            background: linear-gradient(135deg, #ebb01c 0%, #cb9610 100%);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+            }
+        }
+
+        &--secondary {
+            background: transparent;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+
+            &:hover {
+                background: rgba(255, 215, 0, 0.1);
+                transform: translateY(-2px);
+            }
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+
+    &__disclaimer {
+        background: transparent;
+        border: 1px solid rgba(255, 215, 0, 0.4);
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #F4E4BC;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Quicksand", sans-serif;
+
+        &:hover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+        }
+    }
+}
+
+// Risk Disclaimer Modal
+
+.risk-modal {
+    .modal__content,
+    .dc-modal__content {
+        background: #ffffff !important;
+        border-radius: 20px !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+        border: 2px solid #b1913e !important;
+    }
+
+    &__content {
+        padding: 2rem;
+        font-family: "Quicksand", sans-serif;
+    }
+
+    &__title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 1rem;
+        text-align: center;
+        background: linear-gradient(135deg, #b1913e 70%, #a0802e 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    &__text {
+        font-size: 1.5rem;
+        line-height: 1.6;
+        color: #ffffff;
+        margin-bottom: 1rem;
+    }
+
+    &__list {
+        
+        list-style: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        font-size: 1.5rem;
+        line-height: 1.6;
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    &__btn {
+        width: 100%;
+        padding: 14px 24px;
+        background: linear-gradient(135deg, #b1913e 0%, #a0802e 100%);
+        border: none;
+        border-radius: 50px;
+        color: #1a1a1e;
+        font-size: 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: "Quicksand", sans-serif;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+    }
+}
+
+// Animations
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+// Mobile responsive
+@media (max-width: 480px) {
+    .login-card {
+        width: 90vw;
+        padding: 2rem;
+        
+        &__title {
+            font-size: 1.5rem;
+        }
+    }
+}

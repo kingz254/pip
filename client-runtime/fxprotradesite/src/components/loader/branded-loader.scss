@@ -1,0 +1,665 @@
+// Branded Loader Styles - FxProTrades - Advanced Quantum Theme
+
+// CSS Custom Properties
+.branded-loader.binary-theme {
+    --binary-primary: #6a00ff;
+    --binary-secondary: #00b3ff;
+    --binary-tertiary: #00ffd9;
+    --binary-accent: #ff00e6;
+    --binary-highlight: #5e17eb;
+    --binary-deep: #240054;
+    --binary-energy: #b69cff;
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --text-muted: #9ca3af;
+    --surface-dark: #040014;
+    --surface-darker: #01000d;
+    --binary-glass: rgba(106, 0, 255, 0.15);
+    --border-glow: rgba(106, 0, 255, 0.4);
+    --shadow-glow: 0 0 30px rgba(106, 0, 255, 0.3);
+    --electron-glow: 0 0 10px rgba(0, 179, 255, 0.8);
+    --wave-glow: 0 0 15px rgba(255, 0, 230, 0.6);
+    --core-pulse: 0 0 25px rgba(106, 0, 255, 0.8);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+// Main loader container
+.branded-loader.binary-theme {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(ellipse at center, var(--surface-dark) 0%, var(--surface-darker) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    z-index: 9999;
+    color: var(--text-primary);
+}
+
+// Canvas for quantum particles simulation
+.quantum-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+// Main loader container
+.loader-container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 550px;
+    padding: 2rem;
+    background: rgba(4, 0, 20, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(106, 0, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 
+                inset 0 0 15px rgba(106, 0, 255, 0.1);
+    animation: containerFadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Brand section
+.brand-section {
+    margin-bottom: 3rem;
+    
+    .quantum-visualization {
+        position: relative;
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        margin-bottom: 1.5rem;
+        
+        .q-sphere {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: qSphereRotate 20s linear infinite;
+            
+            .q-core {
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                background: radial-gradient(circle, var(--binary-primary) 0%, var(--binary-deep) 80%);
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                box-shadow: var(--core-pulse);
+                animation: corePulsate 3s ease-in-out infinite;
+                
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 120%;
+                    height: 120%;
+                    transform: translate(-50%, -50%);
+                    background: radial-gradient(circle, rgba(106, 0, 255, 0.5), transparent 70%);
+                    border-radius: 50%;
+                    opacity: 0.8;
+                    animation: coreGlowPulse 3s ease-in-out infinite alternate;
+                }
+            }
+            
+            .q-orbit {
+                position: absolute;
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                border: 2px dashed transparent;
+                transform: translate(-50%, -50%);
+                
+                &.orbit-1 {
+                    width: 70px;
+                    height: 70px;
+                    border-top-color: var(--quantum-secondary);
+                    border-bottom-color: var(--quantum-secondary);
+                    animation: orbitRotate1 8s linear infinite;
+                    opacity: 0.7;
+                    box-shadow: 0 0 15px rgba(0, 179, 255, 0.2);
+                }
+                
+                &.orbit-2 {
+                    width: 100px;
+                    height: 100px;
+                    border-left-color: var(--quantum-accent);
+                    border-right-color: var(--quantum-accent);
+                    animation: orbitRotate2 12s linear infinite reverse;
+                    opacity: 0.6;
+                    box-shadow: 0 0 15px rgba(255, 0, 230, 0.2);
+                    transform: translate(-50%, -50%) rotate(60deg);
+                }
+                
+                &.orbit-3 {
+                    width: 130px;
+                    height: 130px;
+                    border-top-color: var(--quantum-tertiary);
+                    border-left-color: var(--quantum-tertiary);
+                    animation: orbitRotate3 15s linear infinite;
+                    opacity: 0.5;
+                    box-shadow: 0 0 15px rgba(0, 255, 217, 0.2);
+                    transform: translate(-50%, -50%) rotate(30deg);
+                }
+            }
+            
+            .q-electron {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                box-shadow: var(--electron-glow);
+                
+                &::before {
+                    content: '';
+                    position: absolute;
+                    width: 20px;
+                    height: 4px;
+                    border-radius: 4px;
+                    background: inherit;
+                    opacity: 0.3;
+                    filter: blur(2px);
+                }
+                
+                &.e1 {
+                    background: var(--quantum-secondary);
+                    top: calc(50% - 35px);
+                    left: 50%;
+                    animation: electronOrbit1 8s linear infinite;
+                    
+                    &::before {
+                        transform: rotate(90deg);
+                    }
+                }
+                
+                &.e2 {
+                    background: var(--quantum-accent);
+                    top: 50%;
+                    left: calc(50% - 50px);
+                    animation: electronOrbit2 12s linear infinite reverse;
+                    
+                    &::before {
+                        transform: rotate(0deg);
+                    }
+                }
+                
+                &.e3 {
+                    background: var(--quantum-tertiary);
+                    top: calc(50% - 15px);
+                    left: calc(50% - 60px);
+                    animation: electronOrbit3 15s linear infinite;
+                    
+                    &::before {
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+            
+            .q-wave {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 140%;
+                height: 140%;
+                border-radius: 40%;
+                transform: translate(-50%, -50%) rotate(0deg);
+                background: transparent;
+                border: 1px solid rgba(106, 0, 255, 0.2);
+                box-shadow: var(--wave-glow);
+                animation: waveRotate 10s linear infinite, wavePulse 5s ease-in-out infinite alternate;
+            }
+            
+            .q-probability-cloud {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 140px;
+                height: 140px;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                background: radial-gradient(circle, 
+                    rgba(106, 0, 255, 0.05) 0%, 
+                    rgba(0, 179, 255, 0.05) 40%,
+                    rgba(255, 0, 230, 0.05) 70%,
+                    transparent 100%);
+                filter: blur(5px);
+                animation: cloudPulse 5s ease-in-out infinite alternate;
+                opacity: 0.7;
+            }
+        }
+    }
+    
+    .brand-text {
+        .brand-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--quantum-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: quantumTitleGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
+            
+            .highlight {
+                color: var(--quantum-accent);
+                background: linear-gradient(135deg, var(--quantum-accent) 0%, var(--quantum-tertiary) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-shadow: 0 0 20px rgba(255, 0, 230, 0.5);
+            }
+        }
+        
+        .brand-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin: 0.5rem 0 0 0;
+            font-weight: 400;
+            letter-spacing: 1px;
+            
+            .brand-name {
+                color: var(--quantum-tertiary);
+                font-weight: 600;
+                text-shadow: 0 0 10px rgba(0, 255, 217, 0.5);
+            }
+        }
+    }
+}
+
+// Progress section
+.progress-section {
+    margin-bottom: 2.5rem;
+    
+    .progress-container {
+        position: relative;
+        margin-bottom: 1.5rem;
+        
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(106, 0, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 179, 255, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--quantum-primary) 0%, var(--quantum-secondary) 50%, var(--quantum-tertiary) 100%);
+            border-radius: 50px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            
+            .progress-shine {
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+                animation: quantumProgressShine 2s ease-in-out infinite;
+            }
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: -35px;
+            right: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--quantum-tertiary);
+            text-shadow: 0 0 10px rgba(0, 255, 217, 0.5);
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+    }
+    
+    .loading-status {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        
+        .status-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            min-height: 1.5rem;
+            transition: var(--transition-smooth);
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+            
+            span {
+                width: 6px;
+                height: 6px;
+                background: var(--quantum-secondary);
+                border-radius: 50%;
+                animation: quantumDotPulse 1.4s ease-in-out infinite;
+                box-shadow: 0 0 8px var(--quantum-secondary);
+                
+                &:nth-child(1) { 
+                    animation-delay: 0s; 
+                    background: var(--quantum-primary);
+                }
+                &:nth-child(2) { 
+                    animation-delay: 0.2s; 
+                    background: var(--quantum-secondary);
+                }
+                &:nth-child(3) { 
+                    animation-delay: 0.4s; 
+                    background: var(--quantum-tertiary);
+                }
+            }
+        }
+    }
+    
+    .sub-message {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        font-style: italic;
+        letter-spacing: 0.5px;
+        font-family: 'Courier New', monospace;
+    }
+}
+
+// Feature highlights
+.feature-highlights {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    
+    .feature {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: var(--quantum-glass);
+        border-radius: 12px;
+        border: 1px solid var(--border-glow);
+        backdrop-filter: blur(20px);
+        transition: var(--transition-smooth);
+        min-width: 120px;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, 
+                rgba(106, 0, 255, 0.1),
+                rgba(0, 179, 255, 0.1),
+                rgba(0, 255, 217, 0.1),
+                rgba(255, 0, 230, 0.1)
+            );
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(106, 0, 255, 0.2);
+            border-color: var(--quantum-secondary);
+            
+            &::before {
+                opacity: 1;
+            }
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+// Version info
+.version-info {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.85rem;
+    color: var(--quantum-tertiary);
+    opacity: 0.8;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .loader-container {
+        padding: 1rem;
+        max-width: 90%;
+    }
+    
+    .brand-section .brand-text .brand-title {
+        font-size: 2.5rem;
+    }
+    
+    .brand-section .logo-container .brand-logo {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .feature-highlights {
+        gap: 1rem;
+        
+        .feature {
+            min-width: 100px;
+            padding: 0.75rem;
+        }
+    }
+}
+
+// Animations
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes qSphereRotate {
+    from {
+        transform: rotate3d(1, 1, 1, 0deg);
+    }
+    to {
+        transform: rotate3d(1, 1, 1, 360deg);
+    }
+}
+
+@keyframes corePulsate {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 20px rgba(106, 0, 255, 0.7);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        box-shadow: 0 0 30px rgba(106, 0, 255, 1);
+    }
+}
+
+@keyframes coreGlowPulse {
+    0% {
+        opacity: 0.3;
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 0.8;
+        filter: blur(10px);
+    }
+}
+
+@keyframes orbitRotate1 {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes orbitRotate2 {
+    from { transform: translate(-50%, -50%) rotate(60deg); }
+    to { transform: translate(-50%, -50%) rotate(420deg); }
+}
+
+@keyframes orbitRotate3 {
+    from { transform: translate(-50%, -50%) rotate(30deg); }
+    to { transform: translate(-50%, -50%) rotate(390deg); }
+}
+
+@keyframes electronOrbit1 {
+    from { 
+        transform: rotate(0deg) translateX(35px) rotate(0deg); 
+    }
+    to { 
+        transform: rotate(360deg) translateX(35px) rotate(-360deg);
+    }
+}
+
+@keyframes electronOrbit2 {
+    from { 
+        transform: rotate(0deg) translateX(50px) rotate(0deg); 
+    }
+    to { 
+        transform: rotate(360deg) translateX(50px) rotate(-360deg);
+    }
+}
+
+@keyframes electronOrbit3 {
+    from { 
+        transform: rotate(0deg) translateX(65px) rotate(0deg); 
+    }
+    to { 
+        transform: rotate(360deg) translateX(65px) rotate(-360deg);
+    }
+}
+
+@keyframes waveRotate {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes wavePulse {
+    0%, 100% {
+        opacity: 0.3;
+        border-radius: 40%;
+    }
+    50% {
+        opacity: 0.6;
+        border-radius: 42%;
+    }
+}
+
+@keyframes cloudPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.9);
+        filter: blur(5px);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.1);
+        filter: blur(8px);
+    }
+}
+
+@keyframes quantumTitleGlow {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(106, 0, 255, 0.5);
+        opacity: 0.9;
+    }
+    50% {
+        text-shadow: 0 0 30px rgba(106, 0, 255, 0.8), 0 0 40px rgba(255, 0, 230, 0.5);
+        opacity: 1;
+    }
+}
+
+@keyframes quantumProgressShine {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes quantumDotPulse {
+    0%, 80%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+@keyframes quantumFloat {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 100vh, 0);
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(calc(var(--random-x, 50px)), -100px, var(--random-z, 0px)) rotate3d(1, 1, 1, 360deg);
+    }
+}
+
+// Dark theme adjustments
+@media (prefers-color-scheme: dark) {
+    .branded-loader {
+        --surface-dark: #0a0a0a;
+        --surface-darker: #000000;
+    }
+}

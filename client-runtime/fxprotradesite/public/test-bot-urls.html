@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot URL Loader Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .bot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .bot-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+        .bot-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .bot-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .bot-actions {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .share-btn {
+            background: #ff6444;
+            color: white;
+        }
+        .share-btn:hover {
+            background: #e55039;
+        }
+        .test-btn {
+            background: #007bff;
+            color: white;
+        }
+        .test-btn:hover {
+            background: #0056b3;
+        }
+        .url-test {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #28a745;
+        }
+        .url-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Bot URL Loader Test Page</h1>
+        
+        <div class="url-test">
+            <h3>📋 Test URL Bot Loading</h3>
+            <p>Copy one of the generated URLs below and paste it into your browser to test the bot loading functionality:</p>
+            <input type="text" class="url-input" id="testUrl" placeholder="Generated URLs will appear here..." readonly>
+            <button class="test-btn" onclick="testCurrentUrl()">Test Current URL</button>
+        </div>
+
+        <div class="bot-grid" id="botGrid">
+            <!-- Bot cards will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Available bots from the public directory
+        const availableBots = [
+            { 
+                title: 'Top-notch 2', 
+                file: 'Top-notch 2.xml',
+                description: 'Top-rated strategy loved by professional traders for its consistency and impressive performance metrics.'
+            },
+            { 
+                title: 'BOT V3', 
+                file: 'BOT V3.xml',
+                description: 'Stable and dependable trading bot with conservative approach and long-term profitability focus.'
+            },
+            { 
+                title: 'Tradezilla', 
+                file: 'Tradezilla.xml',
+                description: 'Powerful automated trading beast that adapts to market volatility with machine learning algorithms.'
+            },
+            { 
+                title: 'Market wizard v1.5', 
+                file: 'Market Legend v2.xml',
+                description: 'Community favorite with proven track record in various market conditions and excellent risk management.'
+            },
+            { 
+                title: 'Auto differ recovery over under', 
+                file: 'Auto differ recovery over under.xml',
+                description: 'Automated difference recovery strategy for over/under markets with adaptive risk management.'
+            },
+            { 
+                title: 'Even_Odd Killer bot', 
+                file: 'Even_Odd Killer bot.xml',
+                description: 'Highly effective even/odd prediction bot with advanced pattern recognition and statistical analysis.'
+            }
+        ];
+
+        function generateBotUrl(botTitle) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.pathname = '/'; // Go to main app
+            currentUrl.searchParams.set('bot', encodeURIComponent(botTitle));
+            currentUrl.searchParams.set('tab', 'id-bot-builder');
+            return currentUrl.toString();
+        }
+
+        function shareBot(bot) {
+            const shareUrl = generateBotUrl(bot.title);
+            
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                console.log('✅ Bot link copied to clipboard:', shareUrl);
+                document.getElementById('testUrl').value = shareUrl;
+                
+                // Show notification
+                showNotification('Bot link copied to clipboard!');
+            }).catch(err => {
+                console.error('❌ Failed to copy bot link:', err);
+                alert(`Copy this link to share the bot:\n${shareUrl}`);
+            });
+        }
+
+        function testBot(bot) {
+            const testUrl = generateBotUrl(bot.title);
+            window.open(testUrl, '_blank');
+        }
+
+        function testCurrentUrl() {
+            const url = document.getElementById('testUrl').value;
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                alert('Please click "Share" on a bot first to generate a test URL');
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        function renderBots() {
+            const grid = document.getElementById('botGrid');
+            
+            availableBots.forEach(bot => {
+                const card = document.createElement('div');
+                card.className = 'bot-card';
+                card.innerHTML = `
+                    <div class="bot-title">${bot.title}</div>
+                    <div class="bot-description">${bot.description}</div>
+                    <div class="bot-actions">
+                        <button class="share-btn" onclick="shareBot({title: '${bot.title}'})">
+                            📋 Share
+                        </button>
+                        <button class="test-btn" onclick="testBot({title: '${bot.title}'})">
+                            🚀 Test Load
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', renderBots);
+    </script>
+</body>
+</html>

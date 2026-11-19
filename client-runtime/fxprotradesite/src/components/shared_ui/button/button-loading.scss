@@ -1,0 +1,56 @@
+// Button Loading Styles
+.button-loading {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    .spinner {
+        border: 2px solid transparent;
+        border-radius: 50%;
+        animation: buttonSpin 1s linear infinite;
+    }
+    
+    // Size variants
+    &--small .spinner {
+        width: 12px;
+        height: 12px;
+        border-width: 2px;
+    }
+    
+    &--medium .spinner {
+        width: 16px;
+        height: 16px;
+        border-width: 2px;
+    }
+    
+    &--large .spinner {
+        width: 20px;
+        height: 20px;
+        border-width: 3px;
+    }
+    
+    // Color variants
+    &--primary .spinner {
+        border-top-color: var(--text-primary, #ffffff);
+        border-right-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    &--secondary .spinner {
+        border-top-color: var(--primary-blue, #3b82f6);
+        border-right-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    &--white .spinner {
+        border-top-color: #ffffff;
+        border-right-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+@keyframes buttonSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

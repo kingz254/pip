@@ -1,0 +1,1775 @@
+html {
+    scroll-behavior: smooth;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.smart-trading-display {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    padding-bottom: 150px; // Extra padding for bottom to accommodate fixed footer
+    height: 75%; // This ensures full container height
+    max-height: 100vh; // Prevent overflow beyond viewport height
+    background-color: var(--general-main-1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS devices
+    
+    // Hide scrollbar in WebKit browsers while preserving functionality
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+}
+
+.smart-trading-header {
+    margin-bottom: 36px;
+    text-align: center;
+
+    h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-prominent);
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+        position: relative;
+        display: inline-block;
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand-red-coral), var(--status-success));
+            border-radius: 2px;
+        }
+    }
+
+    .derivs-text {
+        color: var(--text-general);
+        margin-top: 12px;
+        font-size: 15px;
+    }
+
+    .controls-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 16px;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--general-section-1);
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .control-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+            font-size: 12px;
+            color: var(--text-less-prominent);
+        }
+
+        select, input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-normal);
+            background-color: var(--general-main-1);
+            color: var(--text-prominent);
+            min-width: 140px;
+
+            &:hover:not(:disabled) {
+                border-color: var(--border-hover);
+            }
+
+            &:focus {
+                outline: none;
+                border-color: var(--brand-red-coral);
+                box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+            }
+        }
+
+        input[type="number"] {
+            width: 80px;
+            -moz-appearance: textfield;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    }
+
+    .price-display {
+        background-color: var(--background-primary-container);
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid var(--border-normal);
+        position: relative;
+
+        strong {
+            color: var(--brand-red-coral); // Changed from var(--text-colored-background) to var(--brand-red-coral)
+            font-weight: 600;
+        }
+        
+        .update-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--status-success);
+            margin-left: auto; // Push to right side
+            opacity: 0;
+            animation: blink 1s ease-in-out;
+        }
+    }
+
+    @keyframes blink {
+        0% { opacity: 0; }
+        50% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+}
+
+.smart-trading-strategies {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.strategy-card {
+    background: linear-gradient(to bottom, var(--general-section-1), var(--general-main-1));
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-normal);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, transparent);
+        transition: background 0.3s ease;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    &.trading {
+        border: none;
+        box-shadow: 0 8px 24px rgba(0, 128, 0, 0.1);
+        background: linear-gradient(to bottom,
+            var(--background-primary-container-highlight),
+            var(--general-section-1)
+        );
+
+        &:before {
+            background: linear-gradient(90deg, var(--status-success), var(--brand-red-coral));
+        }
+
+        .strategy-card__name {
+            color: var(--brand-red-coral);
+        }
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(var(--border-normal-rgb), 0.3);
+        margin-bottom: 4px; // Add small margin since description is removed
+    }
+
+    &__name {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-prominent);
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    &__analysis-content {
+        background-color: var(--background-primary-container);
+        padding: 16px;
+        border-radius: 8px;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px dashed rgba(var(--border-subtle-rgb), 0.6);
+        position: relative;
+        overflow: hidden;
+        word-break: break-word; // Prevent text overflow
+
+        &:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 3s infinite;
+            animation-play-state: paused;
+        }
+
+        &:hover:before {
+            animation-play-state: running;
+        }
+    }
+
+    &__settings {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 12px;
+        border: 1px solid rgba(var(--border-normal-rgb), 0.3);
+        border-radius: 8px;
+        background-color: var(--general-section-1);
+        overflow: visible; // Allow overflow for small screens
+    }
+
+    &__actions {
+        display: flex;
+        gap: 12px;
+        margin-top: auto;
+
+        .strategy-card__trade-button {
+            flex-grow: 1;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            
+            &:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+
+            &:active:not(:disabled) {
+                transform: translateY(0);
+            }
+            
+            // Auto trading button styling (single button per card)
+            &--single {
+                background: linear-gradient(135deg, #2196f3, #21cbf3);
+                border-color: transparent;
+                font-weight: 600;
+                letter-spacing: 0.3px;
+                
+                &:hover:not(:disabled) {
+                    background: linear-gradient(135deg, #1e88e5, #00b0ff);
+                }
+                
+                &:disabled {
+                    background: linear-gradient(135deg, #90caf9, #81d4fa);
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+                
+                // When in "Stop" state (variant="danger")
+                &[variant="danger"] {
+                    background: linear-gradient(135deg, #f44336, #ff7043);
+                    
+                    &:hover:not(:disabled) {
+                        background: linear-gradient(135deg, #e53935, #ff5722);
+                    }
+                }
+            }
+        }
+    }
+
+    &__status {
+        background: var(--general-section-1);
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid var(--border-normal);
+        margin-top: 8px;
+
+        .status-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+
+            .martingale-info {
+                color: var(--text-warning);
+                font-weight: 600;
+            }
+
+            .trade-result {
+                font-weight: 600;
+
+                &.win {
+                    color: var(--status-success);
+                }
+
+                &.loss {
+                    color: var(--status-danger);
+                }
+            }
+
+            .trade-stats {
+                color: var(--text-less-prominent);
+            }
+
+            .condition-met {
+                color: var(--status-success);
+                background: var(--background-success-container);
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .trade-in-progress {
+                color: var(--brand-blue);
+                background: var(--background-primary-container);
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-weight: 600;
+                text-align: center;
+                animation: pulse 1.5s infinite;
+            }
+        }
+    }
+
+    &__trade-button {
+        padding: 10px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    &__status {
+        display: flex;
+        align-items: center;
+    }
+
+    .condition-indicator-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .condition-indicator {
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--border-normal); // subtle default
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+
+        &.active {
+            background-color: var(--status-success); // green
+            box-shadow: 0 0 6px var(--status-success);
+            border-color: rgba(var(--status-success-rgb), 0.3);
+            transform: scale(1.1);
+            
+            &::after {
+                content: '';
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background-color: rgba(255, 255, 255, 0.8);
+                border-radius: 50%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        &:not(.active) {
+            background-color: var(--border-disabled);
+            opacity: 0.6;
+        }
+    }
+
+    // Ensure content inside cards doesn't cause horizontal overflow
+    max-width: 100%;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &.selected {
+        background-color: rgba(var(--brand-red-coral-rgb), 0.15);
+        color: var(--brand-red-coral);
+    }
+
+    &.trading {
+        background-color: rgba(var(--status-success-rgb), 0.15);
+        color: var(--status-success);
+        animation: glow 2s infinite alternate;
+    }
+}
+
+.status-indicator-animated {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: var(--status-success);
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 8px var(--status-success);
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 28%;
+
+    label {
+        font-size: 12px;
+        color: var(--text-less-prominent);
+        font-weight: 500;
+        letter-spacing: 0.2px;
+    }
+
+    input {
+        padding: 4px 5px;
+        border: 1px solid var(--border-normal);
+        border-radius: 6px;
+        background-color: var(--general-main-1);
+        color: var(--text-prominent);
+        font-size: 10px;
+        width: auto;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        height: 20px;
+
+        &:hover:not(:disabled) {
+            border-color: var(--border-hover);
+        }
+
+        &:focus {
+            outline: none;
+            border-color: var(--brand-red-coral);
+            box-shadow: 0 0 0 2px rgba(var(--brand-red-coral-rgb), 0.2);
+        }
+
+        &:disabled {
+            background-color: var(--general-disabled);
+            color: var(--text-disabled);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        // Remove spinner buttons from number inputs
+        &[type="number"] {
+            -moz-appearance: textfield;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    }
+}
+
+// Add new analysis display styles
+.analysis-data {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.recommendation {
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 4px;
+    padding: 8px;
+    
+    &.rise, &.even, &.over, &.matches {
+        background-color: rgba(var(--status-success-rgb), 0.1);
+    }
+    
+    &.fall, &.odd, &.under, &.differs {
+        background-color: rgba(var(--brand-secondary-rgb), 0.1);
+    }
+    
+    .recommendation-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .confidence-badge {
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 10px;
+        padding: 2px 6px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+}
+
+// Additional recommendation styling for matches/differs
+.recommendation {
+    &.matches {
+        background: linear-gradient(135deg, 
+            rgba(var(--status-success-rgb), 0.15),
+            rgba(var(--status-success-rgb), 0.08)
+        );
+        border: 1px solid rgba(var(--status-success-rgb), 0.3);
+        
+        .recommendation-header {
+            color: var(--status-success);
+        }
+        
+        .confidence-badge {
+            background: var(--status-success);
+            color: white;
+        }
+    }
+    
+    &.differs {
+        background: linear-gradient(135deg, 
+            rgba(var(--brand-secondary-rgb), 0.15),
+            rgba(var(--brand-secondary-rgb), 0.08)
+        );
+        border: 1px solid rgba(var(--brand-secondary-rgb), 0.3);
+        
+        .recommendation-header {
+            color: var(--brand-secondary);
+        }
+        
+        .confidence-badge {
+            background: var(--brand-secondary);
+            color: white;
+        }
+    }
+}
+
+.trend-meter, .distribution-meter {
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+}
+
+.trend-rise, .dist-bar.even, .dist-bar.over {
+    background-color: var(--status-success);
+    height: 100%;
+}
+
+.trend-fall, .dist-bar.odd, .dist-bar.under {
+    background-color: var(--brand-secondary);
+    height: 100%;
+}
+
+.trend-labels, .distribution-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-less-prominent);
+}
+
+// Digit Sequence Display for Even/Odd Card 2
+.digit-distribution {
+    .distribution-header {
+        margin-bottom: 8px;
+    }
+    
+    .digit-sequence {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .digit-label {
+        width: 26px; // Increase width slightly to accommodate digit + classification
+        height: 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 11px;
+        position: relative; // Add positioning for the subscript
+        
+        // Add subscript styling
+        sub {
+            position: absolute;
+            bottom: 0;
+            right: 2px;
+            font-size: 8px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        &.even {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: rgb(46, 125, 50);
+        }
+        
+        &.odd {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: rgb(230, 81, 0);
+        }
+        
+        // Improved styling for over/under labels
+        &.over {
+            background-color: rgba(33, 150, 243, 0.3); // Brighter blue background
+            color: #0d47a1; // Darker blue text for better contrast
+            border: 1px solid rgba(33, 150, 243, 0.6); // Add border
+            font-weight: 700; // Make text bolder
+        }
+        
+        // Add styling for equal label
+        &.equal {
+            background-color: rgba(156, 39, 176, 0.3); // Purple background
+            color: #4a148c; // Dark purple text
+            border: 1px solid rgba(156, 39, 176, 0.6); // Add border
+            font-weight: 700; // Make text bolder
+        }
+        
+        &.under {
+            background-color: rgba(233, 30, 99, 0.3); // Brighter pink background
+            color: #880e4f; // Darker pink text for better contrast
+            border: 1px solid rgba(233, 30, 99, 0.6); // Add border
+            font-weight: 700; // Make text bolder
+        }
+    }
+    
+    .distribution-note {
+        margin-top: 8px;
+        font-style: italic;
+        
+        // Add some styling to highlight the barrier value in the explanation
+        .barrier-value {
+            font-weight: 700;
+            color: var(--text-prominent);
+            padding: 0 2px;
+        }
+    }
+}
+
+.streak-indicator {
+    margin-top: 4px;
+    
+    .streak-count {
+        font-weight: bold;
+        margin-left: 4px;
+    }
+}
+
+// Enhanced styles for Matches/Differs barrier digit display
+.barrier-digit-info {
+    margin-top: 8px;
+    padding: 8px;
+    background-color: rgba(var(--brand-red-coral-rgb), 0.08);
+    border-radius: 6px;
+    border: 1px solid rgba(var(--brand-red-coral-rgb), 0.2);
+    text-align: center;
+    
+    .text {
+        color: var(--text-prominent);
+        font-weight: 500;
+    }
+}
+
+.target-digit-info, .barrier-digit-info {
+    margin-top: 8px;
+    padding: 6px 8px;
+    background-color: rgba(0,0,0,0.03);
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid rgba(var(--border-normal-rgb), 0.3);
+    
+    .target-digit-value {
+        font-weight: bold;
+        color: var(--brand-red-coral);
+        background-color: rgba(var(--brand-red-coral-rgb), 0.1);
+        padding: 2px 6px;
+        border-radius: 3px;
+        margin-left: 4px;
+    }
+}
+
+// Enhanced animated percentage bars for matches/differs - label styling
+.animated-percentage-bar {
+    &__label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-prominent);
+        margin-bottom: 4px;
+    }
+}
+
+// Digit Frequency Display for Matches/Differs
+.digit-frequency-display {
+    margin-top: 8px;
+    
+    .digit-freq-bars {
+        display: flex;
+        align-items: flex-end;
+        height: 40px;
+        gap: 2px;
+        padding: 0 4px;
+        background-color: rgba(0,0,0,0.03);
+        border-radius: 4px;
+    }
+    
+    .digit-freq-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        
+        &.selected-digit {
+            position: relative;
+            
+            // Add a highlight indicator for the selected digit
+            &:before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+                border-top: 5px solid var(--brand-red-coral);
+            }
+            
+            .digit-freq-label {
+                font-weight: bold;
+                color: var(--brand-red-coral);
+            }
+        }
+    }
+    
+    .digit-freq-label {
+        font-size: 9px;
+        color: var(--text-less-prominent);
+        margin-top: 2px;
+    }
+}
+
+// Enhanced digit frequency visualization
+.digit-frequency-display {
+    margin-top: 12px;
+    padding: 8px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 6px;
+    border: 1px solid rgba(var(--border-normal-rgb), 0.2);
+    
+    .frequency-title {
+        color: var(--text-prominent);
+        margin-bottom: 8px;
+        text-align: center;
+        display: block;
+    }
+    
+    .digit-freq-bars {
+        display: flex;
+        align-items: flex-end;
+        height: 50px;
+        gap: 3px;
+        padding: 0 4px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 4px;
+        border: 1px solid rgba(var(--border-normal-rgb), 0.1);
+    }
+    
+    .digit-freq-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        position: relative;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            transform: translateY(-1px);
+        }
+        
+        &.barrier-digit {
+            position: relative;
+            
+            // Add a highlight indicator for the barrier digit
+            &:before {
+                content: '●';
+                position: absolute;
+                top: -12px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: var(--brand-red-coral);
+                font-size: 8px;
+                font-weight: bold;
+            }
+            
+            .digit-freq-label {
+                font-weight: bold;
+                color: var(--brand-red-coral);
+                background: rgba(var(--brand-red-coral-rgb), 0.1);
+                border-radius: 3px;
+                padding: 1px 3px;
+            }
+            
+            .digit-freq-percent {
+                color: var(--brand-red-coral);
+                font-weight: 600;
+            }
+        }
+    }
+    
+    .digit-freq-bar {
+        width: 100%;
+        min-height: 4px;
+        border-radius: 2px 2px 0 0;
+        margin-bottom: 2px;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        
+        &:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    }
+    
+    .digit-freq-label {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--text-prominent);
+        margin-bottom: 1px;
+        line-height: 1;
+    }
+    
+    .digit-freq-percent {
+        font-size: 8px;
+        color: var(--text-less-prominent);
+        line-height: 1;
+    }
+}
+
+// Add digit frequency grid for Over/Under
+.digit-frequency {
+    margin-top: 12px;
+    
+    .digit-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+        
+        .digit-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 2px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+            
+            &:hover {
+                transform: translateY(-2px);
+            }
+            
+            &.over {
+                background-color: rgba(var(--status-info-rgb), 0.1);
+                border: 1px solid rgba(var(--status-info-rgb), 0.3);
+                
+                .digit-value {
+                    color: var(--status-info-darker);
+                    font-weight: bold;
+                }
+                
+                .digit-freq {
+                    color: var(--status-info);
+                }
+            }
+            
+            &.under {
+                background-color: rgba(var(--brand-secondary-rgb), 0.1);
+                border: 1px solid rgba(var(--brand-secondary-rgb), 0.3);
+                
+                .digit-value {
+                    color: var(--brand-secondary-dark);
+                    font-weight: bold;
+                }
+                
+                .digit-freq {
+                    color: var(--brand-secondary);
+                }
+            }
+            
+            // Add style for equal values in digit boxes
+            &.equal {
+                background-color: rgba(156, 39, 176, 0.1);
+                border: 1px solid rgba(156, 39, 176, 0.3);
+                
+                .digit-value {
+                    color: #4a148c;
+                    font-weight: bold;
+                }
+                
+                .digit-freq {
+                    color: #9c27b0;
+                }
+            }
+        }
+        
+        .digit-value {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .digit-freq {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+    }
+}
+
+// Add barrier input for Over/Under
+.barrier-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+    
+    label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-general);
+    }
+    
+    .barrier-input {
+        width: 40px;
+        padding: 4px;
+        border-radius: 4px;
+        border: 1px solid var(--border-normal);
+        text-align: center;
+        font-weight: bold;
+        
+        &:focus {
+            outline: none;
+            border-color: var(--brand-red-coral);
+            box-shadow: 0 0 0 2px rgba(var(--brand-red-coral-rgb), 0.2);
+        }
+        
+        // Remove spinner buttons
+        &[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                appearance: none;
+                margin: 0;
+            }
+        }
+    }
+    
+    .barrier-explanation {
+        flex-basis: 100%;
+        margin-top: 4px;
+    }
+}
+
+// Add reconnect button styles
+.reconnect-button {
+    padding: 6px 12px;
+    background-color: var(--general-section-2);
+    border: 1px solid var(--border-normal);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-general);
+    
+    &:hover {
+        background-color: var(--general-hover);
+        transform: translateY(-1px);
+    }
+    
+    &:active {
+        transform: translateY(1px);
+    }
+}
+
+// Improved animated percentage bars styles with enhanced visuals
+.animated-percentage-bar {
+    width: 100%;
+    margin: 12px 0 8px;
+    position: relative;
+    overflow: hidden;
+    
+    &__container {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 8px;
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 12px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        
+        &:hover {
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.08);
+        }
+    }
+    
+    &__row {
+        height: 30px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    
+    &__label {
+        width: 65px; // Increased width to accommodate "Matches X" and "Differs from X" labels
+        text-align: right;
+        margin-right: 12px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-less-prominent);
+        flex-shrink: 0;
+        white-space: nowrap; // Prevent text wrapping
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    &__bar-container {
+        height: 30px;
+        background: linear-gradient(to right, rgba(240, 240, 240, 0.5), rgba(250, 250, 250, 0.8));
+        border-radius: 6px;
+        flex-grow: 1;
+        overflow: hidden;
+        position: relative;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+    
+    &__bar {
+        height: 100%;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); // Bouncy animation for width changes
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        cursor: pointer; // Add cursor pointer for interactivity
+        
+        &--rise {
+            background: linear-gradient(to right, #63D471, #8BEDA6);
+            &::before {
+                background-color: rgba(139, 237, 166, 0.4); // #8BEDA6
+            }
+        }
+        
+        &--fall {
+            background: linear-gradient(to right, #FF5F6D, #FF7F7F);
+            &::before {
+                background-color: rgba(255, 127, 127, 0.4); // #FF7F7F
+            }
+        }
+        
+        &--even {
+            background: linear-gradient(to right, #63D471, #8BEDA6);
+            &::before {
+                background-color: rgba(139, 237, 166, 0.4); // #8BEDA6
+            }
+        }
+        
+        &--odd {
+            background: linear-gradient(to right, #FF5F6D, #FF7F7F);
+            &::before {
+                background-color: rgba(255, 127, 127, 0.4); // #FF7F7F 
+            }
+        }
+        
+        &--over {
+            background: linear-gradient(to right, #0083B0, #2196f3);
+            &::before {
+                background-color: rgba(33, 150, 243, 0.4); // #2196f3
+            }
+        }
+        
+        &--under {
+            background: linear-gradient(to right, #C6426E, #e91e63);
+            &::before {
+                background-color: rgba(233, 30, 99, 0.4); // #e91e63
+            }
+        }
+        
+        &--matches {
+            background: linear-gradient(to right, #63D471, #8BEDA6);
+            &::before {
+                background-color: rgba(139, 237, 166, 0.4); // #8BEDA6
+            }
+            
+            &:hover {
+                background: linear-gradient(to right, #4CAF50, #63D471);
+                box-shadow: 0 4px 8px rgba(99, 212, 113, 0.3);
+                transform: translateY(-1px);
+            }
+        }
+        
+        &--differs {
+            background: linear-gradient(to right, #FF5F6D, #FF7F7F);
+            &::before {
+                background-color: rgba(255, 127, 127, 0.4); // #FF7F7F
+            }
+            
+            &:hover {
+                background: linear-gradient(to right, #F44336, #FF5F6D);
+                box-shadow: 0 4px 8px rgba(255, 95, 109, 0.3);
+                transform: translateY(-1px);
+            }
+        }
+        
+        // Shine effect overlay
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 50%;
+            height: 100%;
+            opacity: 0;
+            animation: shine 3s infinite;
+            transform: skewX(-25deg);
+            pointer-events: none;
+        }
+    }
+    
+    &__value {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+        
+        &.highlight {
+            animation: valuePulse 0.5s ease-in-out;
+        }
+    }
+}
+
+// Keyframe animations for the bar effects
+@keyframes shine {
+    0% { opacity: 0; left: -50%; }
+    20% { opacity: 0.5; }
+    100% { opacity: 0; left: 150%; }
+}
+
+@keyframes valuePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 4px rgba(var(--status-success-rgb), 0.2); }
+    100% { box-shadow: 0 0 10px rgba(var(--status-success-rgb), 0.5); }
+}
+
+@media screen and (max-width: 768px) {
+    .smart-trading-display {
+        padding: 12px;
+        padding-bottom: 80px; // Add extra padding at bottom for mobile to ensure last item is fully visible
+    }
+
+    .smart-trading-header {
+        margin-bottom: 24px; // Reduce margin on mobile
+        
+        h2 {
+            font-size: 24px; // Smaller heading on mobile
+        }
+
+        .controls-container {
+            flex-direction: column;
+            align-items: stretch;
+            
+            .control-item {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                
+                select, input {
+                    min-width: 0;
+                    width: 50%;
+                }
+            }
+            
+            .price-display {
+                justify-content: center;
+            }
+        }
+    }
+
+    .smart-trading-strategies {
+        grid-template-columns: 1fr;
+        gap: 16px; // Reduce gap on mobile
+    }
+
+    .strategy-card {
+        padding: 16px;
+        gap: 12px; // Reduce gap between elements on mobile
+
+        &__settings {
+            flex-direction: row; // Force horizontal layout
+            overflow-x: auto; // Allow horizontal scrolling for settings
+            padding: 8px;
+            -webkit-overflow-scrolling: touch;
+            
+            // Add visual indicator for scrollable area
+            &:after {
+                content: '';
+                min-width: 8px;
+            }
+
+            .setting-item {
+                width: 10%; // Adjust width for better fit on mobile
+                flex: 1; // Allow items to grow and fill available space
+            }
+        }
+    }
+    
+    .digit-distribution {
+        .digit-sequence {
+            justify-content: center;
+        }
+    }
+    
+    .digit-frequency {
+        .digit-grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .smart-trading-display {
+        padding: 8px;
+    }
+    
+    .strategy-card {
+        padding: 12px;
+        
+        &__header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            
+            .strategy-card__status {
+                align-self: flex-start;
+            }
+        }
+    }
+    
+    .animated-percentage-bar {
+        &__container {
+            padding: 4px;
+        }
+        
+        &__row {
+            height: 24px;
+            margin-bottom: 4px;
+        }
+        
+        &__label {
+            width: 50px; // Increased for matches/differs labels on mobile
+            margin-right: 6px;
+            font-size: 10px; // Slightly smaller font
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        
+        &__bar-container {
+            height: 24px;
+        }
+        
+        &__value {
+            font-size: 11px;
+            padding-right: 4px;
+        }
+    }
+    
+    .digit-label {
+        width: 24px; // Slightly narrower on mobile
+        height: 18px;
+        font-size: 10px;
+        
+        sub {
+            font-size: 7px;
+            right: 1px;
+            bottom: 0;
+        }
+    }
+}
+
+// Trading Condition Styles
+.trading-condition {
+    margin-top: 16px;
+    border: 1px solid var(--brand-red-coral);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-color: var(--general-section-1);
+    box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+    
+    .condition-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-bottom: 1px solid var(--border-normal);
+    }
+    
+    .condition-content {
+        padding: 12px;
+    }
+    
+    .condition-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &.tick-direction-row {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-normal);
+            transition: opacity 0.2s ease;
+            background-color: rgba(var(--brand-red-coral-rgb), 0.03);
+            padding: 12px;
+            border-radius: 6px;
+            
+            &.disabled {
+                .condition-value,
+                .condition-select {
+                    opacity: 0.5;
+                }
+                
+                .condition-label:not(.tick-direction-label) {
+                    opacity: 0.5;
+                }
+            }
+            
+            // Wrapper for all tick condition controls
+            .tick-condition-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .tick-direction-label {
+                label {
+                    display: flex;
+                    align-items: center;
+                    user-select: none;
+                    
+                    span {
+                        font-weight: 600;
+                        color: var(--text-prominent);
+                    }
+                }
+            }
+            
+            input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+                accent-color: var(--brand-red-coral);
+                flex-shrink: 0;
+                border: 2px solid var(--border-normal);
+                border-radius: 3px;
+                background-color: var(--general-main-1);
+                position: relative;
+                margin: 0;
+                
+                // Force checkbox visibility with custom styling
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                
+                // Custom checkmark when checked
+                &:checked {
+                    background-color: var(--brand-red-coral);
+                    border-color: var(--brand-red-coral);
+                    
+                    &::after {
+                        content: '✓';
+                        position: absolute;
+                        color: white;
+                        font-size: 11px;
+                        font-weight: bold;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                }
+                
+                &:hover:not(:disabled) {
+                    transform: scale(1.05);
+                    transition: transform 0.15s ease;
+                    border-color: var(--brand-red-coral);
+                    box-shadow: 0 0 0 2px rgba(var(--brand-red-coral-rgb), 0.2);
+                }
+                
+                &:focus {
+                    outline: none;
+                    box-shadow: 0 0 0 2px rgba(var(--brand-red-coral-rgb), 0.25);
+                }
+                
+                &:disabled {
+                    cursor: not-allowed;
+                    opacity: 0.4;
+                    background-color: var(--general-disabled);
+                }
+            }
+            
+            // Tick condition label styles
+            .tick-checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+                user-select: none;
+                cursor: pointer;
+                
+                .tick-checkbox {
+                    margin: 0;
+                }
+            }
+            
+            .tick-label-text {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--text-general);
+                white-space: nowrap;
+            }
+            
+            // Tick count input
+            .tick-count-input {
+                width: 50px;
+                padding: 4px 8px;
+                border: 1px solid var(--border-normal);
+                border-radius: 4px;
+                background-color: var(--general-main-1);
+                color: var(--text-general);
+                font-size: 13px;
+                text-align: center;
+                transition: all 0.2s ease;
+                
+                &:hover:not(:disabled) {
+                    border-color: var(--border-hover);
+                }
+                
+                &:focus {
+                    outline: none;
+                    border-color: var(--brand-red-coral);
+                    box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+                }
+                
+                &:disabled {
+                    opacity: 0.5;
+                    background-color: var(--general-disabled);
+                    cursor: not-allowed;
+                }
+            }
+            
+            // Tick type select (Rise/Fall, Even/Odd, Over/Under/Equals)
+            .tick-type-select {
+                padding: 4px 24px 4px 8px;
+                border: 1px solid var(--border-normal);
+                border-radius: 4px;
+                background-color: var(--general-main-1);
+                color: var(--text-general);
+                font-size: 13px;
+                appearance: none;
+                background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23999' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 4px center;
+                background-size: 16px;
+                transition: all 0.2s ease;
+                min-width: 100px;
+                cursor: pointer;
+                
+                &:hover:not(:disabled) {
+                    border-color: var(--border-hover);
+                }
+                
+                &:focus {
+                    outline: none;
+                    border-color: var(--brand-red-coral);
+                    box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+                }
+                
+                &:disabled {
+                    opacity: 0.5;
+                    background-color: var(--general-disabled);
+                    cursor: not-allowed;
+                }
+            }
+            
+            // Tick barrier input (for Over/Under strategy)
+            .tick-barrier-input {
+                width: 45px;
+                padding: 4px 8px;
+                border: 1px solid var(--border-normal);
+                border-radius: 4px;
+                background-color: var(--general-main-1);
+                color: var(--text-general);
+                font-size: 13px;
+                text-align: center;
+                transition: all 0.2s ease;
+                
+                &:hover:not(:disabled) {
+                    border-color: var(--border-hover);
+                }
+                
+                &:focus {
+                    outline: none;
+                    border-color: var(--brand-red-coral);
+                    box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+                }
+                
+                &:disabled {
+                    opacity: 0.5;
+                    background-color: var(--general-disabled);
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+    
+    .condition-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-general);
+        min-width: 35px;
+    }
+    
+    .condition-select {
+        padding: 4px 24px 4px 8px;
+        border: 1px solid var(--border-normal);
+        border-radius: 4px;
+        background-color: var(--general-main-1);
+        color: var(--text-general);
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23999' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 4px center;
+        background-size: 16px;
+        transition: all 0.2s ease;
+        
+        &:hover:not(:disabled) {
+            border-color: var(--border-hover);
+        }
+        
+        &:focus {
+            outline: none;
+            border-color: var(--brand-red-coral);
+            box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+        }
+        
+        &:disabled {
+            opacity: 0.6;
+            background-color: var(--general-disabled);
+            cursor: not-allowed;
+        }
+        
+        &.action-select {
+            flex-grow: 1;
+            max-width: 150px;
+        }
+    }
+    
+    .condition-value-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .condition-value {
+        width: 60px;
+        padding: 4px 20px 4px 8px;
+        border: 1px solid var(--border-normal);
+        border-radius: 4px;
+        background-color: var(--general-main-1);
+        color: var(--text-general);
+        transition: all 0.2s ease;
+        
+        &:hover:not(:disabled) {
+            border-color: var(--border-hover);
+        }
+        
+        &:focus {
+            outline: none;
+            border-color: var(--brand-red-coral);
+            box-shadow: 0 0 0 1px rgba(var(--brand-red-coral-rgb), 0.2);
+        }
+        
+        &:disabled {
+            opacity: 0.6;
+            background-color: var(--general-disabled);
+            cursor: not-allowed;
+        }
+        
+        // Remove spinner buttons
+        &[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                appearance: none;
+                margin: 0;
+            }
+        }
+    }
+    
+    .condition-percent {
+        position: absolute;
+        right: 8px;
+        font-size: 12px;
+        color: var(--text-less-prominent);
+        pointer-events: none;
+    }
+    
+    // Add specific styling for digit count input field
+    .digit-count-input {
+        width: 40px; // Make it narrower than the regular condition value inputs
+        padding: 4px 8px; // Adjust padding to make it compact
+        text-align: center; // Center the number
+    }
+    
+    // Add specific styling for barrier input in pattern condition
+    .barrier-input {
+        width: 38px;
+        padding: 4px 8px;
+        text-align: center;
+        font-weight: 500;
+        background-color: rgba(var(--status-info-rgb), 0.05); // Subtle highlight
+    }
+    
+    // Add specific styling for digit input in Matches/Differs
+    .digit-input {
+        width: 38px;
+        padding: 4px;
+        text-align: center;
+        font-weight: bold;
+        background-color: rgba(var(--brand-red-coral-rgb), 0.05);
+    }
+}
+
+// Add responsive styles for the condition UI on mobile
+@media screen and (max-width: 768px) {
+    .trading-condition {
+        .condition-row {
+            gap: 6px; // Reduce gap on mobile
+        }
+        
+        .condition-label {
+            min-width: 30px; // Reduce width on mobile
+            font-size: 12px;
+        }
+        
+        .condition-select {
+            padding: 4px 20px 4px 6px; // Smaller padding
+            font-size: 12px; // Smaller font
+            
+            &.action-select {
+                max-width: 120px; // Smaller action select
+            }
+        }
+        
+        .condition-value {
+            width: 50px; // Narrower input
+        }
+    }
+}

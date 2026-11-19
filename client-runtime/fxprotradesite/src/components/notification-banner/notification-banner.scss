@@ -1,0 +1,126 @@
+.notification-banner {
+  width: 100%;
+  background: linear-gradient(90deg, #b1913e 0%, #dba80db7 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  height: 28px;
+  z-index: 4; /* Below the run panel's z-index of 5 (--zindex-drawer) */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  // Hover effect for the entire banner
+  &:hover {
+    background: linear-gradient(90deg, #b1913e 0%, #dba80ddd 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(107, 72, 255, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &__content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__marquee {
+    display: flex;
+    position: relative;
+    width: 200%;
+    animation: scroll 30s linear infinite;
+    will-change: transform;
+  }
+
+  &__text {
+    display: flex;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+    flex: 0 0 50%;
+    
+    &-item {
+      flex-shrink: 0;
+      padding: 0 200px; // Increased padding for better spacing
+      
+      &:first-child {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  &__close {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+
+    &:hover {
+      background-color: rgba(171, 144, 10, 0.477);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%); // Move exactly half width (one full marquee set)
+    }
+  }
+
+  // Pause animation on hover
+  &:hover &__marquee {
+    animation-play-state: paused;
+  }
+
+  // Mobile responsiveness
+  @media (max-width: 768px) {
+    height: 25px;
+
+    &__marquee {
+      animation-duration: 20s; // Much faster on mobile (half the desktop speed)
+    }
+    
+    &__text {
+      font-size: 13px;
+    }
+  }
+
+  // Dark mode support
+  @media (prefers-color-scheme: dark) {
+    background: linear-gradient(90deg, #b1913e 0%, #b1913e 100%);
+  }
+}
+
+// Add some breathing room for content below
+.notification-banner + * {
+  margin-top: 0;
+}

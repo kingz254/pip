@@ -1,0 +1,100 @@
+import React from 'react';
+import { observer } from 'mobx-react-lite';
+import Dialog from '@/components/shared_ui/dialog';
+import { DBOT_TABS } from '@/constants/bot-contents';
+import { useStore } from '@/hooks/useStore';
+import { Localize, localize } from '@deriv-com/translations';
+import { useDevice } from '@deriv-com/ui';
+import { rudderStackSendOpenEvent } from '../../../analytics/rudderstack-common-events';
+import ToolbarButton from './toolbar-button';
+import WorkspaceGroup from './workspace-group';
+import './reset-dialog.scss';
+
+const Toolbar = observer(() => {
+    const { run_panel, toolbar, quick_strategy, dashboard } = useStore();
+    const { isDesktop } = useDevice();
+    const { is_dialog_open, closeResetDialog, onResetOkButtonClick: onOkButtonClick } = toolbar;
+    const { is_running } = run_panel;
+    const { setFormVisibility } = quick_strategy;
+    const { setActiveTab } = dashboard;
+    const confirm_button_text = is_running ? localize('Yes') : localize('OK');
+    const cancel_button_text = is_running ? localize('No') : localize('Cancel');
+    
+    const handleQuickStrategyOpen = () => {
+        setFormVisibility(true);
+        rudderStackSendOpenEvent({
+            subpage_name: 'bot_builder',
+            subform_source: 'bot_builder',
+            subform_name: 'quick_strategy',
+        });
+    };
+
+    const handleFreeBotsOpen = () => {
+        setActiveTab(DBOT_TABS.FREE_BOTS);
+        // Note: Analytics event might need type extension for 'free_bots' subform_name
+        rudderStackSendOpenEvent({
+            subpage_name: 'bot_builder',
+            subform_source: 'bot_builder',
+            subform_name: 'quick_strategy' as any, // Temporary type assertion
+        });
+    };
+    return (
+        <React.Fragment>
+            <div className='toolbar dashboard__toolbar' data-testid='dt_dashboard_toolbar'>
+                <div className='toolbar__section'>
+                    {!isDesktop && (
+                        <>
+                            <ToolbarButton
+                                popover_message={localize('Click here to start building your Binaryfx Bot.')}
+                                button_id='db-toolbar__get-started-button'
+                                button_classname='toolbar__btn toolbar__btn--icon toolbar__btn--start'
+                                buttonOnClick={handleQuickStrategyOpen}
+                                button_text={localize('Quick strategy')}
+                            />
+                            <ToolbarButton
+                                popover_message={localize('Access free trading bots and strategies.')}
+                                button_id='db-toolbar__free-bots-button'
+                                button_classname='toolbar__btn toolbar__btn--icon toolbar__btn--free-bots'
+                                buttonOnClick={handleFreeBotsOpen}
+                                button_text={localize('Free bots')}
+                            />
+                        </>
+                    )}
+                    {isDesktop && <WorkspaceGroup />}
+                </div>
+            </div>
+            {!isDesktop && <WorkspaceGroup />}
+            <Dialog
+                portal_element_id='modal_root'
+                title={localize('Are you sure?')}
+                is_visible={is_dialog_open}
+                confirm_button_text={confirm_button_text}
+                onConfirm={onOkButtonClick}
+                cancel_button_text={cancel_button_text}
+                onCancel={closeResetDialog}
+                is_mobile_full_width={false}
+                className={'toolbar__dialog reset-dialog'}
+                has_close_icon
+                is_closed_on_cancel={true}
+                is_closed_on_confirm={true}
+            >
+                {is_running ? (
+                    <Localize
+                        i18n_default_text='The workspace will be reset to the default strategy and any unsaved changes will be lost. <0>Note: This will not affect your running bot.</0>'
+                        components={[
+                            <div
+                                key={0}
+                                className='toolbar__dialog-text--second'
+                                data-testid='dt_toolbar_dialog_text_second'
+                            />,
+                        ]}
+                    />
+                ) : (
+                    <Localize i18n_default_text='Any unsaved changes will be lost.' />
+                )}
+            </Dialog>
+        </React.Fragment>
+    );
+});
+
+export default Toolbar;

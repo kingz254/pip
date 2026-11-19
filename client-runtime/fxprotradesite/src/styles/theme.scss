@@ -1,0 +1,143 @@
+:root {
+    // Base colors
+    --color-background-primary: #{$COLOR_LIGHT_BLACK_4_SOLID};
+    --color-background-secondary: #ffffff;
+    --color-text-primary: #{$COLOR_LIGHT_BLACK_1};
+    --color-text-secondary: #{$COLOR_LIGHT_BLACK_2};
+    --color-border: #{$COLOR_LIGHT_GRAY_3};
+    --color-shadow: rgba(0, 0, 0, 0.1);
+    --color-icon: #{$COLOR_LIGHT_BLACK_2};
+
+    // Component-specific colors
+    --color-loader-background: #ffffff;
+    --color-loader-spinner: #{$COLOR_LIGHT_BLACK_2};
+    --color-button-primary: #{$COLOR_LIGHT_BLACK_1};
+    --color-button-secondary: #{$COLOR_LIGHT_GRAY_1};
+
+    // Group elements containers
+    --color-group-container-background: #ffffff;
+    --color-group-container-border: #{$COLOR_LIGHT_GRAY_3};
+    --color-group-container-header: #{$COLOR_LIGHT_BLACK_4_SOLID};
+    --color-group-container-shadow: rgba(0, 0, 0, 0.05);
+    --color-group-container-text: #{$COLOR_LIGHT_BLACK_1};
+    --color-group-container-secondary-text: #{$COLOR_LIGHT_BLACK_2};
+
+    // Additional container variants
+    --color-container-active: #{$COLOR_LIGHT_GRAY_6};
+    --color-container-hover: #{$COLOR_LIGHT_GRAY_3};
+    --color-container-selected: rgba(0, 180, 147, 0.08);
+    --color-container-disabled: #{$COLOR_LIGHT_GRAY_2};
+    --color-container-nested-background: #{$COLOR_LIGHT_BLACK_4_SOLID};
+    --color-container-card-shadow: rgba(0, 0, 0, 0.08);
+
+    // Specific container elements
+    --color-container-header-border: #{$COLOR_LIGHT_GRAY_3};
+    --color-container-footer-background: #{$COLOR_LIGHT_BLACK_4};
+    --color-container-scrollbar: #{$COLOR_LIGHT_GRAY_5};
+    --color-container-scrollbar-thumb: #{$COLOR_LIGHT_GRAY_1};
+
+    // Analysis settings container
+    --color-analysis-container-background: #ffffff;
+    --color-analysis-container-border: #{$COLOR_LIGHT_GRAY_3};
+    --color-analysis-container-header: #{$COLOR_LIGHT_BLACK_4_SOLID};
+    --color-analysis-active-tab: #{$COLOR_LIGHT_BLACK_4_SOLID};
+    --color-analysis-inactive-tab: rgba(242, 243, 244, 0.56);
+    --color-analysis-tab-text: #{$COLOR_LIGHT_BLACK_1};
+
+    // Symbol selector
+    --color-symbol-selector-background: #ffffff;
+    --color-symbol-selector-border: #{$COLOR_LIGHT_GRAY_3};
+    --color-symbol-selector-item-hover: #{$COLOR_LIGHT_GRAY_3};
+    --color-symbol-selector-item-active: #{$COLOR_LIGHT_GRAY_6};
+    --color-symbol-selector-item-text: #{$COLOR_LIGHT_BLACK_1};
+    --color-symbol-selector-search-background: #ffffff;
+
+    // Ticks history container
+    --color-ticks-history-background: #ffffff;
+    --color-ticks-history-border: #{$COLOR_LIGHT_GRAY_3};
+    --color-ticks-history-grid: #{$COLOR_LIGHT_GRAY_3};
+    --color-ticks-history-text: #{$COLOR_LIGHT_BLACK_1};
+    --color-ticks-history-positive: #4bb4b3;
+    --color-ticks-history-negative: #ff6d75;
+
+    // Trade history container
+    --color-trade-history-background: #ffffff;
+    --color-trade-history-header: #{$COLOR_LIGHT_BLACK_4_SOLID};
+    --color-trade-history-row-even: #ffffff;
+    --color-trade-history-row-odd: #{$COLOR_LIGHT_BLACK_4};
+    --color-trade-history-profit: #4bb4b3;
+    --color-trade-history-loss: #ff6d75;
+    --color-trade-history-border: #{$COLOR_LIGHT_GRAY_3};
+}
+
+.theme--dark {
+    // Base colors
+    --color-background-primary: #{$COLOR_DARK_BLUE_2};
+    --color-background-secondary: #{$COLOR_DARK_BLUE_3};
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #{$COLOR_DARK_BLUE_7};
+    --color-border: #{$COLOR_DARK_BLUE_4};
+    --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-icon: #{$COLOR_DARK_BLUE_7};
+
+    // Component-specific colors
+    --color-loader-background: #{$COLOR_DARK_BLUE_3};
+    --color-loader-spinner: #ffffff;
+    --color-button-primary: #ffffff;
+    --color-button-secondary: #{$COLOR_DARK_BLUE_7};
+
+    // Group elements containers
+    --color-group-container-background: #{$COLOR_DARK_BLUE_3};
+    --color-group-container-border: #{$COLOR_DARK_BLUE_4};
+    --color-group-container-header: #{$COLOR_DARK_BLUE_4};
+    --color-group-container-shadow: rgba(0, 0, 0, 0.2);
+    --color-group-container-text: #ffffff;
+    --color-group-container-secondary-text: #{$COLOR_DARK_BLUE_7};
+
+    // Additional container variants
+    --color-container-active: #{$COLOR_DARK_BLUE_4};
+    --color-container-hover: #{$COLOR_DARK_BLUE_5};
+    --color-container-selected: rgba(0, 180, 147, 0.16);
+    --color-container-disabled: #{$COLOR_DARK_BLUE_8};
+    --color-container-nested-background: #{$COLOR_DARK_BLUE_3};
+    --color-container-card-shadow: rgba(0, 0, 0, 0.25);
+
+    // Specific container elements
+    --color-container-header-border: #{$COLOR_DARK_BLUE_5};
+    --color-container-footer-background: #{$COLOR_DARK_BLUE_4};
+    --color-container-scrollbar: #{$COLOR_DARK_BLUE_5};
+    --color-container-scrollbar-thumb: #{$COLOR_DARK_BLUE_7};
+
+    // Analysis settings container
+    --color-analysis-container-background: #{$COLOR_DARK_BLUE_3};
+    --color-analysis-container-border: #{$COLOR_DARK_BLUE_4};
+    --color-analysis-container-header: #{$COLOR_DARK_BLUE_4};
+    --color-analysis-active-tab: #{$COLOR_DARK_BLUE_5};
+    --color-analysis-inactive-tab: rgba(41, 46, 81, 0.56);
+    --color-analysis-tab-text: #ffffff;
+
+    // Symbol selector
+    --color-symbol-selector-background: #{$COLOR_DARK_BLUE_3};
+    --color-symbol-selector-border: #{$COLOR_DARK_BLUE_4};
+    --color-symbol-selector-item-hover: #{$COLOR_DARK_BLUE_4};
+    --color-symbol-selector-item-active: #{$COLOR_DARK_BLUE_5};
+    --color-symbol-selector-item-text: #ffffff;
+    --color-symbol-selector-search-background: #{$COLOR_DARK_BLUE_4};
+
+    // Ticks history container
+    --color-ticks-history-background: #{$COLOR_DARK_BLUE_3};
+    --color-ticks-history-border: #{$COLOR_DARK_BLUE_4};
+    --color-ticks-history-grid: #{$COLOR_DARK_BLUE_5};
+    --color-ticks-history-text: #ffffff;
+    --color-ticks-history-positive: #4bb4b3;
+    --color-ticks-history-negative: #ff6d75;
+
+    // Trade history container
+    --color-trade-history-background: #{$COLOR_DARK_BLUE_3};
+    --color-trade-history-header: #{$COLOR_DARK_BLUE_4};
+    --color-trade-history-row-even: #{$COLOR_DARK_BLUE_3};
+    --color-trade-history-row-odd: #{$COLOR_DARK_BLUE_2};
+    --color-trade-history-profit: #4bb4b3;
+    --color-trade-history-loss: #ff6d75;
+    --color-trade-history-border: #{$COLOR_DARK_BLUE_4};
+}

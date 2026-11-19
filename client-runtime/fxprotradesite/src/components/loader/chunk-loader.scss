@@ -1,0 +1,56 @@
+.chunk-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    overflow: hidden;
+
+    .loader-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .logo {
+        font-size: 4rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 4px;
+        margin-bottom: 2rem;
+        text-shadow: 0 0 20px rgba(33, 150, 243, 0.5);
+
+        span {
+            color: #2196f3;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(random(100) - 50px, random(100) - 50px);
+        opacity: 0;
+    }
+}

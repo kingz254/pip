@@ -1,0 +1,13 @@
+import './bb_statement';
+import './bba_statement';
+import './donchian_channels_statement';
+import './ema_statement';
+import './emaa_statement';
+import './ichimoku_statement';
+import './rsi_statement';
+import './rsia_statement';
+import './sma_statement';
+import './smaa_statement';
+import './macda_statement';
+import './williams_r_statement';
+import './Parts';

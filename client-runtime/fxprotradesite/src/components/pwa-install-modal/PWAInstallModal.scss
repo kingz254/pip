@@ -1,0 +1,105 @@
+.pwa-install-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-outside-dialog, rgba(0, 0, 0, 0.5)); // Use theme variable for overlay
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; // Ensure it's above other content
+    padding: 1rem; // Add some padding for smaller screens
+
+    .pwa-install-modal-content {
+        padding: 24px; // Increased padding
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: var(--shadow-drop, 0 4px 15px rgba(0, 0, 0, 0.2)); // Use theme variable for shadow
+        width: 90%;
+        max-width: 400px; // Consistent max-width
+
+        h3 {
+            margin-top: 0;
+            margin-bottom: 12px; // Adjusted margin
+            font-size: 1.4em; // Slightly adjusted font size
+            font-weight: bold; // Ensure heading is bold
+        }
+
+        p {
+            margin-bottom: 24px; // Increased margin for spacing
+            font-size: 1em;
+            line-height: 1.5; // Improved readability
+        }
+
+        .pwa-install-modal-actions {
+            display: flex;
+            justify-content: space-around; // Keeps buttons spaced
+            gap: 16px; // Add gap between buttons
+        }
+
+        .pwa-install-modal-button {
+            padding: 12px 24px; // Adjusted padding for better touch targets
+            border: none;
+            border-radius: 4px; // Consistent border-radius with app
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            min-width: 120px; // Ensure buttons have a good minimum width
+            transition:
+                background-color 0.2s ease-in-out,
+                color 0.2s ease-in-out,
+                border-color 0.2s ease-in-out;
+            flex-grow: 1; // Allow buttons to grow
+            max-width: 180px; // Max width for buttons
+        }
+    }
+
+    &.theme--light .pwa-install-modal-content {
+        background-color: var(--general-main-1, #fff);
+        color: var(--text-prominent, #333);
+        border: 1px solid var(--general-section-1, #eee);
+
+        .pwa-install-modal-button {
+            &.install {
+                background-color: var(--status-success, #2e8836);
+                color: var(--text-colored-background, white);
+                &:hover {
+                    background-color: var(--button-primary-hover, #256e2b); // Use a hover variable or darken
+                }
+            }
+            &.close {
+                background-color: var(--general-section-1, #ccc);
+                color: var(--text-prominent, #333);
+                border: 1px solid var(--border-normal, #ccc);
+                &:hover {
+                    background-color: var(--general-hover, #bbb);
+                }
+            }
+        }
+    }
+
+    &.theme--dark .pwa-install-modal-content {
+        background-color: var(--general-main-2, #2a2e39); // Use a slightly lighter dark bg if main-1 is too dark
+        color: var(--text-prominent, #fff);
+        border: 1px solid var(--general-section-5, #323741);
+
+        .pwa-install-modal-button {
+            &.install {
+                background-color: var(--status-success, #00a79e);
+                color: var(--text-colored-background, white);
+                &:hover {
+                    background-color: var(--button-primary-hover, #008c84); // Use a hover variable or darken
+                }
+            }
+            &.close {
+                background-color: var(--general-section-5, #323741);
+                color: var(--text-prominent, #fff);
+                border: 1px solid var(--border-normal-2, #414652);
+                &:hover {
+                    background-color: var(--general-hover, #414652);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,17 @@
+.app-header {
+    &__logo {
+        padding-inline-start: 1.2rem;
+        padding-inline-end: 2rem;
+        border-inline-end: 1px solid var(--general-section-1);
+        height: 32px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        
+        &-image {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+        }
+    }
+}

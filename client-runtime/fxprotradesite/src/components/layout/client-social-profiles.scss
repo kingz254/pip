@@ -1,0 +1,11 @@
+.pf-social-profiles { display: flex; align-items: center; gap: 8px; }
+.pf-social-profiles a { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid var(--pf-client-edge); background: var(--pf-client-glass); color: var(--pf-client-ink); text-decoration: none; backdrop-filter: blur(var(--pf-client-blur)); -webkit-backdrop-filter: blur(var(--pf-client-blur)); }
+.pf-social-profiles svg { width: 18px; height: 18px; }
+.pf-social-profiles--round a { border-radius: 50%; }
+.pf-social-profiles--square a { border-radius: 8px; }
+.pf-social-profiles--plain a { border-color: transparent; background: transparent; backdrop-filter: none; }
+.pf-social-profiles a:hover { border-color: var(--pf-client-accent); color: var(--pf-client-accent); }
+.pf-social-profiles--footer { margin-inline-end: 12px; }
+@media (max-width: 767px) {
+    .pf-social-profiles--footer { position: fixed; z-index: 1000; inset: auto 0 env(safe-area-inset-bottom, 0px); justify-content: center; min-height: 48px; margin: 0; padding: 6px 12px; border-top: 1px solid var(--pf-client-edge); background: var(--pf-client-glass); backdrop-filter: blur(var(--pf-client-blur)); -webkit-backdrop-filter: blur(var(--pf-client-blur)); }
+}

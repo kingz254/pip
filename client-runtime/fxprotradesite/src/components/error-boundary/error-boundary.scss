@@ -1,0 +1,144 @@
+.error-boundary-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.error-boundary-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    padding: 40px;
+    text-align: center;
+
+    h1 {
+        color: #333;
+        margin: 0 0 15px 0;
+        font-size: 28px;
+        line-height: 1.3;
+    }
+
+    p {
+        color: #666;
+        margin: 15px 0;
+        font-size: 16px;
+        line-height: 1.5;
+
+        &.error-help {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #999;
+        }
+    }
+}
+
+.error-details {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: left;
+
+    summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: #333;
+        padding: 5px;
+
+        &:hover {
+            color: #667eea;
+        }
+    }
+
+    pre {
+        margin: 10px 0 0 0;
+        padding: 10px;
+        background: white;
+        border-radius: 4px;
+        font-size: 12px;
+        overflow-x: auto;
+        color: #d32f2f;
+        line-height: 1.4;
+    }
+}
+
+.error-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.error-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+    }
+
+    &.secondary {
+        background: #f0f0f0;
+        color: #333;
+        border: 1px solid #ddd;
+
+        &:hover {
+            background: #e0e0e0;
+            border-color: #999;
+        }
+
+        &:active {
+            background: #d0d0d0;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .error-boundary-container {
+        padding: 10px;
+    }
+
+    .error-boundary-content {
+        padding: 25px;
+
+        h1 {
+            font-size: 22px;
+        }
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+    .error-actions {
+        flex-direction: column;
+
+        button {
+            width: 100%;
+        }
+    }
+}

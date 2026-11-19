@@ -1,0 +1,33 @@
+.dtrader-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 120px); // Account for header and footer
+    background-color: var(--general-main-1);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dtrader-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #fff;
+}
+
+.dtrader-waiting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-general);
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .dtrader-container {
+        height: calc(100vh - 100px);
+    }
+}

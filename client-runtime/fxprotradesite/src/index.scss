@@ -1,0 +1,28 @@
+@import './components/shared/styles/constants';
+@import './styles/theme';
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}

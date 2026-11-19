@@ -1,0 +1,352 @@
+@use 'components/shared/styles/mixins' as *;
+
+// Fun and vibrant theme variables
+:root {
+    --fun-primary: #ff6b35;
+    --fun-secondary: #4dabf7;
+    --fun-accent: #7c3aed;
+    --fun-success: #10b981;
+    --fun-warning: #f59e0b;
+    --fun-bg: #1a1a2e;
+    --fun-bg-light: #16213e;
+    --fun-text: #ffffff;
+    --fun-text-muted: #94a3b8;
+    --fun-border: #334155;
+    --fun-shadow: rgba(0, 0, 0, 0.25);
+    --fun-glow: rgba(255, 107, 53, 0.3);
+}
+
+.login-required-modal {
+    &__content {
+        background: linear-gradient(135deg, var(--fun-bg) 0%, var(--fun-bg-light) 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        color: var(--fun-text);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--fun-border);
+        box-shadow: 
+            0 20px 40px var(--fun-shadow),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+        
+        // Subtle animated background pattern
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(77, 171, 247, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+            animation: backgroundFloat 8s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        // All content above background
+        > * {
+            position: relative;
+            z-index: 2;
+        }
+    }
+
+    &__emoji {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: block;
+        animation: bounce 2s infinite, rotate 4s linear infinite;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    &__title {
+        color: var(--fun-text);
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--fun-primary) 0%, var(--fun-secondary) 50%, var(--fun-accent) 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+        animation: titlePulse 3s ease-in-out infinite;
+    }
+
+    &__funny-message {
+        background: rgba(255, 107, 53, 0.1);
+        border: 1px solid rgba(255, 107, 53, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--fun-text);
+        line-height: 1.6;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+    }
+
+    &__description {
+        color: var(--fun-text-muted);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    &__login-btn {
+        background: linear-gradient(135deg, var(--fun-success) 0%, #059669 100%);
+        border: none;
+        border-radius: 15px;
+        padding: 1rem 2rem;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        &:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            
+            &::before {
+                left: 100%;
+            }
+        }
+        
+        &:active {
+            transform: translateY(0) scale(0.98);
+        }
+    }
+
+    &__create-btn {
+        background: linear-gradient(135deg, var(--fun-primary) 0%, #ea580c 100%);
+        border: none;
+        border-radius: 15px;
+        padding: 1rem 2rem;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px var(--fun-glow);
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        &:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+            
+            &::before {
+                left: 100%;
+            }
+        }
+        
+        &:active {
+            transform: translateY(0) scale(0.98);
+        }
+    }
+
+    &__footer {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--fun-border);
+    }
+
+    &__footer-text {
+        color: var(--fun-text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+
+    &__social-mini {
+        text-align: center;
+    }
+
+    &__social-text {
+        color: var(--fun-text-muted);
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    &__social-links-mini {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    &__social-link-mini {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        
+        &:hover {
+            transform: translateY(-2px) scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        &:active {
+            transform: translateY(0) scale(1.05);
+        }
+    }
+}
+
+// Fun Animations
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    40% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+    60% {
+        transform: translateY(-5px) rotate(-3deg);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(5deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes titlePulse {
+    0%, 100% {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes backgroundFloat {
+    0% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateY(-10px) scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+// Modal container adjustments
+.dc-modal__container.dc-modal__container_login-required-modal {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 20px !important;
+    max-width: 500px !important;
+    margin: 2rem !important;
+    padding: 0 !important;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .login-required-modal {
+        &__content {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+        }
+        
+        &__emoji {
+            font-size: 3rem;
+        }
+        
+        &__title {
+            font-size: 2rem;
+        }
+        
+        &__funny-message {
+            padding: 1rem;
+            font-size: 1rem;
+        }
+        
+        &__actions {
+            gap: 0.75rem;
+        }
+        
+        &__login-btn,
+        &__create-btn {
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+        }
+    }
+}
