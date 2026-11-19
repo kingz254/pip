@@ -1,3 +1,4 @@
+import { useClientBranding } from '../../pipforge/site-branding';
 import './client-social-profiles.scss';
 
 const glyphs: Record<string, string> = {
@@ -30,7 +31,7 @@ function profileUrl(key: string, value: string) {
 }
 
 const ClientSocialProfiles = ({ place }: { place: 'header' | 'footer' }) => {
-    const site = window.__PF_SITE_BRANDING__;
+    const site = useClientBranding();
     if (!site || !['both', place].includes(site.icon_place)) return null;
     const profiles = Object.entries(site.social || {}).filter(([key, value]) => key in glyphs && !!value?.trim());
     if (!profiles.length) return null;

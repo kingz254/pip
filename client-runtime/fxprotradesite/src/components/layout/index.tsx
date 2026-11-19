@@ -1,3 +1,4 @@
+import { useClientBranding } from '../../pipforge/site-branding';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import Cookies from 'js-cookie';
@@ -19,19 +20,19 @@ import './layout.scss';
 
 const Layout = () => {
     const { isDesktop } = useDevice();
+    const brand = useClientBranding();
 
     const isCallbackPage = window.location.pathname === '/callback';
 
     return (
         <div className={clsx('layout', { responsive: isDesktop })}>
             {!isCallbackPage && <AppHeader />}
-            {!isCallbackPage && <NotificationBanner />}
+            {!isCallbackPage && !!brand?.announcement && <NotificationBanner message={brand.announcement} />}
             <Body>
                 <Outlet />
             </Body>
             {!isCallbackPage && <DisclaimerButton />}
-            {!isCallbackPage && isDesktop && <Footer />}
-            {!isCallbackPage && !isDesktop && <ClientSocialProfiles place='footer' />}
+            {!isCallbackPage && <Footer />}
             {!isCallbackPage && <CommunityFloatingIcon />}
             {!isCallbackPage && <NetworkSpeedIndicator />}
         </div>

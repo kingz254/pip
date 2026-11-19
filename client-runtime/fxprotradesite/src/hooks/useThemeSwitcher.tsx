@@ -10,6 +10,12 @@ const useThemeSwitcher = () => {
     };
     const { setDarkMode, is_dark_mode_on } = ui;
 
+    useEffect(() => {
+        const update = () => setDarkMode(document.documentElement.dataset.pfTheme === 'dark');
+        window.addEventListener('pf:branding',update);
+        update();
+        return () => window.removeEventListener('pf:branding',update);
+    }, [setDarkMode]);
     // Initialize theme from localStorage on mount
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme') || 'light';

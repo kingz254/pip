@@ -136,3 +136,42 @@ html[data-pf-tenant='true'][data-pf-header='halo'] .app-header { box-shadow: 0 8
     from { background-position: 0 0, 100% 100%, 0 0; }
     to { background-position: 9% 12%, 90% 88%, 0 0; }
 }
+
+html[data-pf-embedded='true'] body::before { display:none !important; }
+html[data-pf-tenant='true'] .app-header,html[data-pf-tenant='true'] .app-footer { flex-shrink:0; }
+html[data-pf-tenant='true'] .dc-dialog__dialog,html[data-pf-tenant='true'] .dc-mobile-full-page-modal,html[data-pf-tenant='true'] .dc-page-overlay { background:var(--pf-client-page, #151923) !important;color:var(--pf-client-ink) !important;backdrop-filter:blur(24px); }
+@media(max-width:768px){html[data-pf-tenant='true'] .app-footer{display:flex !important;position:relative;flex-wrap:wrap;height:auto;min-height:40px;padding:8px;gap:8px}html[data-pf-tenant='true'] .layout{height:100dvh;display:flex;flex-direction:column}html[data-pf-tenant='true'] .main-body{flex:1;min-height:0;overflow:auto}}
+
+html[data-pf-active-tab]:not([data-pf-active-tab='id-bot-builder']) .bot-builder{visibility:hidden!important;pointer-events:none!important}
+html[data-pf-active-tab='id-bot-builder'] .controls__section{z-index:100!important;position:relative}
+html[data-pf-tenant='true'] #root{position:relative;z-index:1}
+
+.pf-account{max-width:100%;flex-wrap:wrap;font-size:1.4rem}.pf-account button,.pf-account select,.pf-account a{font:inherit;color:inherit;border:1px solid var(--pf-client-edge);border-radius:8px;padding:8px 12px;background:var(--pf-client-glass);cursor:pointer}.pf-account button[aria-pressed='true']{border-color:var(--pf-client-accent);background:color-mix(in srgb,var(--pf-client-accent) 22%,var(--pf-client-glass))}
+html[data-pf-account-style='accent'] .pf-account{background:var(--pf-client-accent);padding:8px;border-radius:12px;color:var(--pf-client-ink)}html[data-pf-account-style='terminal'] .pf-account{font-family:monospace;border:1px solid var(--pf-client-accent);padding:8px;border-radius:4px}html[data-pf-account-style='glass'] .pf-account{background:var(--pf-client-glass);backdrop-filter:blur(var(--pf-client-blur));padding:8px;border-radius:14px}html[data-pf-account-style='outline'] .pf-account{border:1px solid var(--pf-client-edge);padding:8px;border-radius:12px}html[data-pf-account-style='stacked'] .pf-account{flex-direction:column;align-items:stretch!important}
+
+html[data-pf-active-tab]:not([data-pf-active-tab='id-bot-builder']) .bot-builder,
+html[data-pf-active-tab]:not([data-pf-active-tab='id-bot-builder']) .db-toolbox { display:none !important; }
+html[data-pf-tenant='true'] body {
+    --surface-primary:var(--pf-client-glass) !important;
+    --surface-secondary:var(--pf-client-glass) !important;
+    --surface-elevated:var(--pf-client-glass) !important;
+    --surface-glass:var(--pf-client-glass) !important;
+    --text-secondary:var(--pf-client-muted) !important;
+    --text-muted:var(--pf-client-muted) !important;
+    --border-primary:var(--pf-client-edge) !important;
+    --border-secondary:var(--pf-client-edge) !important;
+    --primary-color:var(--pf-client-accent) !important;
+    --primary-gradient:linear-gradient(135deg,var(--pf-client-accent),var(--pf-client-secondary)) !important;
+}
+html[data-pf-tenant='true'] .trading-hub-modern {background:transparent !important}
+html[data-pf-tenant='true'] :is(.hub-header,.strategy-card,.analysis-data,.status-bar,.run-panel,.db-toolbox,.app-footer,.dc-tabs__list){background:var(--pf-client-glass) !important;backdrop-filter:blur(var(--pf-client-blur));border-color:var(--pf-client-edge) !important}
+html[data-pf-tenant='true'] :is(button,input,select,textarea){font-family:var(--pf-client-font)}
+html[data-pf-tenant='true'] .layout{height:100dvh;overflow:hidden}
+html[data-pf-tenant='true'] .main-body{flex:1;min-height:0;overflow:hidden}
+html[data-pf-tenant='true'] .main{height:100%;min-height:0}
+html[data-pf-tenant='true'] .bot-dashboard{height:100%;overflow:auto}
+
+html[data-pf-tenant='true'] .dc-tabs__list--main__tabs {display:flex!important;justify-content:flex-start!important;overflow-x:auto!important;flex-shrink:0}
+html[data-pf-tenant='true'] .dc-tabs__item--main__tabs {flex:0 0 auto!important;min-width:max-content!important;width:auto!important;padding:0 18px!important;font-size:15px!important;min-height:48px;white-space:nowrap}
+html[data-pf-tenant='true'] .main__container > .dc-tabs{height:100%;min-height:0;grid-template-rows:auto minmax(0,1fr)}
+html[data-pf-tenant='true'] .main__container > .dc-tabs > .dc-tabs__content{min-height:0;overflow:auto}

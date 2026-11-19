@@ -11,6 +11,6 @@ checkAndRecoverFromChunkError();
 
 AnalyticsInitializer();
 
-loadClientBranding().finally(() => {
+loadClientBranding().then(() => {
     ReactDOM.createRoot(document.getElementById('root')!).render(<AuthWrapper />);
-});
+}).catch(() => { document.getElementById('root')!.textContent = 'This domain is not connected to a live site, or the site service is temporarily unavailable. Please contact the site owner.'; });

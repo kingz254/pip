@@ -2,7 +2,7 @@
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { readFileSync } from 'node:fs';
 
-const appsScript = readFileSync(new URL('../../public/deriv-apps.js', import.meta.url), 'utf8');
+const appsScript = readFileSync(new URL('../../public/fxpro-preview.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../../public/index.html', import.meta.url), 'utf8');
 export const tick = (ms) => new Promise((r) => setTimeout(r, ms));
 

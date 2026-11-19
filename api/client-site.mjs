@@ -12,6 +12,8 @@ export default async function handler(req, res) {
   try {
     const config = await resolveSiteAuth(req.headers.host);
     if (!config?.site) { res.statusCode = 404; res.end('No live client site is connected to this domain.'); return; }
+    // Preserve tenant visit reporting now that customer domains bypass the builder.
+    await fetch(`${process.env.SUPABASE_URL}/rest/v1/rpc/record_public_site_visit`, {method:'POST',headers:{apikey:process.env.SUPABASE_SERVICE_ROLE_KEY,Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({p_domain:config.site.domain}),signal:AbortSignal.timeout(2000)}).catch(() => {});
     const site = Object.fromEntries(publicFields.filter(key => key in config.site).map(key => [key, config.site[key]]));
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.end(JSON.stringify(site));

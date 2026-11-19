@@ -80,7 +80,8 @@ const router = createBrowserRouter(
             <Route path='endpoint' element={<Endpoint />} errorElement={<RouteErrorFallback />} />
             <Route path='callback' element={<CallbackPage />} errorElement={<RouteErrorFallback />} />
         </Route>
-    )
+    ),
+    { basename: window.location.pathname.startsWith('/fxpro.html') ? '/fxpro.html' : '/' }
 );
 
 function App() {
@@ -141,22 +142,6 @@ function App() {
         sessionStorage.setItem('dbot_pwa_prompt_dismissed_this_session', 'true');
     };
 
-
-    // ✅ Register the service worker (for PWA support)
-    useEffect(() => {
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker
-                    .register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker registered with scope:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Service Worker registration failed:', error);
-                    });
-            });
-        }
-    }, []);
 
     return (
         <ErrorBoundary>

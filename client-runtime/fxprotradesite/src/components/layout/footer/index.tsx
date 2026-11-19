@@ -40,7 +40,7 @@ const Footer = () => {
             <ResponsibleTrading />
             <Deriv />
             <Livechat />
-            {cs_chat_whatsapp && <WhatsApp />}
+            {!window.__PF_SITE_BRANDING__ && cs_chat_whatsapp && <WhatsApp />}
             <div className='app-footer__vertical-line' />
             <ServerTime />
             <div className='app-footer__vertical-line' />

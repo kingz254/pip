@@ -18,9 +18,8 @@ export const DBOT_TABS: TDashboardTabIndex = Object.freeze({
     CHART: 3,
     ANALYSIS_TOOL: 4,
     FREE_BOTS: 5,
-    COMMUNITY: 6,
-    PORTFOLIO: 7,
-    FOREX: 8,
+    PORTFOLIO: 6,
+    FOREX: 7,
 });
 
 export const MAX_STRATEGIES = 10;
@@ -32,7 +31,6 @@ export const TAB_IDS = [
     'id-charts',
     'id-analysis-tool',
     'id-free-bots',
-    'id-community',
     'id-portfolio',
     'id-forex',
 ];

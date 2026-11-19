@@ -17,3 +17,58 @@ public/vendor/
 coverage/
 
 *.log
+
+*.log
+/public/fxpro.html
+/public/client-background.js
+# Generated full FXPro runtime assets
+/public/.well-known/
+/public/1 tick DIgit Over 2.xml
+/public/2025 Bot  Over Under.xml
+/public/2025 Original Version.xml
+/public/Accumulator Reverse D'Alembert.xml
+/public/ai/
+/public/arbitrage/
+/public/assets/
+/public/Auto Differ Recovery O_U.xml
+/public/Core Bot V3.xml
+/public/deriv-callback.html
+/public/deriv-callback.js
+/public/deriv-logo.png
+/public/deriv-logo.svg
+/public/deriv-logo1.png
+/public/Digit Over 3.xml
+/public/Elite Startrader.xml
+/public/Envy Pro Differ.xml
+/public/EvenOdd Dominator.xml
+/public/Godzilla.xml
+/public/H_L Auto Fortress.xml
+/public/js/
+/public/ldpanalyzer/
+/public/Legacy 2026 Over.xml
+/public/manifest.json
+/public/Market Legend v2.xml
+/public/markup/
+/public/Mavic-Air-RF Vix Bot.xml
+/public/MD MASTER BOT Pro.  (2).xml
+/public/Mega Heist Robot.xml
+/public/MKOREAN SV 7 2025 BOT STRATEGY (1) (1).docx
+/public/Oracle OverUnder Pro.xml
+/public/service-worker.js
+/public/signal-center/
+/public/signals/
+/public/signals over bot.xml
+/public/signals under bot.xml
+/public/signals-detector/
+/public/static/
+/public/test-bot-urls.html
+/public/the binary blueprint.png
+/public/the binary blueprint1.png
+/public/Top-notch 2.xml
+/public/Turbo O_U Accelerator.xml
+/public/Ultra Recovery.xml
+/public/Under 9 Bot.xml
+/public/Upgraded Candlemine.xml
+/public/🫰Pro  Differ Bot .xml
+
+*recovery-codes*.txt

@@ -1,6 +1,6 @@
 # FXPro source migration
 
-The FXPro source is under `client-runtime/fxprotradesite`. It is still intentionally separate from Pipforge's current production preview and tenant routing; connecting those is the next integration step.
+The FXPro source is under `client-runtime/fxprotradesite`. It is now the complete runtime for both Pipforge's client preview and published customer domains. Native order: Dashboard, Bot Builder, DTrader, Smart trading, Analysis Tool, Free Bots, Portfolio, Forex. Smart trading retains Trading Hub, Smart Trading, Speed Bot and Charts.
 
 ## Migrated execution boundary
 
@@ -17,6 +17,14 @@ The same source migration is published for review in `fxpro254-hue/fxprotradesit
 
 Both copies build with Rsbuild. Pipforge's test suite includes session/account-switch and quote/buy failure tests. Deriv's live schemas validate the representative proposal, buy and open-contract payloads. These are source/build/mocked checks; they do not establish that a configured production account has completed a trade. No real or demo trade was placed.
 
-## Next integration step
+## Preview and delivery
 
-Build this runtime into Pipforge's output, mount it in the builder preview with draft branding, and route live tenant domains directly to it. Saved name/logo, template, font, blur, header, loader and social preferences already have a first-pass branding bridge, but the full preference matrix and mobile layout must be verified when the runtime is connected. Do not describe that routing or appearance work as deployed yet.
+`npm run build` installs isolated runtime dependencies, builds the frontend, and copies hashed assets into `public/` without overwriting the builder. `fxpro.html` is generated. Retired token callbacks, markup tool and service worker are excluded.
+
+`api/site-entry.mjs` serves Pipforge on platform hosts and the trading HTML directly on customer hosts. `/api/client-site` resolves live published sites; unknown domains cannot silently receive a generic trading app.
+
+The builder mounts one complete same-origin runtime through `fxpro-preview.js`. Draft changes travel through a source-and-origin-checked message bridge without remounting the app. Delivered sites load their saved public profile from the backend. Name/logo, palette, font, header, blur, loader, announcement, account display, native menu visibility and social placement are applied by `src/pipforge/site-branding.ts` and `styles/pipforge-tenant.scss`. Both modes reuse the builder background animation engine exported by `scripts/export-client-backgrounds.mjs`. Dialog surfaces stay readable.
+
+The previous per-tab renderer is no longer mounted or built for delivery. Its compatibility source remains for existing builder handlers. Keep provider credentials out of the public profile.
+
+Verification covers build, saved-profile/bridge/routing tests and public browser navigation. Authenticated demo purchases, external premium/community services and production account permissions still require live verification. Passing tests do not prove a successful trade.

@@ -220,6 +220,7 @@ const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
     const { dashboard, load_modal, run_panel, summary_card } = useStore();
     const { active_tab, is_chart_modal_visible, setActiveTab } = dashboard;
+    useEffect(() => { document.documentElement.dataset.pfActiveTab = TAB_IDS[active_tab] || ''; }, [active_tab]);
     const {
         is_dialog_open,
         dialog_options,

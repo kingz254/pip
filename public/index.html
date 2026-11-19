@@ -657,7 +657,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 
 <link rel="stylesheet" href="/deriv-apps.css?v=automation-center-1">
 <link rel="stylesheet" href="/smart-trading-suite.css?v=2">
-<script src="/deriv-apps.js?v=automation-center-1"></script>
+<script src="/fxpro-preview.js"></script>
 <script src="/smart-trading-core.js?v=2"></script>
 <script src="/smart-trading-suite.js?v=2"></script>
 <script>
@@ -740,6 +740,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     mono:mk({n:"Mono",d:"Black and white. Minimal and centered.",bg:"linear-gradient(150deg,#0a0a0a,#1a1a1a)",a1:"#ffffff",a2:"#9aa0a6",bt:"#0a0a0a",l:"center"})
   };
   function templateTheme(){var hex=(T[st.t].bg.match(/#[\da-f]{6}/i)||[])[0];if(!hex)return "dark";var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return (.2126*r+.7152*g+.0722*b)/255>.55?"light":"dark"}
+  window.addEventListener('pf:runtime-theme',function(event){setClientTheme(event.detail)});
   function setClientTheme(mode){var light=mode==="light",el=$("site"),background=mode===templateTheme()?T[st.t].bg:(light?"linear-gradient(150deg,#f3f4f6,#fff)":"linear-gradient(150deg,#10131b,#151827)");el.dataset.clientTheme=mode;el.style.setProperty("--st",light?"#151717":"#f4f4f6","important");el.style.setProperty("--sm",light?"#555d68":"rgba(244,244,246,.76)","important");el.style.setProperty("--sb",light?"rgba(20,20,30,.1)":"rgba(255,255,255,.12)","important");el.style.setProperty("--sl",light?"rgba(20,20,30,.16)":"rgba(255,255,255,.2)","important");el.style.setProperty("color","var(--st)","important");el.style.setProperty("background",background,"important");var button=el.querySelector("[data-fab=theme]");if(button){button.textContent="◐ "+(light?"Light":"Dark");button.setAttribute("aria-label","Switch to "+(light?"dark":"light")+" theme")}if(window.PipforgeApps&&window.PipforgeApps.setTheme)window.PipforgeApps.setTheme(el)}
   var L={hero:"Hub",store:"Store",terminal:"Terminal",center:"Centered"},ids=Object.keys(T);
   function applyT(el,t){var mode=el.dataset.clientTheme,bg=mode&&mode!==templateTheme()?(mode==="light"?"linear-gradient(150deg,#f3f4f6,#fff)":"linear-gradient(150deg,#10131b,#151827)"):t.bg;el.style.setProperty("background",bg,mode?"important":"");["a1","a2","st","sm","sb","sl","bt"].forEach(function(k){el.style.setProperty("--"+k,t[k])});el.dataset.l=t.l}
@@ -1571,7 +1572,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function fromRow(s){
     var i,ext=null;
     st.n=s.name;st.logo=s.logo_data||"";st.ld=s.loader_style||"ring";st.t=s.template;st.b=s.background;st.blur=Number(s.blur??75);st.h=({center:"brand",minimal:"edge",pill:"dock",banner:"ticker"})[s.header]||s.header;st.ft=s.font_theme||"inter";st.ann=s.announcement;st.sh=s.icon_shape;st.sp=s.icon_place;
-    st.soc=s.social||{};st.menu=s.menu||{};st.as=st.menu.account_style||"compact";st.accountDisplay=st.menu.account_display||"switch";st.m=Number(s.markup);st.dm=s.domain_mode;st.deriv_app_id=s.deriv_app_id||"";
+    st.soc=s.social||{};st.menu=s.menu||{};Object.entries({home:'id-dbot-dashboard',bld:'id-bot-builder',ana:'id-analysis-tool',smt:'id-charts',frb:'id-free-bots',cht:'id-dtrader'}).forEach(function(pair){if(st.menu[pair[1]]===undefined&&st.menu[pair[0]]!==undefined)st.menu[pair[1]]=st.menu[pair[0]]});st.as=st.menu.account_style||"compact";st.accountDisplay=st.menu.account_display||"switch";st.m=Number(s.markup);st.dm=s.domain_mode;st.deriv_app_id=s.deriv_app_id||"";
     if(s.domain_mode==="own"){st.own=s.domain||"";st.dn=""}
     else if(s.domain){for(i=0;i<EX.length;i++)if(s.domain.length>EX[i][0].length+1&&s.domain.slice(-EX[i][0].length)===EX[i][0]&&(!ext||EX[i][0].length>ext[0].length))ext=EX[i];
       if(ext){st.e=ext[0];st.f=ext[1];st.dn=s.domain.slice(0,-ext[0].length)}}
@@ -1742,6 +1743,10 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     }).catch(function(){tenantUnavailable("This site is temporarily unavailable. Please try again shortly.")})}
   function start(){SB=window.PF_SB;var h=tenantHost();if(h)initTenant(h);else initBackend()}
   if(window.PF_SB)start();else window.addEventListener("pf:ready",start);
+  var renderFullRuntime=render;
+  render=function(){renderFullRuntime();if(window.PipforgeRuntime)window.PipforgeRuntime.update(st);};
+  var runtimeMenu=[["id-dbot-dashboard","Dashboard"],["id-bot-builder","Bot Builder"],["id-dtrader","DTrader"],["id-charts","Smart Trading"],["id-analysis-tool","Analysis Tool"],["id-free-bots","Free Bots"],["id-portfolio","Portfolio"],["id-forex","Forex"]];
+  $("mnu").innerHTML=runtimeMenu.map(function(item){return '<label><input type="checkbox" data-m="'+item[0]+'" '+(st.menu[item[0]]!==false?'checked':'')+'> '+item[1]+'</label>'}).join('');
   render();route();
 })();
 </script>

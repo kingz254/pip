@@ -104,6 +104,8 @@ class DerivApiCompatibilityAdapter {
         return this.socket.send({ forget: id });
     }
 
+    forgetAll(type) { return this.send({ forget_all: type }); }
+
     balance() {
         return this.send({ balance: 1 });
     }

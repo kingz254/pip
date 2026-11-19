@@ -2,21 +2,11 @@
 
 ## What the client preview uses
 
-| Tab | Local source | Served route |
-| --- | --- | --- |
-| Bot Builder | `apps/bot-app` | `/apps/bot/#bot_builder` |
-| Analysis | `apps/digits-no-chart-app` | `/apps/digits/` |
-| Smart Trading | The same Digits app, starting with Over/Under | `/apps/digits/?mode=smart` |
-| Charts | `apps/rise-fall-app` | `/apps/rise-fall/` |
-| Accumulators | `apps/accumulators-app` | `/apps/accumulators/` |
-
-These are the supplied template interfaces, not recreations of their screenshots. Frames isolate their styling. Only the selected template is mounted; the platform's old price connection pauses while it is open. Leaving a running bot asks for confirmation. Open contracts continue to exist on the account even if a workspace closes.
-
-`packages/deriv-core` is the shared auth/transport/trading package. All apps use one server-side login session per site origin; the bot retains its own Blockly execution engine. SmartCharts assets are copied once into `public/vendor/smartcharts`. No provider access token is returned to browser JavaScript. Public prices do not require login. Smart Trading shows actual digit statistics and authenticated digit contract controls; it does not claim to predict future ticks or automatically run a strategy.
+The complete native FXPro application under `client-runtime/fxprotradesite` powers both preview and customer domains. Its eight tabs retain their source order; Smart trading contains its four original workspaces. See [FXPRO_CLIENT_RUNTIME.md](FXPRO_CLIENT_RUNTIME.md) for branding, transport and delivery boundaries. The old `apps/` templates are retained as compatibility source and are no longer mounted or built for client delivery.
 
 ## Local preview
 
-Use Node >=22.12. Run `npm ci`, then `npm run dev` in this repository. Open `http://localhost:5173/#client-preview`. The preview server mounts all four apps behind that origin. Local OAuth requires the exact registered `http://localhost:5173/api/deriv/callback`, plus matching values in an ignored `.env`. Without registration, all public data remains available and account operations stay gated.
+Use Node >=22.12. Run `npm ci`, `npm run build`, then `npm run dev` here and open `http://localhost:5173/#client-preview`. Build generates the complete app and its assets; the development server serves that output behind the same origin. Rebuild after native runtime source changes. Local OAuth requires the registered `http://localhost:5173/api/deriv/callback` and matching ignored environment values. Public prices work without login; trading requires an authenticated selected account.
 
 ## Set up login on your current Vercel site
 

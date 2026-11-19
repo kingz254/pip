@@ -1,3 +1,4 @@
+import { useClientBranding } from '../../../pipforge/site-branding';
 import React from 'react';
 import classNames from 'classnames';
 import { useConstructor } from '@/hooks/useConstructor';
@@ -61,6 +62,7 @@ const Tabs = ({
     single_tab_has_no_label = false,
     top,
 }: TTabsProps) => {
+    const brand = useClientBranding();
     const [active_line_style, updateActiveLineStyle] = React.useState({});
     const active_tab_ref = React.useRef<HTMLLIElement>(null);
     const tabs_wrapper_ref = React.useRef<HTMLUListElement>(null);
@@ -125,6 +127,14 @@ const Tabs = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [active_index]);
 
+    React.useEffect(() => {
+        const current = children[active_tab_index];
+        if (current && brand?.menu?.[current.props.id] === false) {
+            const next = children.findIndex(child => child && brand?.menu?.[child.props.id] !== false);
+            if (next >= 0) setActiveTabIndex(next);
+        }
+    }, [brand, active_tab_index]);
+
     const onClickTabItem = (index: number) => {
         if (should_update_hash) {
             const hash = children[index]?.props['data-hash'];
@@ -174,6 +184,7 @@ const Tabs = ({
                         {React.Children.map(children, (child, index) => {
                             if (!child) return null;
                             const { icon, label, id } = child.props;
+                            if (brand?.menu?.[id] === false) return null;
                             const header_content = child.props['data-header-content'];
                             const count = child.props['data-count'];
                             return (

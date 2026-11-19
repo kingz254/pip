@@ -1,3 +1,4 @@
+import ClientSiteLoader from '../components/loader/client-site-loader';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import RootStore from '@/stores/root-store';
 import { TWebSocket } from '@/Types';
@@ -31,7 +32,7 @@ const StoreProvider: React.FC<TStoreProvider> = ({ children, mockStore }) => {
         }
     }, [store, mockStore]);
 
-    if (!store && mockStore) return null;
+    if (!store) return <ClientSiteLoader />;
 
     return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 };

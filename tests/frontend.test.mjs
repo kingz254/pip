@@ -138,7 +138,7 @@ test('backend mode: returning user gets their saved site loaded into the builder
   assert.equal(d.querySelector('#bgs [data-b="heatmap"]').getAttribute('aria-pressed'), 'true');
   assert.equal($('site').dataset.h, 'split'); assert.equal($('site').dataset.bg, 'heatmap');
   assert.equal(d.querySelector('#socs input[data-k="tg"]').value, 'saved');
-  assert.equal(d.querySelector('#mnu input[data-m="ana"]').checked, false);
+  assert.equal(d.querySelector('#mnu input[data-m="id-analysis-tool"]').checked, false);
   assert.equal($('da').value, '999');
   assert.equal(sb.db.sites.length, 1, 'loading does not create a duplicate');
   await tick(1700); assert.equal(sb.db.sites[0].template, 'mint', 'loading does not overwrite the row');

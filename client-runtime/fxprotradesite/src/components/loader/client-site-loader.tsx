@@ -1,10 +1,11 @@
+import { useClientBranding } from '../../pipforge/site-branding';
 import { useEffect, useState } from 'react';
 import FuturisticLoader from './futuristic-loader';
 import './client-site-loader.scss';
 
 const ClientSiteLoader = () => {
     const [elapsed, setElapsed] = useState(false);
-    const site = window.__PF_SITE_BRANDING__;
+    const site = useClientBranding();
 
     useEffect(() => {
         const timer = window.setTimeout(() => setElapsed(true), 8000);
