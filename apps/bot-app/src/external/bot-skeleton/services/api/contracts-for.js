@@ -238,12 +238,8 @@ export default class ContractsFor {
                     contracts_for: { available: contracts },
                 } = response;
 
-                // We don't offer forward-starting contracts in bot.
-                // Note: start_type field may not be available in API response anymore
-                const filtered_contracts = contracts.filter(c => !c.start_type || c.start_type !== 'forward');
-
                 this.contracts_for[symbol] = {
-                    contracts: filtered_contracts,
+                    contracts,
                     timestamp: this.server_time.unix(),
                 };
 
@@ -252,7 +248,7 @@ export default class ContractsFor {
                     delete this.retrieving_contracts_for[symbol];
                 }
 
-                return filtered_contracts;
+                return contracts;
             } catch (error) {
                 console.error('Error in contracts_for API call:', error);
                 if (this.retrieving_contracts_for[symbol]) {

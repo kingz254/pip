@@ -1519,11 +1519,6 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function initPhoneCountries(){
     renderPhoneCountries(PHONE_COUNTRIES);
     $("gncountry").addEventListener("change",function(){var code=this.options[this.selectedIndex];$("gncode").textContent=code?"+"+code.dataset.dial:""});
-    if(typeof WebSocket==="undefined")return;
-    try{var ws=new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089"),timer=setTimeout(function(){try{ws.close()}catch(e){}},8000);
-      ws.addEventListener("open",function(){ws.send(JSON.stringify({residence_list:1}))},{once:true});
-      ws.addEventListener("message",function(ev){try{var msg=JSON.parse(ev.data);if(msg.residence_list)renderPhoneCountries(msg.residence_list)}catch(e){}clearTimeout(timer);ws.close()},{once:true});
-      ws.addEventListener("error",function(){clearTimeout(timer)},{once:true})}catch(e){}
   }
   initPhoneCountries();
   function phoneE164(selectId,inputId){
@@ -1575,7 +1570,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function setSv(t){var e=pv.querySelector(".pvh .mini");if(e)e.textContent=t;var message=pv.querySelector("#design-save-status");if(message)message.textContent=t;var button=pv.querySelector("[data-confirm-design]");if(button)button.hidden=!(designPending&&requiresDesignConfirmation())}
   function fromRow(s){
     var i,ext=null;
-    st.n=s.name;st.logo=s.logo_data||"";st.ld=s.loader_style||"ring";st.t=s.template;st.b=s.background;st.h=({center:"brand",minimal:"edge",pill:"dock",banner:"ticker"})[s.header]||s.header;st.ft=s.font_theme||"inter";st.ann=s.announcement;st.sh=s.icon_shape;st.sp=s.icon_place;
+    st.n=s.name;st.logo=s.logo_data||"";st.ld=s.loader_style||"ring";st.t=s.template;st.b=s.background;st.blur=Number(s.blur??75);st.h=({center:"brand",minimal:"edge",pill:"dock",banner:"ticker"})[s.header]||s.header;st.ft=s.font_theme||"inter";st.ann=s.announcement;st.sh=s.icon_shape;st.sp=s.icon_place;
     st.soc=s.social||{};st.menu=s.menu||{};st.as=st.menu.account_style||"compact";st.accountDisplay=st.menu.account_display||"switch";st.m=Number(s.markup);st.dm=s.domain_mode;st.deriv_app_id=s.deriv_app_id||"";
     if(s.domain_mode==="own"){st.own=s.domain||"";st.dn=""}
     else if(s.domain){for(i=0;i<EX.length;i++)if(s.domain.length>EX[i][0].length+1&&s.domain.slice(-EX[i][0].length)===EX[i][0]&&(!ext||EX[i][0].length>ext[0].length))ext=EX[i];
@@ -1587,7 +1582,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     if(s.deriv_app_id)$("da").value=s.deriv_app_id;if(s.referral_url)$("dr").value=s.referral_url}
   function cleanSoc(){var o={};Object.keys(st.soc||{}).forEach(function(k){var v=String(st.soc[k]||"").trim().slice(0,200);if(v)o[k]=v});return o}
   function toRow(){
-    var r={name:(st.n||"").trim().slice(0,24)||"My Trading Site",logo_data:st.logo||null,loader_style:st.ld||"ring",template:st.t,background:st.b,header:st.h,font_theme:st.ft||"inter",announcement:(st.ann||"").slice(0,60),icon_shape:st.sh,icon_place:st.sp,social:cleanSoc(),menu:Object.assign({},st.menu,{account_style:st.as||"compact",account_display:st.accountDisplay||"switch"}),markup:st.m};
+    var r={name:(st.n||"").trim().slice(0,24)||"My Trading Site",logo_data:st.logo||null,loader_style:st.ld||"ring",template:st.t,background:st.b,blur:Math.max(0,Math.min(100,Number(st.blur)||0)),header:st.h,font_theme:st.ft||"inter",announcement:(st.ann||"").slice(0,60),icon_shape:st.sh,icon_place:st.sp,social:cleanSoc(),menu:Object.assign({},st.menu,{account_style:st.as||"compact",account_display:st.accountDisplay||"switch"}),markup:st.m};
     if(!BK.site||BK.site.status==="draft"||BK.site.status==="pending_payment"){r.domain_mode=st.dm;r.domain=(st.dm==="own"?ownOK():true)?dom():null}
     return r}
   function flushSave(force){

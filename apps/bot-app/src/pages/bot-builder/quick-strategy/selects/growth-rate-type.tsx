@@ -33,10 +33,13 @@ type TContractTypes = {
 };
 
 type TProposalRequest = {
+    proposal: 1;
     amount: number;
+    basis: 'stake';
+    contract_type: 'ACCU';
     currency: string;
     growth_rate: number;
-    symbol: string;
+    underlying_symbol: string;
     limit_order: {
         take_profit?: number;
     };
@@ -78,7 +81,7 @@ const GrowthRateSelect: React.FC<TContractTypes> = observer(({ name }) => {
     const { setFieldValue, values, setFieldError, errors } = useFormikContext<TFormData>();
 
     const prev_proposal_payload = React.useRef<TProposalRequest | null>(null);
-    const ref_max_payout = React.useRef<TProposalRequest | null>(null);
+    const ref_max_payout = React.useRef<string | null>(null);
     const prev_error = React.useRef<{
         tick_count: string | null;
         take_profit: string | null;
@@ -112,14 +115,20 @@ const GrowthRateSelect: React.FC<TContractTypes> = observer(({ name }) => {
     }, [values, errors.take_profit, errors.tick_count, values.boolean_tick_count, setFieldValue, setFieldError]);
 
     const validateMinMaxForAccumulators = async (values: TFormData) => {
+        const currency = client?.currency;
+        const symbol = values.symbol;
+        if (typeof currency !== 'string' || !currency || typeof symbol !== 'string' || !symbol) return;
         const growth_rate = Number(values.growth_rate);
         const amount = Number(values.stake);
         const take_profit = Number(values.take_profit);
-        const request_proposal = {
+        const request_proposal: Omit<TProposalRequest, 'boolean_tick_count'> = {
+            proposal: 1,
             amount,
-            currency: client?.currency,
+            basis: 'stake',
+            contract_type: 'ACCU',
+            currency,
             growth_rate,
-            symbol: values.symbol,
+            underlying_symbol: symbol,
             limit_order: {
                 ...(!values.boolean_tick_count && { take_profit }),
             },
@@ -127,7 +136,7 @@ const GrowthRateSelect: React.FC<TContractTypes> = observer(({ name }) => {
 
         prev_proposal_payload.current = {
             ...request_proposal,
-            symbol: String(request_proposal.symbol),
+            underlying_symbol: String(request_proposal.underlying_symbol),
             boolean_tick_count: Boolean(values.boolean_tick_count),
         };
         try {
@@ -240,7 +249,7 @@ const GrowthRateSelect: React.FC<TContractTypes> = observer(({ name }) => {
 
     React.useEffect(() => {
         if (
-            prev_proposal_payload.current?.symbol !== values.symbol ||
+            prev_proposal_payload.current?.underlying_symbol !== values.symbol ||
             prev_proposal_payload.current?.amount !== values.stake ||
             prev_proposal_payload.current?.limit_order?.take_profit !== values.take_profit ||
             prev_proposal_payload.current?.currency !== client?.currency ||

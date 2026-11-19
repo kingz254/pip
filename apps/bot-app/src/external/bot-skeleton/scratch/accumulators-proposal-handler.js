@@ -40,14 +40,14 @@ export const handleProposalRequestForAccumulators = instance => {
 };
 
 export const requestProposalForQS = (input_values, ws) => {
-    const { amount, currency, symbol, growth_rate, limit_order } = input_values;
+    const { amount, currency, underlying_symbol, growth_rate, limit_order } = input_values;
     const { take_profit } = limit_order;
 
     const proposal_request = {
         ...DEFAULT_PROPOSAL_REQUEST,
         amount,
         currency,
-        underlying_symbol: symbol,
+        underlying_symbol,
         growth_rate,
         subscribe: undefined,
         limit_order: {

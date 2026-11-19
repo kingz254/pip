@@ -5,7 +5,6 @@ type TContract = {
     max_contract_duration: string;
     min_contract_duration: string;
     expiry_type: string;
-    start_type?: string; // Field may not be available in API response anymore
 };
 
 type TMaxMin = {
@@ -47,8 +46,7 @@ export const buildDurationConfig = (
 ) => {
     type TDurationMaps = keyof typeof duration_maps;
 
-    // Default to 'spot' if start_type is not available (field deprecated in API)
-    const start_type = contract.start_type || 'spot';
+    const start_type = 'spot';
 
     durations.units_display[start_type as keyof typeof durations.units_display] =
         durations.units_display[start_type as keyof typeof durations.units_display] || [];

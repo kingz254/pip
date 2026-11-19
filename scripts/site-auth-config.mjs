@@ -8,5 +8,5 @@ export async function resolveSiteAuth(host, env=process.env, upstream=fetch) {
   const site=await response.json();
   if(!site || site.domain!==domain || !/^[A-Za-z0-9_-]{1,128}$/.test(site.deriv_app_id||''))return null;
   const origin=`https://${host.toLowerCase()}`;
-  return {origin,clientId:site.deriv_app_id,redirectUri:`${origin}/api/deriv/callback`};
+  return {origin,clientId:site.deriv_app_id,redirectUri:`${origin}/api/deriv/callback`,site};
 }

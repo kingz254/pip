@@ -31,6 +31,33 @@ type SubscriptionPromise = Promise<{
     subscription: CurrentSubscription;
 }>;
 
+type DerivActiveSymbol = {
+    underlying_symbol: string;
+    underlying_symbol_name: string;
+    underlying_symbol_type: string;
+    market: string;
+    subgroup: string;
+    submarket: string;
+    pip_size: number;
+    is_trading_suspended: 0 | 1;
+    exchange_is_open: 0 | 1;
+    trade_count: number;
+};
+
+const toBotSymbol = (symbol: DerivActiveSymbol) => ({
+    symbol: symbol.underlying_symbol,
+    underlying_symbol: symbol.underlying_symbol,
+    display_name: symbol.underlying_symbol_name,
+    market: symbol.market,
+    submarket: symbol.submarket,
+    subgroup: symbol.subgroup,
+    pip_size: symbol.pip_size,
+    symbol_type: symbol.underlying_symbol_type,
+    underlying_symbol_type: symbol.underlying_symbol_type,
+    is_trading_suspended: Boolean(symbol.is_trading_suspended),
+    exchange_is_open: Boolean(symbol.exchange_is_open),
+});
+
 type TApiBaseApi = {
     connection: {
         readyState: keyof typeof socket_state;
@@ -418,6 +445,8 @@ class APIBase {
                 throw new Error('No active symbols received from API');
             }
 
+            const botSymbols = (active_symbols as DerivActiveSymbol[]).map(toBotSymbol);
+
             this.has_active_symbols = true;
 
             // Process active symbols using the dedicated service with fallback
@@ -426,7 +455,7 @@ class APIBase {
                     setTimeout(() => reject(new Error('Enrichment timeout')), this.ENRICHMENT_TIMEOUT_MS)
                 );
 
-                const enrichmentPromise = activeSymbolsProcessorService.processActiveSymbols(active_symbols);
+                const enrichmentPromise = activeSymbolsProcessorService.processActiveSymbols(botSymbols);
                 const processedResult = await Promise.race([enrichmentPromise, enrichmentTimeout]);
 
                 this.active_symbols = processedResult.enrichedSymbols;
@@ -434,7 +463,7 @@ class APIBase {
             } catch (enrichmentError) {
                 console.warn('Symbol enrichment failed, using raw symbols:', enrichmentError);
                 // Fallback to raw symbols if enrichment fails
-                this.active_symbols = active_symbols;
+                this.active_symbols = botSymbols;
                 this.pip_sizes = {};
             }
 
