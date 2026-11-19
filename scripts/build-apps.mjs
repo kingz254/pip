@@ -1,6 +1,6 @@
 import './export-client-backgrounds.mjs';
 import { spawnSync } from 'node:child_process';
-import { cp, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 const root=fileURLToPath(new URL('../',import.meta.url));
@@ -20,3 +20,8 @@ for(const entry of await readdir(resolve(app,'dist'))) {
 let html=await readFile(resolve(app,'dist/index.html'),'utf8');
 html=html.replace('</head>','<script src="/client-background.js" defer></script></head>');
 await writeFile(resolve(root,'public/fxpro.html'),html);
+
+// Vercel gives static index.html precedence over rewrites, so keep it only in the server bundle.
+const output=resolve(root,'site-output');
+await cp(resolve(root,'public'),output,{recursive:true,filter:source=>source!==resolve(root,'public/index.html')});
+await rm(resolve(output,'index.html'),{force:true});

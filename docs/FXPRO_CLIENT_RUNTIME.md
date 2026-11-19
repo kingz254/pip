@@ -19,7 +19,7 @@ Both copies build with Rsbuild. Pipforge's test suite includes session/account-s
 
 ## Preview and delivery
 
-`npm run build` installs isolated runtime dependencies, builds the frontend, and copies hashed assets into `public/` without overwriting the builder. `fxpro.html` is generated. Retired token callbacks, markup tool and service worker are excluded.
+`npm run build` installs isolated runtime dependencies, builds the frontend, and copies hashed assets into `public/` without overwriting the builder. `fxpro.html` is generated. Deploy output is `site-output/`, excluding static `index.html` so Vercel cannot bypass the host-aware entry function. The function explicitly bundles the original builder and generated runtime HTML. Retired token callbacks, markup tool and service worker are excluded.
 
 `api/site-entry.mjs` serves Pipforge on platform hosts and the trading HTML directly on customer hosts. `/api/client-site` resolves live published sites; unknown domains cannot silently receive a generic trading app.
 
