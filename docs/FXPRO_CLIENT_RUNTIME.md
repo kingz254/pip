@@ -4,6 +4,7 @@ The FXPro source is under `client-runtime/fxprotradesite`. It is now the complet
 
 ## Migrated execution boundary
 
+- Deriv OAuth and account APIs have one canonical implementation in the Pipforge repository root (`api/deriv.mjs` backed by `scripts/deriv-auth.mjs` and the encrypted Supabase credential store). Do not deploy a second auth server from `client-runtime/fxprotradesite`; customer domains are resolved and authenticated by the shared root API.
 - Startup restores `/api/deriv/session`; provider tokens are never returned to the browser. Accounts and fresh account-specific OTP URLs come from the existing encrypted Pipforge BFF.
 - Bot Builder, Smart Trading, Speed Bot, Advanced Trading and the native manual terminal share the New API transport. Blockly's internal view-model names are adapted at the boundary, while outgoing requests use New API fields.
 - Parameter-based purchases obtain a quote on the selected authenticated connection before buying; account changes invalidate pending work. Duplicate in-flight purchases are rejected. Buy/sell/update/cancel failures are never automatically retried.
