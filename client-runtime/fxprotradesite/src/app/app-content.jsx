@@ -123,7 +123,22 @@ const AppContent = observer(() => {
                         return;
                     }
 
-                    const xmlContent = await response.text();
+                    let xmlContent = await response.text();
+                    const signal = event.data.signal;
+                    if (signal) {
+                        if (!/^(R_(10|25|50|75|100)|1HZ(10|15|25|30|50|75|90|100)V)$/.test(signal.symbol) || !['DIGITOVER','DIGITUNDER'].includes(signal.type) || !Number.isInteger(signal.barrier) || signal.barrier < 0 || signal.barrier > 9) throw new Error('Invalid signal');
+                        const xml = new DOMParser().parseFromString(xmlContent, 'text/xml');
+                        xml.querySelectorAll('field[name="SYMBOL_LIST"]').forEach(f => f.textContent = signal.symbol);
+                        xml.querySelectorAll('field[name="TYPE_LIST"],field[name="PURCHASE_LIST"]').forEach(f => f.textContent = signal.type);
+                        xml.querySelectorAll('value[name="PREDICTION"] field[name="NUM"]').forEach(f => f.textContent = String(signal.barrier));
+                        xml.querySelectorAll('block[type="variables_set"]').forEach(block => {
+                            if (block.querySelector(':scope > field[name="VAR"]')?.textContent === 'prediction') {
+                                const number = block.querySelector(':scope > value[name="VALUE"] field[name="NUM"]');
+                                if (number) number.textContent = String(signal.barrier);
+                            }
+                        });
+                        xmlContent = new XMLSerializer().serializeToString(xml);
+                    }
                     
                     // Get bot name from filename
                     const botName = fileName.replace('.xml', '').replace(/-/g, ' ');

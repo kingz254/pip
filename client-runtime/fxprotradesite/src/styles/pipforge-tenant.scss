@@ -230,3 +230,8 @@ html[data-pf-tenant=true] .dashboard__chart-wrapper{height:100%!important;min-he
 }
 
 .main-signals-frame{display:block;width:100%;height:100%;min-height:60vh;border:0;background:transparent}
+
+html[data-pf-tenant=true] .app-footer{height:40px!important;min-height:40px!important;padding:0 8px!important;overflow:visible!important;z-index:1200}
+html[data-pf-tenant=true] .app-footer :is(.pf-social-profiles a,.pf-risk-button){width:28px!important;height:28px!important;min-height:28px!important;padding:4px!important}
+.pf-mobile-run{position:fixed;bottom:40px;left:0;right:0;z-index:1300;padding:4px 8px;background:var(--pf-client-page,var(--general-main-1))}
+@media(max-width:1023px){html[data-pf-tenant=true] .controls__section{display:none!important}html[data-pf-tenant=true] .dc-drawer{bottom:96px!important}}

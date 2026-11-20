@@ -319,7 +319,7 @@
             }
         </style>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
-    </head>
+    <style>body{background:transparent!important}h1,h2{color:inherit!important}.o-signal-btn,.theme-toggle{display:none!important}td{padding:8px!important}.signal-box{min-height:36px;font:inherit;color:inherit}th{background:var(--accent)!important}table{width:100%!important}</style></head>
     <body>
         <!-- Theme Toggle -->
         <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌙</button>
@@ -367,7 +367,7 @@
             </table>
         </div>
 
-        <script src="signals/signals.js" type="text/javascript"></script>
+        <script src="/signals/signals.js" type="text/javascript"></script>
         <script>
             // Theme Management
             function initTheme() {
@@ -422,5 +422,5 @@
                 }, '*');
             }
         </script>
-    </body>
+    <script>setInterval(()=>{try{const c=parent.getComputedStyle(parent.document.documentElement);document.body.style.color=c.getPropertyValue('--pf-client-ink');document.documentElement.style.setProperty('--accent',c.getPropertyValue('--pf-client-accent'))}catch{}},500);</script></body>
 </html>

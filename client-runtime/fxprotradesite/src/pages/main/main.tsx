@@ -1322,6 +1322,7 @@ const AppWrapper = observer(() => {
                 <StandaloneChartModal />
             </DesktopWrapper>
             <MobileWrapper>
+                {showRunPanel && <div className='pf-mobile-run'><RunStrategy /></div>}
                 {showRunPanel && <RunPanel />}
             </MobileWrapper>
             <Dialog

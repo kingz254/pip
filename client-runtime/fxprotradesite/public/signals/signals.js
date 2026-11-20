@@ -114,17 +114,18 @@ function updateTables() {
         // Generate over/under table row
         overUnderTable.innerHTML += `<tr>
             <td>${displayName} </td>
-            <td><span class="signal-box ${overClass}">${overClass === 'over' ? 'Over 2' : '----'}</span></td>
-            <td><span class="signal-box ${underClass}">${underClass === 'under' ? 'Under 7' : '----'}</span></td>
+            <td><button class="signal-box ${overClass}" data-symbol="${symbol}" data-type="DIGITOVER" data-barrier="2" ${overClass === 'over' ? '' : 'disabled'}>${overClass === 'over' ? 'Over 2 →' : '----'}</button></td>
+            <td><button class="signal-box ${underClass}" data-symbol="${symbol}" data-type="DIGITUNDER" data-barrier="7" ${underClass === 'under' ? '' : 'disabled'}>${underClass === 'under' ? 'Under 7 →' : '----'}</button></td>
         </tr>`;
 
         // Generate combined table row for desktop (Over/Under first, then Rise/Fall)
         combinedTable.innerHTML += `<tr>
             <td>${displayName}</td>
-            <td><span class="signal-box ${overClass}">${overClass === 'over' ? 'Over 2' : '----'}</span></td>
-            <td><span class="signal-box ${underClass}">${underClass === 'under' ? 'Under 7' : '----'}</span></td>
+            <td><button class="signal-box ${overClass}" data-symbol="${symbol}" data-type="DIGITOVER" data-barrier="2" ${overClass === 'over' ? '' : 'disabled'}>${overClass === 'over' ? 'Over 2 →' : '----'}</button></td>
+            <td><button class="signal-box ${underClass}" data-symbol="${symbol}" data-type="DIGITUNDER" data-barrier="7" ${underClass === 'under' ? '' : 'disabled'}>${underClass === 'under' ? 'Under 7 →' : '----'}</button></td>
         </tr>`;
     });
 }
 
 setInterval(updateTables, 1000); // Update every second
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-symbol]');if(b)parent.postMessage({action:'load_bot_file',fileName:b.dataset.type==='DIGITUNDER'?'signals under bot.xml':'signals over bot.xml',signal:{symbol:b.dataset.symbol,type:b.dataset.type,barrier:Number(b.dataset.barrier)}},location.origin)});
