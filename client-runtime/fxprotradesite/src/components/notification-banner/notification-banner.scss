@@ -1,6 +1,6 @@
 .notification-banner {
   width: 100%;
-  background: linear-gradient(90deg, #b1913e 0%, #dba80db7 100%);
+  background: linear-gradient(90deg, var(--pf-client-accent) 0%, var(--pf-client-accent) 100%);
   color: white;
   position: relative;
   overflow: hidden;
@@ -12,7 +12,7 @@
 
   // Hover effect for the entire banner
   &:hover {
-    background: linear-gradient(90deg, #b1913e 0%, #dba80ddd 100%);
+    background: linear-gradient(90deg, var(--pf-client-accent) 0%, var(--pf-client-accent) 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(107, 72, 255, 0.3);
   }
@@ -116,7 +116,7 @@
 
   // Dark mode support
   @media (prefers-color-scheme: dark) {
-    background: linear-gradient(90deg, #b1913e 0%, #b1913e 100%);
+    background: linear-gradient(90deg, var(--pf-client-accent) 0%, var(--pf-client-accent) 100%);
   }
 }
 

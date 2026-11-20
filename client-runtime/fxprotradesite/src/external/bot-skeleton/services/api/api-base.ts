@@ -1,4 +1,4 @@
-import { getSelectedAccount, getTradingAccounts } from '../../../../pipforge/session';
+import { getSelectedAccount, getTradingAccounts, getSessionGeneration } from '../../../../pipforge/session';
 import CommonStore from '@/stores/common-store';
 import { TAuthData } from '@/types/api-types';
 import { observer as globalObserver } from '../../utils/observer';
@@ -165,7 +165,14 @@ class APIBase {
         }
     };
 
-    async authorizeAndSubscribe() {
+    private authorization: {generation:number;promise:Promise<void>} | null = null;
+    authorizeAndSubscribe() {
+        const generation=getSessionGeneration();
+        if(this.authorization?.generation===generation)return this.authorization.promise;
+        const promise=this.authorizeSelectedAccount(generation).finally(()=>{if(this.authorization?.promise===promise)this.authorization=null});
+        this.authorization={generation,promise};return promise;
+    }
+    private async authorizeSelectedAccount(generation:number) {
         const token = V2GetActiveToken();
         if (token) {
             this.token = token;
@@ -176,8 +183,12 @@ class APIBase {
             try {
                 const account = getSelectedAccount();
                 if (!account || account.account_id !== this.account_id) throw new Error('Account changed. Reconnect before trading.');
+                const api=this.api;
+                const balance=await api.send({balance:1});
+                if(generation!==getSessionGeneration())return;
+                if(balance?.error || balance?.balance?.loginid!==account.account_id)throw new Error('Could not verify the selected account connection.');
                 const authorize = {
-                    loginid: account.account_id, currency: account.currency, balance: Number(account.balance),
+                    loginid: account.account_id, currency: account.currency, balance: Number(balance.balance.balance),
                     is_virtual: account.account_type === 'demo' ? 1 : 0,
                     account_list: getTradingAccounts().map(a => ({ loginid: a.account_id, currency: a.currency,
                         is_virtual: a.account_type === 'demo' ? 1 : 0, is_disabled: 0 })),
@@ -193,40 +204,28 @@ class APIBase {
                 setIsAuthorized(true);
                 
                 this.is_authorized = true;
-                await this.subscribe();
+                await this.subscribe(api);
 
             } catch (e) {
+                if(generation!==getSessionGeneration())return;
                 this.is_authorized = false;
                 setIsAuthorized(false);
                 globalObserver.emit('Error', e);
             } finally {
-                setIsAuthorizing(false);
+                if(generation===getSessionGeneration())setIsAuthorizing(false);
             }
         }
     }
 
-    async subscribe() {
-        const subscribeToStream = (streamName: string) => {
-            return doUntilDone(
-                () => {
-                    const subscription = this.api?.send({
-                        [streamName]: 1,
-                        subscribe: 1,
-
-                    });
-                    if (subscription) {
-                        this.current_auth_subscriptions.push(subscription);
-                    }
-                    return subscription;
-                },
-                [],
-                this
-            );
+    async subscribe(api=this.api) {
+        const subscribe=(name:string)=>{
+            const pending=api?.send({[name]:1,subscribe:1});
+            if(pending)this.current_auth_subscriptions.push(pending);
+            return pending;
         };
-
-        const streamsToSubscribe = ['balance', 'transaction', 'proposal_open_contract'];
-
-        await Promise.all(streamsToSubscribe.map(subscribeToStream));
+        await subscribe('balance');
+        // Empty positions or a temporarily unavailable report stream must not sign out a verified account.
+        await Promise.all(['transaction','proposal_open_contract'].map(name=>subscribe(name)?.catch(error=>globalObserver.emit('Error',error))));
     }
 
     getActiveSymbols = async () => {

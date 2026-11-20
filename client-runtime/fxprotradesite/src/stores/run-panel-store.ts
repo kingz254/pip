@@ -1,3 +1,5 @@
+import { getSelectedAccount } from '../pipforge/session';
+import { api_base } from '@/external/bot-skeleton';
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx';
 import { botNotification } from '@/components/bot-notification/bot-notification';
 import { notification_message } from '@/components/bot-notification/bot-notification-utils';
@@ -183,7 +185,11 @@ export default class RunPanelStore {
         await self_exclusion.checkRestriction();
     };
 
+    is_starting = false;
     onRunButtonClick = async () => {
+        if(this.is_running || this.is_starting)return;
+        this.is_starting=true;
+        try {
         let timer_counter = 1;
         if (window.sendRequestsStatistic) {
             performance.clearMeasures();
@@ -203,9 +209,20 @@ export default class RunPanelStore {
         const is_ios = mobileOSDetect() === 'iOS';
         this.dbot.saveRecentWorkspace();
         this.dbot.unHighlightAllBlocks();
-        if (!client.is_logged_in) {
+        if (!getSelectedAccount()) {
             this.showLoginDialog();
             return;
+        }
+        if (!client.is_logged_in || !api_base.is_authorized) {
+            try {
+                await api_base.init();
+                const account=getSelectedAccount();
+                if(!account || !api_base.is_authorized || api_base.account_id!==account.account_id)throw new Error('Account connection is not ready.');
+                client.setLoginId(account.account_id);client.setCurrency(account.currency);client.setIsLoggedIn(true);
+            } catch {
+                runInAction(()=>{this.dialog_options={title:localize('Trading connection'),message:localize('Your account is reconnecting. Wait for the connection, then run your bot again.')};this.is_dialog_open=true});
+                return;
+            }
         }
 
         /**
@@ -244,6 +261,7 @@ export default class RunPanelStore {
             this.dbot.runBot();
         });
         this.setShowBotStopMessage(false);
+        } finally { this.is_starting=false; }
     };
 
     onStopButtonClick = () => {

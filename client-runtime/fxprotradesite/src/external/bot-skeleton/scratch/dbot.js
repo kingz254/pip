@@ -109,20 +109,10 @@ class DBot {
             __webpack_public_path__ = public_path; // eslint-disable-line no-global-assign
             ApiHelpers.setInstance(api_helpers_store);
             DBotStore.setInstance(store);
-            const window_width = window.innerWidth;
             try {
-                let workspaceScale = 0.7;
+                const workspaceScale = is_mobile ? 0.6 : 0.7;
 
                 const { handleFileChange } = DBotStore.instance;
-                if (window_width < 1640) {
-                    if (is_mobile) {
-                        workspaceScale = 0.6;
-                    } else {
-                        const scratch_div_width = document.getElementById('scratch_div')?.offsetWidth;
-                        const zoom_scale = scratch_div_width / window_width / 1.5;
-                        workspaceScale = zoom_scale;
-                    }
-                }
                 const el_scratch_div = document.getElementById('scratch_div');
                 if (!el_scratch_div) {
                     return;
@@ -350,13 +340,13 @@ class DBot {
             api_base.setIsRunning(true);
             this.interpreter.run(code).catch(error => {
                 globalObserver.emit('Error', error);
-                this.stopBot();
+                globalObserver.emit('bot.click_stop');
             });
         } catch (error) {
             globalObserver.emit('Error', error);
 
             if (this.interpreter) {
-                this.stopBot();
+                globalObserver.emit('bot.click_stop');
             }
         }
     }

@@ -198,7 +198,7 @@ export class DerivWS {
         const quote = buyId === '1'
           ? [...this.proposalIds.values()].find((candidate) => this.matchesParameters(candidate.parameters, payload.parameters))
           : this.proposalIds.get(buyId);
-        if (!this.freshUrl || !quote || Date.now() - quote.createdAt > 15_000 || typeof payload.price !== 'number' || !Number.isFinite(price) || price <= 0 || price > quote.askPrice || (buyId !== '1' && !quote.subscriptionId)) {
+        if (!this.freshUrl || !quote || Date.now() - quote.createdAt > 15_000 || typeof payload.price !== 'number' || !Number.isFinite(price) || price <= 0 || price > quote.askPrice) {
           reject(new Error('Get a fresh quote on your connected account before buying.')); return;
         }
         this.proposalIds.delete(quote.id);

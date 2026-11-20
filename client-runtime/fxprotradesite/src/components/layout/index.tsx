@@ -1,3 +1,4 @@
+import '../../pipforge/template-host';
 import { useClientBranding } from '../../pipforge/site-branding';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';

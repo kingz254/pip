@@ -1,4 +1,5 @@
 'use client';
+import { getEmbeddedTradingHost } from './embedded-host';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchAccounts, getWebSocketOTP, logout as endSession } from '../auth/accounts';
 import { initiateLogin, initiateSignUp } from '../auth/oauth';
@@ -14,6 +15,7 @@ export function useSessionAuth() {
   const [error,setError]=useState<string|null>(null);
   const generation=useRef(0);
   const switchAccount=useCallback(async(id:string)=>{
+    const host=getEmbeddedTradingHost();if(host){host.switchAccount(id);return;}
     const version=++generation.current;
     setWsUrl(undefined);
     try {
@@ -26,6 +28,15 @@ export function useSessionAuth() {
     } catch(e){if(version===generation.current){setError(e instanceof Error?e.message:'Account unavailable');setAuthState('error');}}
   },[]);
   useEffect(()=>{
+    const host=getEmbeddedTradingHost();
+    if(host){
+      let disposed=false;
+      const sync=()=>{if(disposed)return;const list=host.getAccounts(),active=host.getSelectedAccount();setAccounts(list);storeDerivAccounts(list);setActiveAccountId(active?.account_id||null);setAuthState(active?'authenticated':'unauthenticated');setError(null)};
+      sync();const unsubscribe=host.subscribe(sync);
+      const stop=()=>{disposed=true;unsubscribe()};
+      window.addEventListener('pagehide',stop,{once:true});
+      return()=>{window.removeEventListener('pagehide',stop);stop()};
+    }
     const version=++generation.current;
     (async()=>{
       try {
@@ -38,7 +49,7 @@ export function useSessionAuth() {
     })();
     return()=>{generation.current++;};
   },[switchAccount]);
-  const logout=useCallback(()=>{generation.current++;endSession();setAccounts([]);setActiveAccountId(null);setWsUrl(undefined);setAuthState('unauthenticated');},[]);
+  const logout=useCallback(()=>{const host=getEmbeddedTradingHost();if(host){void host.logout();return;}generation.current++;endSession();setAccounts([]);setActiveAccountId(null);setWsUrl(undefined);setAuthState('unauthenticated');},[]);
   const login=useCallback(()=>initiateLogin({clientId:'',redirectUri:''}),[]);
   const signUp=useCallback(()=>initiateSignUp({clientId:'',redirectUri:''}),[]);
   const updateAccountBalance=useCallback((id:string,balance:string,currency?:string)=>setAccounts(current=>{

@@ -39,9 +39,9 @@
     width: 5px;
     height: 15px;
     border-radius: 2px;
-    border: solid #b1913e;
+    border: solid var(--pf-client-accent);
     border-width: 0 1px 1px 0;
-    background: #b1913e;
+    background: var(--pf-client-accent);
     animation: tilt infinite 5s cubic-bezier(0.955, -0.010, 1.000, 1.000);
     transform-origin: 100% 100%;
   }

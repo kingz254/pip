@@ -1,3 +1,4 @@
+import { replaceGold } from './gold-accent.mjs';
 import { useSyncExternalStore } from 'react';
 import templateThemes from './template-themes.json' with { type: 'json' };
 
@@ -58,8 +59,6 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.style.setProperty('--pf-client-edge', theme.edge);
     root.style.setProperty('--pf-client-blur', `${Math.round(Math.max(0, Math.min(100, site.blur)) * 0.24)}px`);
     root.style.setProperty('--pf-client-font', site.palette?.font || `'${family}', sans-serif`);
-    root.dataset.pfAccountStyle = String(site.menu?.account_style || 'compact');
-    root.dataset.pfAccountDisplay = String(site.menu?.account_display || 'switch');
     root.style.colorScheme = light ? 'light' : 'dark';
     localStorage.setItem('theme',light ? 'light' : 'dark');
     document.body?.classList.toggle('theme--dark', !light);
@@ -76,6 +75,9 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     fontLink.rel = 'stylesheet';
     fontLink.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, '+')}&display=swap`;
     document.head.append(fontLink);
+    const computed=window.getComputedStyle(document.body);
+    for(const property of Array.from(computed)){if(!property.startsWith('--'))continue;const value=computed.getPropertyValue(property),branded=replaceGold(value);if(branded!==value)document.body.style.setProperty(property,branded);}
+    const blockly=(window as any).Blockly;if(blockly?.Colours?.RootBlock){blockly.Colours.RootBlock.colour=theme.accent;blockly.Colours.RootBlock.colourSecondary=theme.accent;}
     window.__PF_SITE_BRANDING__ = site;
     document.querySelectorAll('iframe').forEach(frame => brandEmbeddedTool(frame, site));
     window.dispatchEvent(new Event('pf:branding'));
@@ -125,10 +127,12 @@ function brandEmbeddedTool(frame: HTMLIFrameElement, site: PipforgeSiteBranding)
         const root = document.documentElement;
         frame.style.colorScheme = root.dataset.pfTheme || 'dark';
         doc.documentElement.style.colorScheme = frame.style.colorScheme;
+        doc.documentElement.classList.toggle('dark',root.dataset.pfTheme==='dark');
         for (const property of Array.from(root.style)) if (property.startsWith('--pf-client-')) doc.documentElement.style.setProperty(property,root.style.getPropertyValue(property));
         let style = doc.getElementById('pf-tool-theme') as HTMLStyleElement;
         if (!style) { style=doc.createElement('style');style.id='pf-tool-theme';doc.head.append(style); }
         style.textContent = 'html,body{background:transparent!important;color:var(--pf-client-ink)!important;font-family:var(--pf-client-font)!important}header,section,.menu,.settings-panel{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}input,select,button{font-family:var(--pf-client-font)}';
+        if(frame.getAttribute('src')?.startsWith('/apps/'))style.textContent+='html{--primary:from var(--pf-client-accent) r g b!important;--ring:from var(--pf-client-accent) r g b!important;--primary-foreground:from var(--pf-client-ink) r g b!important;--foreground:from var(--pf-client-ink) r g b!important;--muted-foreground:from var(--pf-client-muted) r g b!important}header,footer,.footer-bar{display:none!important}.bg-popover,[role=dialog]{background:var(--pf-client-page)!important}.bg-background{background:transparent!important}.bg-card,.bg-muted{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}html,body,main{margin:0!important;max-width:100%!important}main{min-height:100%!important;height:100dvh!important}main>[class*=max-w-]{max-width:none!important;width:100%!important}';
         if (doc.title === 'Binaryfx' || doc.documentElement.dataset.pfBrandHeading === 'true') { doc.documentElement.dataset.pfBrandHeading='true';doc.title=site.name; const heading=doc.querySelector('h1');if(heading)heading.textContent=site.name; }
     } catch { /* External charts retain their provider's own rendering. */ }
 }

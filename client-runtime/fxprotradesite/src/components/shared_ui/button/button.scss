@@ -3,7 +3,7 @@
 :root {
     --button-primary-default: #ff444f;
     --text-colored-background: #fff;
-    --button-primary-hover: #b1913e;
+    --button-primary-hover: var(--pf-client-accent);
     --button-secondary-default: #6e6e6e;
 }
 

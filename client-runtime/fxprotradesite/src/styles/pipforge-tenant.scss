@@ -143,7 +143,7 @@ html[data-pf-tenant='true'] .dc-dialog__dialog,html[data-pf-tenant='true'] .dc-m
 @media(max-width:768px){html[data-pf-tenant='true'] .app-footer{display:flex !important;position:relative;flex-wrap:wrap;height:auto;min-height:40px;padding:8px;gap:8px}html[data-pf-tenant='true'] .layout{height:100dvh;display:flex;flex-direction:column}html[data-pf-tenant='true'] .main-body{flex:1;min-height:0;overflow:auto}}
 
 html[data-pf-active-tab]:not([data-pf-active-tab='id-bot-builder']) .bot-builder{visibility:hidden!important;pointer-events:none!important}
-html[data-pf-active-tab='id-bot-builder'] .controls__section{z-index:100!important;position:relative}
+html[data-pf-active-tab='id-bot-builder'] .controls__section{z-index:100!important}
 html[data-pf-tenant='true'] #root{position:relative;z-index:1}
 
 .pf-account{max-width:100%;flex-wrap:wrap;font-size:1.4rem}.pf-account button,.pf-account select,.pf-account a{font:inherit;color:inherit;border:1px solid var(--pf-client-edge);border-radius:8px;padding:8px 12px;background:var(--pf-client-glass);cursor:pointer}.pf-account button[aria-pressed='true']{border-color:var(--pf-client-accent);background:color-mix(in srgb,var(--pf-client-accent) 22%,var(--pf-client-glass))}
@@ -171,10 +171,13 @@ html[data-pf-tenant='true'] .main-body{flex:1;min-height:0;overflow:hidden}
 html[data-pf-tenant='true'] .main{height:100%;min-height:0}
 html[data-pf-tenant='true'] .bot-dashboard{height:100%;overflow:auto}
 
-html[data-pf-tenant='true'] .dc-tabs__list--main__tabs {display:flex!important;justify-content:flex-start!important;overflow-x:auto!important;flex-shrink:0}
+html[data-pf-tenant='true'] .dc-tabs__list--main__tabs {display:flex!important;justify-content:flex-start!important;overflow-x:auto!important;flex-shrink:0;min-width:0;width:100%}
 html[data-pf-tenant='true'] .dc-tabs__item--main__tabs {flex:0 0 auto!important;min-width:max-content!important;width:auto!important;padding:0 18px!important;font-size:15px!important;min-height:48px;white-space:nowrap}
-html[data-pf-tenant='true'] .main__container > .dc-tabs{height:100%;min-height:0;grid-template-rows:auto minmax(0,1fr)}
+html[data-pf-tenant='true'] .main__container > .dc-tabs{height:100%;min-height:0;min-width:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
 html[data-pf-tenant='true'] .main__container > .dc-tabs > .dc-tabs__content{min-height:0;overflow:auto}
+html[data-pf-tenant='true'] :is(.trading-hub-tabbed,.smart-trading-display,.speed-bot-display){flex:1;min-width:0;width:100%;height:100%;max-height:100%;overflow:auto;padding-bottom:24px}
+html[data-pf-tenant='true'] .trading-hub-content{max-height:none;overflow:visible}
+@media(min-width:1024px){html[data-pf-tenant='true'] .bot-dashboard:has(.main__run-strategy-wrapper button) .dc-tabs__list--main__tabs{width:calc(100% - 38.2rem)}}
 
 html[data-pf-header='compact'] .app-header{padding:6px 12px!important;gap:6px!important}
 html[data-pf-header='corner'] .app-header{border-radius:0 0 24px 0;border-bottom:2px solid var(--pf-client-accent)}
@@ -191,3 +194,24 @@ html[data-pf-header='stacked'] .app-header{flex-direction:column}
 html[data-pf-header='stacked'] .app-header .pf-account{margin:0!important}
 html[data-pf-header='accountbar'] .app-header .pf-account{flex-basis:100%;justify-content:flex-end}
 html[data-pf-header='editorial'] .app-header .app-header__logo{font-size:24px}
+
+.pf-account{position:relative;margin-inline-start:auto;font-size:14px;z-index:120}
+.pf-account-trigger{display:flex!important;gap:10px!important;align-items:center;background:transparent!important;border:0!important;min-height:48px;text-align:start!important}
+.pf-account-trigger>span{display:grid;gap:3px}.pf-account-trigger small{color:var(--pf-client-muted);font-size:12px}.pf-account-trigger strong{color:var(--pf-client-ink);font-size:16px;white-space:nowrap}
+.pf-account-trigger>svg:last-child{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;transition:transform .2s}.pf-account-trigger>svg.is-open{transform:rotate(180deg)}
+.pf-account-menu{position:absolute;right:0;top:calc(100% + 6px);width:min(400px,calc(100vw - 24px));max-height:70dvh;overflow:auto;border:1px solid var(--pf-client-edge);border-radius:14px;background:var(--pf-client-page);color:var(--pf-client-ink);box-shadow:0 16px 45px #0004;backdrop-filter:blur(24px);padding:0 10px 10px;z-index:300}
+.pf-account-tabs{display:flex;border-bottom:1px solid var(--pf-client-edge);margin:0 -10px 12px}.pf-account-tabs button{flex:1;padding:16px 12px;border:0!important;border-bottom:2px solid transparent!important;border-radius:12px!important;background:transparent!important;text-align:start}.pf-account-tabs button[aria-selected=true]{border-bottom-color:var(--pf-client-accent)!important}
+.pf-account-menu h3{font-size:14px;margin:10px 4px}.pf-account-row{display:flex!important;align-items:center;gap:10px;width:100%;border:0!important;margin-bottom:6px;text-align:start!important;padding:12px!important}.pf-account-row>span{display:grid;gap:4px;flex:1}.pf-account-row small{color:var(--pf-client-muted);font-size:12px}.pf-account-row strong{white-space:nowrap;font-size:14px}.pf-account-row[aria-pressed=true]{background:var(--pf-client-glass)!important}.pf-account-logout{display:flex!important;justify-content:flex-end;align-items:center;gap:8px;width:100%;border:0!important;border-top:1px solid var(--pf-client-edge)!important;background:transparent!important;padding:16px 4px!important}.pf-account-logout svg{width:20px;height:20px;fill:none;stroke:currentColor}.pf-account-status{font-size:12px;color:var(--pf-client-muted)}
+html[data-pf-tenant=true] .app-header{overflow:visible!important;position:relative;z-index:120}
+html[data-pf-tenant=true] .pf-trading-template{display:block;height:100%;min-height:400px;background:transparent}
+html[data-pf-tenant=true] .notification-banner{background:linear-gradient(90deg,var(--pf-client-accent),var(--pf-client-secondary))!important}
+
+html[data-pf-tenant=true] :is(.dc-modal__container,.load-strategy__wrapper .dc-mobile-full-page-modal){background:var(--pf-client-page)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(24px)}
+html[data-pf-tenant=true] .dashboard__chart-wrapper{height:100%!important;min-height:0}
+
+.pf-account-trigger[data-account-type=demo] small{color:#ffad3a}
+@media(max-width:1023px){
+ html[data-pf-tenant=true] .controls__section{position:absolute!important;bottom:0;inset-inline:0;width:100%;z-index:100;background:var(--pf-client-page)!important}
+ html[data-pf-tenant=true] .bot-builder{top:56px!important;bottom:64px!important;height:calc(100% - 120px)!important}
+ html[data-pf-tenant=true] .bot-builder #scratch_div{height:100%!important}
+}

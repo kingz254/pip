@@ -32,12 +32,12 @@ export function DerivWSProvider({ children }: { children: React.ReactNode }) {
   // completeAuth before the OTP URL resolves — and `balance` on the public
   // socket earns AuthorizationRequired, which the app's blanket WS-error toast
   // showed the user as "Please log in." right after a successful login
-  // (deriv-com/deriv-api-v2#587). Matches the `isAuthenticated: !!auth.wsUrl`
+  // (deriv-com/deriv-api-v2#587). Matches the `isAuthenticated: auth.authState === 'authenticated'`
   // gate every other authenticated consumer already uses.
   useBalanceSync(
     ws,
     isConnected,
-    auth.wsUrl ? auth.activeAccountId : null,
+    auth.authState === 'authenticated' ? auth.activeAccountId : null,
     auth.updateAccountBalance
   );
 

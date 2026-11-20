@@ -33,10 +33,17 @@ export function requestForOptions(input, account) {
 
 // Keep Blockly's internal view model while using only New API fields on the wire.
 export function responseForWorkspace(data) {
+    if (data.trading_times) return { ...data, trading_times: { ...data.trading_times,
+        markets: data.trading_times.markets.map(market => ({ ...market, submarkets: (market.submarkets || []).map(submarket => ({ ...submarket,
+            symbols: submarket.symbols.filter(symbol => Array.isArray(symbol.times?.open) && Array.isArray(symbol.times?.close)).map(symbol => ({ ...symbol,
+                symbol: symbol.underlying_symbol, events: symbol.events || [], trading_days: symbol.trading_days || [],
+            })),
+        })) })),
+    } };
     if (data.active_symbols) return { ...data, active_symbols: data.active_symbols.map(s => ({ ...s,
         symbol: s.underlying_symbol, display_name: s.underlying_symbol_name,
         symbol_type: s.underlying_symbol_type, pip: Number(s.pip_size),
-        market_display_name: s.market.replaceAll('_', ' '), submarket_display_name: s.submarket.replaceAll('_', ' '),
+        market_display_name: s.market.replaceAll('_', ' '), submarket_display_name: s.submarket.replaceAll('_', ' '), subgroup_display_name: s.subgroup.replaceAll('_', ' '),
     })) };
     if (data.proposal_open_contract) {
         const c = data.proposal_open_contract;

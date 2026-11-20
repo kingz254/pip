@@ -52,6 +52,14 @@ const BotBuilder = observer(() => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [is_running]);
 
+    React.useEffect(() => {
+        if(active_tab!==1 || is_loading)return;
+        const resize=()=>{const workspace=window.Blockly?.derivWorkspace;if(workspace){if(!(workspace.scale>0))workspace.setScale(isDesktop?0.7:0.6);window.Blockly.svgResize(workspace);workspace.resize?.();}};
+        const observer=new ResizeObserver(resize);if(el_ref.current)observer.observe(el_ref.current);
+        const frame=requestAnimationFrame(resize);
+        return()=>{cancelAnimationFrame(frame);observer.disconnect()};
+    },[active_tab,is_loading,isDesktop]);
+
     const handleBlockChangeOnBotRun = (e: Event) => {
         const { is_reset_button_clicked } = toolbar;
         if (e.type !== 'selected' && !is_reset_button_clicked) {

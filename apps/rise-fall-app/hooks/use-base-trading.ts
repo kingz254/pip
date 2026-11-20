@@ -68,7 +68,7 @@ export function useBaseTrading({
   // the public WS by triggering logout.
   useEffect(() => {
     if (isExhausted && ws) {
-      onAuthWSFailed?.();
+      toast.error('Trading connection interrupted. Reconnect before placing another trade.');
     }
   }, [isExhausted, ws, onAuthWSFailed]);
 

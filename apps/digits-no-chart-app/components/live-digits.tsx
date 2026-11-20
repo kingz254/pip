@@ -44,7 +44,7 @@ export function LiveDigits({
     ws,
     isConnected,
     isExhausted,
-    isAuthenticated: !!auth.wsUrl,
+    isAuthenticated: auth.authState === 'authenticated',
     onAuthWSFailed: logout,
   });
 

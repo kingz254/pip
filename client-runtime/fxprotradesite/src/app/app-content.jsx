@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import { ToastContainer, toast } from 'react-toastify';
 import useLiveChat from '@/components/chat/useLiveChat';
 import ChunkLoader from '@/components/loader/chunk-loader';
-import LoginRequiredModal from '@/components/login-required-modal';
 import { getUrlBase } from '@/components/shared';
 import TncStatusUpdateModal from '@/components/tnc-status-update-modal';
 import TransactionDetailsModal from '@/components/transaction-details';
@@ -100,6 +99,7 @@ const AppContent = observer(() => {
     // Handle bot file loading from signal pages
     React.useEffect(() => {
         const handleBotFileLoad = async (event) => {
+            if(event.origin!==window.location.origin)return;
             if (event.data?.action === 'load_bot_file' && event.data?.fileName) {
                 const fileName = event.data.fileName;
                 console.log('🚀 Loading signal bot:', fileName);
@@ -290,7 +290,6 @@ const AppContent = observer(() => {
                     />
                     <TncStatusUpdateModal />
                 </div>
-                {window.parent === window && <LoginRequiredModal />}
             </ThemeProvider>
         
     );

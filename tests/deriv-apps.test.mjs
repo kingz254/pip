@@ -31,7 +31,7 @@ test('preview keeps one complete FXPro app mounted when design choices change', 
 test('builder offers every native FXPro tab in source order', async t => {
   const { w, d } = boot(); t.after(() => w.close()); await tick(100);
   assert.deepEqual([...d.querySelectorAll('#mnu input')].map(x => x.dataset.m), [
-    'id-dbot-dashboard','id-bot-builder','id-dtrader','id-charts','id-analysis-tool','id-free-bots','id-portfolio','id-forex',
+    'id-dbot-dashboard','id-bot-builder','id-trading-hub','id-smart-trading','id-speed-bot','id-charts','id-analysis-tool','id-free-bots','id-portfolio','id-forex','id-digits','id-accumulators','id-rise-fall',
   ]);
 });
 

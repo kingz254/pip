@@ -46,7 +46,7 @@ export function LiveRiseFall({
     ws,
     isConnected,
     isExhausted,
-    isAuthenticated: !!auth.wsUrl,
+    isAuthenticated: auth.authState === 'authenticated',
     onAuthWSFailed: logout,
   });
 

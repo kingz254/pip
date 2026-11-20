@@ -1,4 +1,6 @@
 'use client';
+import { borrowSocket } from './borrow-socket';
+import { getEmbeddedTradingHost } from './embedded-host';
 import { getWebSocketOTP } from '../auth/accounts';
 import { getAuthInfo } from '../auth/storage';
 
@@ -55,11 +57,26 @@ export function useDerivWS(options?: UseDerivWSOptions): UseDerivWSReturn {
   // Full reconnect key: changes when auth type changes OR when the account switches.
   // Stays stable when only the OTP URL string is refreshed for the same account.
   const isAuthenticated = url !== undefined;
-  const reconnectKey = isAuthenticated ? `auth:${accountId ?? 'unknown'}` : 'public';
+  const reconnectKey = getEmbeddedTradingHost()
+    ? `host:${accountId ?? 'public'}`
+    : isAuthenticated ? `auth:${accountId ?? 'unknown'}` : 'public';
 
   useEffect(() => {
     let disposed = false;
 
+    const host=getEmbeddedTradingHost();
+    if(host){
+      let stop=()=>{};
+      host.getSocket().then(instance=>{
+        if(disposed)return;
+        const lease=borrowSocket(instance);wsRef.current=lease.socket;setIsConnected(instance.isConnected);setError(null);
+        const stopConnection=instance.onConnectionStateChange(connected=>{if(!disposed){setIsConnected(connected);if(connected)setError(null)}});
+        const release=()=>{stopConnection();lease.release()};window.addEventListener('pagehide',release,{once:true});
+        stop=()=>{window.removeEventListener('pagehide',release);release()};
+        listenersRef.current.forEach(listener=>listener());
+      }).catch(error=>{if(!disposed)setError(error instanceof Error?error.message:'Trading connection unavailable')});
+      return()=>{disposed=true;stop();wsRef.current=null;listenersRef.current.forEach(listener=>listener());};
+    }
     let firstConnection = true;
     const instance = new DerivWS(url, url && accountId ? async () => {
       if(firstConnection){firstConnection=false;return url;}

@@ -27,7 +27,7 @@ const server = createServer(async (req,res) => {
   if (url.pathname === '/') { await siteEntry(req,res); return; }
   if (url.pathname === '/api/client-site') { await clientSite(req,res); return; }
   const appKey = url.pathname.match(/^\/apps\/([^/]+)/)?.[1];
-  if (dev && apps[appKey]) {
+  if (dev && process.env.PF_LEGACY_APPS === '1' && apps[appKey]) {
     const upstream = proxyRequest({ hostname:'127.0.0.1',port:apps[appKey][1],path:req.url,method:req.method,headers:{...req.headers,host:new URL(origin).host}}, response => { res.writeHead(response.statusCode,response.headers); response.pipe(res); });
     upstream.on('error',()=> { if (!res.headersSent) res.writeHead(503,{'Content-Type':'text/html','Refresh':'3'}); res.end('<p>The trading app is starting. This page will retry shortly.</p>'); });
     req.pipe(upstream); return;

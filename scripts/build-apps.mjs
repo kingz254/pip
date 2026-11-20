@@ -11,6 +11,11 @@ for(const args of [['ci','--include=dev','--ignore-scripts','--no-audit','--no-f
   const result=spawnSync(process.execPath,[process.env.npm_execpath,...args],{cwd:app,stdio:'inherit',env:{...process.env,NODE_ENV:'production'}});
   if(result.status!==0)process.exit(result.status||1);
 }
+for(const [folder,route] of [['digits-no-chart-app','digits'],['rise-fall-app','rise-fall'],['accumulators-app','accumulators']]) {
+  const result=spawnSync(process.execPath,[process.env.npm_execpath,'run','build','--','--webpack'],{cwd:resolve(root,'apps',folder),stdio:'inherit',env:{...process.env,PIPFORGE_BUILD:'1',NEXT_TELEMETRY_DISABLED:'1',NEXT_PUBLIC_BASE_PATH:'/apps/'+route,NEXT_PUBLIC_DERIV_APP_NAME:'Trading workspace'}});
+  if(result.status!==0)process.exit(result.status||1);
+  await cp(resolve(root,'apps',folder,'.next-build'),resolve(root,'public/apps',route),{recursive:true});
+}
 await mkdir(resolve(root,'public'),{recursive:true});
 for(const entry of await readdir(resolve(app,'dist'))) {
   if(['index.html','markup','deriv-callback.html','deriv-callback.js','service-worker.js','test-bot-urls.html'].includes(entry))continue;

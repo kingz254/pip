@@ -196,7 +196,7 @@ const Tabs = ({
                                     icon_color={icon_color}
                                     icon_size={icon_size}
                                     is_active={index === active_tab_index}
-                                    key={label}
+                                    key={id || index}
                                     is_label_hidden={children.length === 1 && single_tab_has_no_label}
                                     label={label}
                                     id={id}

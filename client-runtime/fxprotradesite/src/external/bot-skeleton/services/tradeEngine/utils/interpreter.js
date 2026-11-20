@@ -82,7 +82,7 @@ const Interpreter = () => {
                 })
                 .catch(e => {
                     // e.error for errors get from API, e for code errors
-                    $scope.observer.emit('Error', e.error || e);
+                    $scope.observer.emit('Error', e.error ? { ...e.error, nonRetryable: e.nonRetryable } : e);
                 });
         };
 
@@ -238,6 +238,7 @@ const Interpreter = () => {
                 if ($scope.stopped) {
                     return;
                 }
+                if (e.nonRetryable) { reject(e); return; }
                 // DBot handles 'InvalidToken' internally
                 if (e.code === 'InvalidToken') {
                     globalObserver.emit('client.invalid_token');

@@ -63,7 +63,7 @@
     z-index: 10;
 
     &:hover {
-        background-color: #b1913e;
+        background-color: var(--pf-client-accent);
         color: white;
         transform: rotate(90deg);
     }
@@ -73,7 +73,7 @@
         color: #7b9bff;
 
         &:hover {
-            background-color: #b1913e;
+            background-color: var(--pf-client-accent);
             color: white;
         }
     }
@@ -103,20 +103,20 @@
     text-align: center;
     margin: 0 16px 8px;
     line-height: 1.3;
-    background: linear-gradient(135deg, #b1913e, #b48a0b);
+    background: linear-gradient(135deg, var(--pf-client-accent), var(--pf-client-accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 
     .theme--dark & {
-        background: linear-gradient(135deg, #b1913e, #ba9d47);
+        background: linear-gradient(135deg, var(--pf-client-accent), var(--pf-client-accent));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
 
     .theme--light & {
-        background: linear-gradient(135deg, #b1913e, #c19f3b);
+        background: linear-gradient(135deg, var(--pf-client-accent), var(--pf-client-accent));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -288,7 +288,7 @@
     }
 
     &.primary {
-        background: linear-gradient(135deg,#b1913e,#ceb159);
+        background: linear-gradient(135deg,var(--pf-client-accent),var(--pf-client-accent));
         color: white;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 
@@ -297,15 +297,15 @@
         }
 
         .theme--dark & {
-            background: linear-gradient(135deg, #b1913e,#ceb159);
+            background: linear-gradient(135deg, var(--pf-client-accent),var(--pf-client-accent));
             color: #000000;
         }
     }
 
     &.secondary {
         background: transparent;
-        color: #b1913e;
-        border: 2px solid#ceb159;
+        color: var(--pf-client-accent);
+        border: 2px solidvar(--pf-client-accent);
 
         &:hover {
             background:  rgba(248, 228, 5, 0.4);;
@@ -317,8 +317,8 @@
         }
 
         .theme--dark & {
-            color: #b1913e;
-            border-color: #ceb159;
+            color: var(--pf-client-accent);
+            border-color: var(--pf-client-accent);
 
             &:hover {
                 background: rgba(122, 134, 8, 0.1);

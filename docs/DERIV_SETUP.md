@@ -2,7 +2,7 @@
 
 ## What the client preview uses
 
-The complete native FXPro application under `client-runtime/fxprotradesite` powers both preview and customer domains. Its eight tabs retain their source order; Smart trading contains its four original workspaces. See [FXPRO_CLIENT_RUNTIME.md](FXPRO_CLIENT_RUNTIME.md) for branding, transport and delivery boundaries. The old `apps/` templates are retained as compatibility source and are no longer mounted or built for client delivery.
+The complete native FXPro application under `client-runtime/fxprotradesite` powers both preview and customer domains. Trading Hub, Smart Trading, Speed Bot and Charts are independent main tabs. Digits, Accumulators and Rise/Fall reuse the supplied template screens and the shell account/socket. DTrader is removed. See [FXPRO_CLIENT_RUNTIME.md](FXPRO_CLIENT_RUNTIME.md) for branding, transport and delivery boundaries. The old `apps/` templates are retained as compatibility source and are no longer mounted or built for client delivery.
 
 ## Local preview
 

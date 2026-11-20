@@ -1,3 +1,4 @@
+import { getSelectedAccount } from '../../../../../pipforge/session';
 import { localize } from '@deriv-com/translations';
 import { createError } from '../../../utils/error';
 
@@ -25,9 +26,9 @@ const expectOptions = options => {
 };
 
 export const expectInitArg = args => {
-    const [token, options] = args;
+    const [accountId, options] = args;
 
-    if (!token) {
+    if (!getSelectedAccount() || accountId !== getSelectedAccount().account_id) {
         throw createError('LoginError', localize('Please login'));
     }
 

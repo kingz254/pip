@@ -13,7 +13,6 @@ import {
 import { ChartTitle, SmartChart } from '@deriv/deriv-charts';
 import { useDevice } from '@deriv-com/ui';
 import ToolbarWidgets from './toolbar-widgets';
-import ChartToggle from './chart-toggle';
 import '@deriv/deriv-charts/dist/smartcharts.css';
 
 type TSubscription = {
@@ -64,7 +63,9 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
 
     useEffect(() => {
         return () => {
-            chart_api.api.forgetAll('ticks');
+            Object.values(subscriptions).forEach(subscription=>subscription?.unsubscribe?.());
+            Object.keys(subscriptions).forEach(key=>delete subscriptions[key]);
+            if(chartSubscriptionIdRef.current)void chart_api.api?.forget(chartSubscriptionIdRef.current).catch(()=>{});
         };
     }, []);
 
@@ -80,20 +81,22 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
         return chart_api.api.send(req);
     };
     const requestForgetStream = (subscription_id: string) => {
-        subscription_id && chart_api.api.forget(subscription_id);
+        if(!subscription_id)return;
+        subscriptions[subscription_id]?.unsubscribe?.();delete subscriptions[subscription_id];
+        void chart_api.api?.forget(subscription_id).catch(()=>{});
     };
 
     const requestSubscribe = async (req: TicksStreamRequest, callback: (data: any) => void) => {
         try {
             requestForgetStream(chartSubscriptionIdRef.current);
             const history = await chart_api.api.send(req);
-            setChartSubscriptionId(history?.subscription.id);
+            setChartSubscriptionId(history?.subscription?.id);
             if (history) callback(history);
             if (req.subscribe === 1) {
-                subscriptions[history?.subscription.id] = chart_api.api
+                subscriptions[history?.subscription?.id] = chart_api.api
                     .onMessage()
                     ?.subscribe(({ data }: { data: TicksHistoryResponse }) => {
-                        callback(data);
+                        if(data.subscription?.id===history?.subscription?.id)callback(data);
                     });
             }
         } catch (e) {
@@ -106,7 +109,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
     if (!symbol) return null;
     const is_connection_opened = !!chart_api?.api;
     return (
-        <ChartToggle>
+        <>
             <div
                 className={classNames('dashboard__chart-wrapper', {
                     'dashboard__chart-wrapper--expanded': is_drawer_open && isDesktop,
@@ -135,7 +138,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                     granularity={granularity}
                     requestAPI={requestAPI}
                     requestForget={() => {}}
-                    requestForgetStream={() => {}}
+                    requestForgetStream={requestForgetStream}
                     requestSubscribe={requestSubscribe}
                     settings={settings}
                     symbol={symbol}
@@ -146,7 +149,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                     leftMargin={80}
                 />
             </div>
-        </ChartToggle>
+        </>
     );
 });
 

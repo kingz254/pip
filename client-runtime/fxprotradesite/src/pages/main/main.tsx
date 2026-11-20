@@ -40,7 +40,10 @@ declare global {
 }
 
 const Chart = lazy(() => import('../chart'));
-const DTrader = lazy(() => import('../dtrader'));
+const TradingHub = lazy(()=>import('@/components/trading-hub/trading-hub-display'));
+const SmartTrading = lazy(()=>import('../chart/smart-trading-display'));
+const SpeedBot = lazy(()=>import('../chart/speed-bot-display'));
+const TradingTemplate = lazy(()=>import('../trading-template'));
 const Forex = lazy(() => import('../forex'));
 
 const DashboardIcon = () => (
@@ -149,37 +152,6 @@ const BotIcon = () => (
         <circle cx='12' cy='4' r='1' fill='var(--text-general)' />
         <path d='M4 11H2' stroke='var(--text-general)' strokeWidth='1.5' strokeLinecap='round' />
         <path d='M22 11H20' stroke='var(--text-general)' strokeWidth='1.5' strokeLinecap='round' />
-    </svg>
-);
-
-const DTraderIcon = () => (
-    <svg width='20px' height='20px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-        <path
-            d='M3 13L7 9L11 13L17 7L21 11'
-            stroke='var(--text-general)'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-        />
-        <path
-            d='M17 7H21V11'
-            stroke='var(--text-general)'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-        />
-        <rect
-            x='2'
-            y='17'
-            width='20'
-            height='5'
-            rx='1'
-            stroke='var(--text-general)'
-            strokeWidth='2'
-            fill='none'
-        />
-        <path d='M6 19H6.01' stroke='var(--text-general)' strokeWidth='2' strokeLinecap='round' />
-        <path d='M10 19H10.01' stroke='var(--text-general)' strokeWidth='2' strokeLinecap='round' />
     </svg>
 );
 
@@ -814,6 +786,9 @@ const AppWrapper = observer(() => {
     const showRunPanel = [
         DBOT_TABS.BOT_BUILDER,
         DBOT_TABS.CHART,
+        DBOT_TABS.TRADING_HUB,
+        DBOT_TABS.SMART_TRADING,
+        DBOT_TABS.SPEED_BOT,
         DBOT_TABS.ANALYSIS_TOOL,
         DBOT_TABS.FREE_BOTS,
     ].includes(active_tab);
@@ -876,24 +851,14 @@ const AppWrapper = observer(() => {
                             }
                             id='id-bot-builder'
                         />
-                        <div
-                            label={
-                                <>
-                                    <DTraderIcon />
-                                    <Localize i18n_default_text='DTrader' />
-                                </>
-                            }
-                            id='id-dtrader'
-                        >
-                            <Suspense fallback={<ChunkLoader message={localize('Loading DTrader...')} />}>
-                                <DTrader />
-                            </Suspense>
-                        </div>
+                        <div id='id-trading-hub' label={<><ChartsIcon /><Localize i18n_default_text='Trading Hub' /></>}><Suspense fallback={<ChunkLoader />}><TradingHub /></Suspense></div>
+                        <div id='id-smart-trading' label={<><AnalysisToolIcon /><Localize i18n_default_text='Smart Trading' /></>}><Suspense fallback={<ChunkLoader />}><SmartTrading /></Suspense></div>
+                        <div id='id-speed-bot' label={<><BotBuilderIcon /><Localize i18n_default_text='Speed Bot' /></>}><Suspense fallback={<ChunkLoader />}><SpeedBot /></Suspense></div>
                         <div
                             label={
                                 <>
                                     <ChartsIcon />
-                                    <Localize i18n_default_text='Smart trading' />
+                                    <Localize i18n_default_text='Charts' />
                                 </>
                             }
                             id='id-charts'
@@ -1339,12 +1304,15 @@ const AppWrapper = observer(() => {
                                 </Suspense>
                             </div>
                         </div>
+                        <div id='id-digits' label={<><AnalysisToolIcon /><Localize i18n_default_text='Digits' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='digits' /></Suspense></div>
+                        <div id='id-accumulators' label={<><PortfolioIcon /><Localize i18n_default_text='Accumulators' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='accumulators' /></Suspense></div>
+                        <div id='id-rise-fall' label={<><ChartsIcon /><Localize i18n_default_text='Rise / Fall' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='rise-fall' /></Suspense></div>
                     </Tabs>
                 </div>
             </div>
             <DesktopWrapper>
                 <div className='main__run-strategy-wrapper'>
-                    {active_tab !== DBOT_TABS.DTRADER && active_tab !== DBOT_TABS.PORTFOLIO && active_tab !== DBOT_TABS.FOREX && <RunStrategy />}
+                    {showRunPanel && <RunStrategy />}
                     {showRunPanel && <RunPanel />}
                 </div>
                 <ChartModal />
@@ -1355,7 +1323,7 @@ const AppWrapper = observer(() => {
                 <StandaloneChartModal />
             </DesktopWrapper>
             <MobileWrapper>
-                {active_tab !== DBOT_TABS.DTRADER && active_tab !== DBOT_TABS.PORTFOLIO && active_tab !== DBOT_TABS.FOREX && <RunPanel />}
+                {showRunPanel && <RunPanel />}
             </MobileWrapper>
             <Dialog
                 cancel_button_text={cancel_button_text || localize('Cancel')}
