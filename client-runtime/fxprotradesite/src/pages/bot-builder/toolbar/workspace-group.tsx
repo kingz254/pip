@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
+import { DBOT_TABS } from '@/constants/bot-contents';
 import {
     LabelPairedArrowRotateLeftMdRegularIcon,
     LabelPairedArrowRotateRightMdRegularIcon,
@@ -23,7 +24,7 @@ import ToolbarIcon from './toolbar-icon';
 
 const WorkspaceGroup = observer(() => {
     const { dashboard, toolbar, load_modal, save_modal } = useStore();
-    const { setPreviewOnPopup, setTradingViewModalVisibility, setAnalysisModalVisibility, setSignalsModalVisibility, setAdvancedDisplayModalVisibility, setStandaloneChartModalVisibility } = dashboard;
+    const { setPreviewOnPopup, setTradingViewModalVisibility, setAnalysisModalVisibility, setActiveTab, setAdvancedDisplayModalVisibility, setStandaloneChartModalVisibility } = dashboard;
     const { has_redo_stack, has_undo_stack, onResetClick, onSortClick, onUndoClick, onZoomInOutClick } = toolbar;
     const { toggleSaveModal } = save_modal;
     const { toggleLoadModal } = load_modal;
@@ -138,7 +139,7 @@ const WorkspaceGroup = observer(() => {
                                 <span
                                     className='toolbar__icon'
                                     id='db-toolbar__signals-button'
-                                    onClick={() => setSignalsModalVisibility()}
+                                    onClick={() => setActiveTab(DBOT_TABS.SIGNALS)}
                                 >
                                     <LabelPairedWifiMdRegularIcon />
                                 </span>
@@ -179,7 +180,7 @@ const WorkspaceGroup = observer(() => {
                                 <span
                                     className='toolbar__icon'
                                     id='db-toolbar__signals-button-mobile'
-                                    onClick={() => setSignalsModalVisibility()}
+                                    onClick={() => setActiveTab(DBOT_TABS.SIGNALS)}
                                 >
                                     <LabelPairedWifiMdRegularIcon />
                                 </span>

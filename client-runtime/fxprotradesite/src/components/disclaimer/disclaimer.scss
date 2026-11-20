@@ -1,3 +1,20 @@
+.pf-risk-button {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    border: 1px solid var(--pf-client-edge, var(--border-normal));
+    border-radius: 50%;
+    background: var(--pf-client-glass, var(--general-section-1));
+    color: var(--pf-client-accent, var(--brand-red-coral, #ff444f));
+    cursor: pointer;
+    touch-action: manipulation;
+    svg { width: 22px; height: 22px; }
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+}
+
 .disclaimer-button-wrapper {
     width: 130px;
     height: 42px;

@@ -32,10 +32,9 @@ const Layout = () => {
             <Body>
                 <Outlet />
             </Body>
-            {!isCallbackPage && <DisclaimerButton />}
             {!isCallbackPage && <Footer />}
-            {!isCallbackPage && <CommunityFloatingIcon />}
-            {!isCallbackPage && <NetworkSpeedIndicator />}
+            {!isCallbackPage && !brand && <CommunityFloatingIcon />}
+            {!isCallbackPage && !brand && <NetworkSpeedIndicator />}
         </div>
     );
 };

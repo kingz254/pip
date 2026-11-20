@@ -140,7 +140,7 @@ html[data-pf-tenant='true'][data-pf-header='halo'] .app-header { box-shadow: 0 8
 html[data-pf-embedded='true'] body::before { display:none !important; }
 html[data-pf-tenant='true'] .app-header,html[data-pf-tenant='true'] .app-footer { flex-shrink:0; }
 html[data-pf-tenant='true'] .dc-dialog__dialog,html[data-pf-tenant='true'] .dc-mobile-full-page-modal,html[data-pf-tenant='true'] .dc-page-overlay { background:var(--pf-client-page, #151923) !important;color:var(--pf-client-ink) !important;backdrop-filter:blur(24px); }
-@media(max-width:768px){html[data-pf-tenant='true'] .app-footer{display:flex !important;position:relative;flex-wrap:wrap;height:auto;min-height:40px;padding:8px;gap:8px}html[data-pf-tenant='true'] .layout{height:100dvh;display:flex;flex-direction:column}html[data-pf-tenant='true'] .main-body{flex:1;min-height:0;overflow:auto}}
+@media(max-width:768px){html[data-pf-tenant='true'] .app-footer{display:flex !important;position:relative;flex-wrap:nowrap;height:52px;min-height:52px;padding:0 8px;gap:6px}html[data-pf-tenant='true'] .layout{height:100dvh;display:flex;flex-direction:column}html[data-pf-tenant='true'] .main-body{flex:1;min-height:0;overflow:auto}}
 
 html[data-pf-active-tab]:not([data-pf-active-tab='id-bot-builder']) .bot-builder{visibility:hidden!important;pointer-events:none!important}
 html[data-pf-active-tab='id-bot-builder'] .controls__section{z-index:100!important}
@@ -211,7 +211,22 @@ html[data-pf-tenant=true] .dashboard__chart-wrapper{height:100%!important;min-he
 
 .pf-account-trigger[data-account-type=demo] small{color:#ffad3a}
 @media(max-width:1023px){
- html[data-pf-tenant=true] .controls__section{position:absolute!important;bottom:0;inset-inline:0;width:100%;z-index:100;background:var(--pf-client-page)!important}
+ html[data-pf-tenant=true] .app-header{flex-direction:row!important;flex-wrap:nowrap!important;gap:4px!important;padding:4px!important;min-width:0}
+ html[data-pf-tenant=true] .app-header__logo{min-width:0;max-width:34vw;overflow:hidden;padding-inline:4px;font-size:14px;text-overflow:ellipsis;white-space:nowrap}
+ html[data-pf-tenant=true] .app-header .pf-social-profiles{gap:3px;flex:0 1 auto}
+ html[data-pf-tenant=true] .app-header .pf-social-profiles a{width:28px;height:28px}
+ html[data-pf-tenant=true] .pf-account{min-width:0;flex:0 1 auto;font-size:12px}
+ html[data-pf-tenant=true] .pf-account-trigger{gap:4px!important;padding:4px!important;min-width:0;min-height:40px}
+ html[data-pf-tenant=true] .pf-account-trigger strong{font-size:clamp(10px,3vw,13px);max-width:30vw;overflow:hidden;text-overflow:ellipsis}
+ html[data-pf-tenant=true] .pf-account-trigger small{font-size:9px}
+ html[data-pf-tenant=true] .dc-drawer{top:11.5rem!important;bottom:9.8rem!important;height:auto!important;transform:translateY(calc(100% - 3.6rem))!important}
+ html[data-pf-tenant=true] .dc-drawer.dc-drawer--open{transform:translateY(0)!important}
+ html[data-pf-tenant=true] .dc-drawer__container{height:100%!important}
+ html[data-pf-tenant=true] .controls__section{position:fixed!important;bottom:52px!important;inset-inline:0;width:100%;z-index:1100;background:var(--pf-client-page)!important;pointer-events:auto;padding:6px 10px;box-sizing:border-box}
+ html[data-pf-tenant=true] .controls__section .animation__wrapper{width:100%}
+ html[data-pf-tenant=true] .controls__section .animation__container{flex:1;min-width:0}
  html[data-pf-tenant=true] .bot-builder{top:56px!important;bottom:64px!important;height:calc(100% - 120px)!important}
  html[data-pf-tenant=true] .bot-builder #scratch_div{height:100%!important}
 }
+
+.main-signals-frame{display:block;width:100%;height:100%;min-height:60vh;border:0;background:transparent}

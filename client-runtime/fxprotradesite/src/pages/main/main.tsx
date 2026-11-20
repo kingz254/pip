@@ -12,7 +12,6 @@ import DesktopWrapper from '@/components/shared_ui/desktop-wrapper';
 import Dialog from '@/components/shared_ui/dialog';
 import MobileWrapper from '@/components/shared_ui/mobile-wrapper';
 import Tabs from '@/components/shared_ui/tabs/tabs';
-import SignalsModal from '@/components/signals/signals-modal';
 import InstancesAnalysis from '@/components/trading-hub/instances-analysis';
 import AdvancedDisplay from '@/components/trading-hub/advanced-display';
 import TradingViewModal from '@/components/trading-view-chart/trading-view-modal';
@@ -851,82 +850,7 @@ const AppWrapper = observer(() => {
                             }
                             id='id-bot-builder'
                         />
-                        <div id='id-trading-hub' label={<><ChartsIcon /><Localize i18n_default_text='Trading Hub' /></>}><Suspense fallback={<ChunkLoader />}><TradingHub /></Suspense></div>
-                        <div id='id-smart-trading' label={<><AnalysisToolIcon /><Localize i18n_default_text='Smart Trading' /></>}><Suspense fallback={<ChunkLoader />}><SmartTrading /></Suspense></div>
-                        <div id='id-speed-bot' label={<><BotBuilderIcon /><Localize i18n_default_text='Speed Bot' /></>}><Suspense fallback={<ChunkLoader />}><SpeedBot /></Suspense></div>
-                        <div
-                            label={
-                                <>
-                                    <ChartsIcon />
-                                    <Localize i18n_default_text='Charts' />
-                                </>
-                            }
-                            id='id-charts'
-                        >
-                            <Suspense fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}>
-                                <Chart show_digits_stats={true} />
-                            </Suspense>
-                        </div>
-                        <div
-                            label={
-                                <>
-                                    <AnalysisToolIcon />
-                                    <Localize i18n_default_text='Analysis Tool' />
-                                </>
-                            }
-                            id='id-analysis-tool'
-                        >
-                            <div
-                                className={classNames('dashboard__chart-wrapper', {
-                                    'dashboard__chart-wrapper--expanded': is_drawer_open && isDesktop,
-                                    'dashboard__chart-wrapper--modal': is_chart_modal_visible && isDesktop,
-                                })}
-                            >
-                                <div className='analysis-tool-toggle'>
-                                    <button
-                                        onClick={() => toggleAnalysisTool('advanced')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'advanced' ? 'active' : ''
-                                        }`}
-                                    >
-                                        Advanced
-                                    </button>
-                                    <button
-                                        onClick={() => toggleAnalysisTool('instances')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'instances' ? 'active' : ''
-                                        }`}
-                                    >
-                                        Instances
-                                    </button>
-                                    <button
-                                        onClick={() => toggleAnalysisTool('ai')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'ai' ? 'active' : ''
-                                        }`}
-                                    >
-                                        A Tool
-                                    </button>
-                                    <button
-                                        onClick={() => toggleAnalysisTool('arbitrage')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'arbitrage' ? 'active' : ''
-                                        }`}
-                                    >
-                                        Arbitrage
-                                    </button>
-                                    <button
-                                        onClick={() => toggleAnalysisTool('ldpanalyzer')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'ldpanalyzer' ? 'active' : ''
-                                        }`}
-                                    >
-                                        LDP Tool
-                                    </button>
-                                </div>
-                                {renderAnalysisToolContent()}
-                            </div>
-                        </div>
+                        <div id='id-speed-bot' label={<><AutoTraderIcon /><Localize i18n_default_text='Speed Bot' /></>}><Suspense fallback={<ChunkLoader />}><SpeedBot /></Suspense></div>
                         <div
                             label={
                                 <>
@@ -1276,17 +1200,67 @@ const AppWrapper = observer(() => {
                             </div>
                             
                         </div>
+                        <div id='id-smart-trading' label={<><AnalysisToolIcon /><Localize i18n_default_text='Smart Trading' /></>}><Suspense fallback={<ChunkLoader />}><SmartTrading /></Suspense></div>
+                        <div id='id-trading-hub' label={<><ChartsIcon /><Localize i18n_default_text='Trading Hub' /></>}><Suspense fallback={<ChunkLoader />}><TradingHub /></Suspense></div>
+                        <div id='id-signals' label={<><SignalsIcon /><Localize i18n_default_text='Signals' /></>}><iframe src='/signals' title='Trading Signals' className='main-signals-frame' /></div>
                         <div
                             label={
                                 <>
-                                    <PortfolioIcon />
-                                    <Localize i18n_default_text='Portfolio' />
+                                    <AnalysisToolIcon />
+                                    <Localize i18n_default_text='Analysis Tool' />
                                 </>
                             }
-                            id='id-portfolio'
+                            id='id-analysis-tool'
                         >
-                            <div className='dashboard__portfolio-wrapper'>
-                                <PortfolioDisplay />
+                            <div
+                                className={classNames('dashboard__chart-wrapper', {
+                                    'dashboard__chart-wrapper--expanded': is_drawer_open && isDesktop,
+                                    'dashboard__chart-wrapper--modal': is_chart_modal_visible && isDesktop,
+                                })}
+                            >
+                                <div className='analysis-tool-toggle'>
+                                    <button
+                                        onClick={() => toggleAnalysisTool('advanced')}
+                                        className={`analysis-tool-toggle__button ${
+                                            analysisToolUrl === 'advanced' ? 'active' : ''
+                                        }`}
+                                    >
+                                        Advanced
+                                    </button>
+                                    <button
+                                        onClick={() => toggleAnalysisTool('instances')}
+                                        className={`analysis-tool-toggle__button ${
+                                            analysisToolUrl === 'instances' ? 'active' : ''
+                                        }`}
+                                    >
+                                        Instances
+                                    </button>
+                                    <button
+                                        onClick={() => toggleAnalysisTool('ai')}
+                                        className={`analysis-tool-toggle__button ${
+                                            analysisToolUrl === 'ai' ? 'active' : ''
+                                        }`}
+                                    >
+                                        A Tool
+                                    </button>
+                                    <button
+                                        onClick={() => toggleAnalysisTool('arbitrage')}
+                                        className={`analysis-tool-toggle__button ${
+                                            analysisToolUrl === 'arbitrage' ? 'active' : ''
+                                        }`}
+                                    >
+                                        Arbitrage
+                                    </button>
+                                    <button
+                                        onClick={() => toggleAnalysisTool('ldpanalyzer')}
+                                        className={`analysis-tool-toggle__button ${
+                                            analysisToolUrl === 'ldpanalyzer' ? 'active' : ''
+                                        }`}
+                                    >
+                                        LDP Tool
+                                    </button>
+                                </div>
+                                {renderAnalysisToolContent()}
                             </div>
                         </div>
                         <div
@@ -1304,9 +1278,35 @@ const AppWrapper = observer(() => {
                                 </Suspense>
                             </div>
                         </div>
-                        <div id='id-digits' label={<><AnalysisToolIcon /><Localize i18n_default_text='Digits' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='digits' /></Suspense></div>
                         <div id='id-accumulators' label={<><PortfolioIcon /><Localize i18n_default_text='Accumulators' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='accumulators' /></Suspense></div>
+                        <div id='id-digits' label={<><AnalysisToolIcon /><Localize i18n_default_text='Digits' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='digits' /></Suspense></div>
                         <div id='id-rise-fall' label={<><ChartsIcon /><Localize i18n_default_text='Rise / Fall' /></>}><Suspense fallback={<ChunkLoader />}><TradingTemplate app='rise-fall' /></Suspense></div>
+                        <div
+                            label={
+                                <>
+                                    <ChartsIcon />
+                                    <Localize i18n_default_text='Charts' />
+                                </>
+                            }
+                            id='id-charts'
+                        >
+                            <Suspense fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}>
+                                <Chart show_digits_stats={true} />
+                            </Suspense>
+                        </div>
+                        <div
+                            label={
+                                <>
+                                    <PortfolioIcon />
+                                    <Localize i18n_default_text='Portfolio' />
+                                </>
+                            }
+                            id='id-portfolio'
+                        >
+                            <div className='dashboard__portfolio-wrapper'>
+                                <PortfolioDisplay />
+                            </div>
+                        </div>
                     </Tabs>
                 </div>
             </div>
@@ -1318,7 +1318,6 @@ const AppWrapper = observer(() => {
                 <ChartModal />
                 <TradingViewModal />
                 <AnalysistoolModal />
-                <SignalsModal />
                 <AdvancedDisplayModal />
                 <StandaloneChartModal />
             </DesktopWrapper>

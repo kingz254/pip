@@ -143,27 +143,8 @@ const DrawerContent = ({ active_index, is_drawer_open, active_tour, setActiveTab
                 <div id='db-run-panel-tab__journal' label={<Localize i18n_default_text='Journal' />}>
                     <Journal />
                 </div>
-                <div id='db-run-panel-tab__signals' label={<Localize i18n_default_text='Signals' />}>
-                    {/* Empty div - actual iframe rendered below to persist across tab switches */}
-                </div>
             </Tabs>
-            {/* Signals iframe - kept mounted but hidden when not active to prevent reload */}
-            <div 
-                className='run-panel__signals'
-                style={{ display: active_index === 3 ? 'block' : 'none' }}
-            >
-                <iframe 
-                    src='/signals' 
-                    style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        border: 'none',
-                        minHeight: '500px'
-                    }}
-                    title='Active Trading Signals'
-                />
-            </div>
-            {((is_drawer_open && active_index !== 2 && active_index !== 3) || active_tour) && <StatisticsSummary {...props} />}
+            {((is_drawer_open && active_index !== 2) || active_tour) && <StatisticsSummary {...props} />}
         </>
     );
 };
