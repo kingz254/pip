@@ -61,37 +61,28 @@ export default class TransactionsStore {
     }
 
     get statistics() {
-        let total_runs = 0;
-        // Filter out only contract transactions and remove dividers
+        const completed_runs = new Set<string>();
         const trxs = this.transactions.filter(
             trx => trx.type === transaction_elements.CONTRACT && typeof trx.data === 'object'
         );
         const statistics = trxs.reduce(
             (stats, { data }) => {
-                const { profit = 0, is_completed = false, buy_price = 0, payout, bid_price } = data as TContractInfo;
-                if (is_completed) {
-                    if (profit > 0) {
-                        stats.won_contracts += 1;
-                    } else {
-                        stats.lost_contracts += 1;
-                    }
-                    stats.total_payout += Number((data as TContractInfo).sell_price ?? bid_price ?? (Number(profit) > 0 ? payout : 0) ?? 0);
-                    stats.total_profit += Number(profit);
-                    stats.total_stake += Number(buy_price);
-                    total_runs += 1;
+                const contract = data as TContractInfo;
+                const profit = Number(contract.profit) || 0;
+                stats.total_stake += Number(contract.buy_price) || 0;
+                stats.total_payout += Number(contract.sell_price ?? contract.bid_price ?? (profit > 0 ? contract.payout : 0)) || 0;
+                stats.total_profit += profit;
+                if (contract.is_completed) {
+                    if (profit > 0) stats.won_contracts += 1;
+                    else stats.lost_contracts += 1;
+                    if (contract.run_id) completed_runs.add(contract.run_id);
+                    else stats.number_of_runs += 1;
                 }
                 return stats;
             },
-            {
-                lost_contracts: 0,
-                number_of_runs: 0,
-                total_profit: 0,
-                total_payout: 0,
-                total_stake: 0,
-                won_contracts: 0,
-            }
+            { lost_contracts: 0, number_of_runs: 0, total_profit: 0, total_payout: 0, total_stake: 0, won_contracts: 0 }
         );
-        statistics.number_of_runs = total_runs;
+        statistics.number_of_runs += completed_runs.size;
         return statistics;
     }
 

@@ -229,14 +229,13 @@ const AppWrapper = observer(() => {
         filePath: string;
         xmlContent: string;
         category: string;
-        popularity: number;
         description: string;
         premium?: boolean;
     }
 
     const [bots, setBots] = useState<Bot[]>([]);
     const [analysisToolUrl, setAnalysisToolUrl] = useState('advanced'); // Changed default to 'advanced'
-    const [botsCategory, setBotsCategory] = useState('automated');
+    const [botsCategory, setBotsCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [showPremiumPopup, setShowPremiumPopup] = useState(false);
@@ -288,195 +287,49 @@ const AppWrapper = observer(() => {
     useEffect(() => {
         const fetchBots = async () => {
             const botFiles = [
-                {
-                    file: 'Legacy 2026 Over.xml',
-                    title: 'Legacy 2026 Over',
-                    category: 'automated',
-                    description:
-                        'Trades digit over, after a loss, it increases prediction to maintain same stake. Best for accounts with $50+ balance.',
-                    premium: false,
-    },
-                {
-                    file: 'Ultra Recovery.xml',
-                    category: 'automated',
-                    popularity: 100,
-                    premium: false,
-                    description:
-                        'Advanced recovery system with smart frequency analysis, dual prediction targeting, and dynamic risk management for consistent profitability.',
-                },
-                {
-                    file: 'Elite Startrader.xml',
-                    category: 'automated',
-                    popularity: 99,
-                    description:
-                        'High-performance trading bot with frequency analysis, dynamic predictions, and advanced risk management system.',
-                },
-                {
-                    file: 'Oracle OverUnder Pro.xml',
-                    category: 'automated',
-                    popularity: 98,
-                    description:
-                        'Advanced Over/Under Oracle with smart martingale, dual prediction system, and configurable take profit/stop loss management.',
-                },
-                {
-                    file: '2025 Bot  Over Under.xml',
-                    category: 'automated',
-                    popularity: 97,
-                    description:
-                        'Advanced 2025 Over/Under bot with digit analysis, frequency tracking, and intelligent prediction system for optimal market timing.',
-                },
-                {
-                    file: '2025 Original Version.xml',
-                    category: 'popular',
-                    popularity: 96,
-                    description:
-                        'Advanced 2025 Even/Odd digit bot with smart profit targeting, loss management, and adaptive stake adjustment for maximum profitability.',
-                },
-                {
-                    file: 'Turbo O_U Accelerator.xml',
-                    category: 'automated',
-                    popularity: 95,
-                    premium: false,
-                    description:
-                        'Advanced over/under trading strategy with turbo speed execution and intelligent market prediction.',
-                },
-                {
-                    file: 'Market Legend v2.xml',
-                    category: 'automated',
-                    popularity: 92,
-                    description:
-                        'Community favorite with proven track record in various market conditions and excellent risk management.',
-                },
-                {
-                    file: 'Auto Differ Recovery O_U.xml',
-                    category: 'automated',
-                    popularity: 90,
-                    description:
-                        'Automated difference recovery strategy for over/under markets with adaptive risk management.',
-                },
-                {
-                    file: 'Godzilla.xml',
-                    category: 'automated',
-                    popularity: 88,
-                    premium: false,
-                    description:
-                        'Powerful automated trading beast that adapts to market volatility with machine learning algorithms.',
-                },
-                {
-                    file: 'Envy Pro Differ.xml',
-                    category: 'popular',
-                    popularity: 85,
-                    description:
-                        'Reliable difference-based trading strategy perfect for beginners and steady profit seekers.',
-                },
-                {
-                    file: 'H_L Auto Fortress.xml',
-                    category: 'automated',
-                    popularity: 90,
-                    description:
-                        'High-Low automated vault system with built-in profit protection and loss prevention mechanisms.',
-                },
-                {
-                    file: 'Top-notch 2.xml',
-                    category: 'automated',
-                    popularity: 94,
-                    description:
-                        'Top-rated strategy loved by professional traders for its consistency and impressive performance metrics.',
-                },
-                {
-                    file: 'Core Bot V3.xml',
-                    category: 'popular',
-                    popularity: 82,
-                    description:
-                        'Stable and dependable trading bot with conservative approach and long-term profitability focus.',
-                },
-                {
-                    file: '	EvenOdd Dominator.xml',
-                    category: 'popular',
-                    popularity: 89,
-                    premium: false,
-                    description:
-                        'Highly effective even/odd prediction bot with advanced pattern recognition and statistical analysis.',
-                },
-                {
-                    file: ' 🫰Pro  Differ Bot .xml',
-                    category: 'automated',
-                    popularity: 91,
-                    description:
-                        'Unstoppable difference-based trading strategy with advanced digit tracking and smart recovery system for consistent wins.',
-                },
-                {
-                    file: 'Under 9 Bot.xml',
-                    category: 'regular',
-                    popularity: 84,
-                    description:
-                        'Sequential digit under strategy targeting digits under 9 with smart prediction rotation and adaptive stake management.',
-                },
-                {
-                    file: '	Accumulator Anti-D Alembert.xml',
-                    category: 'advanced',
-                    popularity: 87,
-                    description:
-                        "Advanced accumulator bot with Reverse D'Alembert strategy, featuring profit/loss thresholds, adaptive stake management, and tick-based sell controls.",
-                },
+            { file: 'Legacy 2026 Over.xml', title: 'Legacy Over', category: 'automated', description: 'Digit Over preset with configurable prediction and stake progression.' },,
+            { file: 'Ultra Recovery.xml', title: 'Ultra Recovery', category: 'automated', description: 'Recovery-style preset. Review its stake progression and loss limits before use.' },,
+            { file: 'Elite Startrader.xml', title: 'Elite Startrader', category: 'automated', description: 'Trading preset with digit analysis and configurable prediction settings.' },,
+            { file: 'Oracle OverUnder Pro.xml', title: 'Oracle Over/Under', category: 'automated', description: 'Over/under digit preset with configurable prediction and money-management values.' },,
+            { file: '2025 Bot  Over Under.xml', title: 'Over/Under 2025', category: 'automated', description: 'Over/under strategy preset. Check the selected market and prediction before running.' },,
+            { file: '2025 Original Version.xml', title: 'Even/Odd 2025', category: 'popular', description: 'Even/odd digit strategy preset with adjustable trade limits.' },,
+            { file: 'Turbo O_U Accelerator.xml', title: 'Turbo O/U', category: 'automated', description: 'Over/under strategy preset with configurable stake progression.' },,
+            { file: 'Market Legend v2.xml', title: 'Market Legend', category: 'popular', description: 'General-purpose strategy preset. Inspect contract and risk settings before running.' },,
+            { file: 'Auto Differ Recovery O_U.xml', title: 'Differ Recovery', category: 'automated', description: 'Differs and over/under recovery preset with adjustable stake settings.' },,
+            { file: 'Godzilla.xml', title: 'Godzilla', category: 'popular', description: 'Multi-setting strategy preset. Review all risk controls in Builder first.' },,
+            { file: 'Envy Pro Differ.xml', title: 'Envy Differ', category: 'automated', description: 'Digit differs preset with configurable prediction and stake values.' },,
+            { file: 'H_L Auto Fortress.xml', title: 'High/Low Fortress', category: 'automated', description: 'Higher/lower preset with configurable contract and money-management settings.' },,
+            { file: 'Top-notch 2.xml', title: 'Top-Notch 2', category: 'popular', description: 'Strategy preset with configurable trade conditions and limits.' },,
+            { file: 'Core Bot V3.xml', title: 'Core Bot V3', category: 'popular', description: 'Core strategy preset. Load it to inspect its conditions and money management.' },,
+            { file: 'EvenOdd Dominator.xml', title: 'Even/Odd Dominator', category: 'automated', description: 'Even/odd digit strategy preset with adjustable stake settings.' },,
+            { file: '🫰Pro  Differ Bot .xml', title: 'Pro Differ', category: 'automated', description: 'Digit differs strategy preset with configurable prediction and stake values.' },,
+            { file: 'Under 9 Bot.xml', title: 'Under 9', category: 'automated', description: 'Digit under strategy preset. Confirm its threshold and selected market before running.' },,
+            { file: "Accumulator Reverse D'Alembert.xml", title: 'Reverse D’Alembert Accumulator', category: 'automated', description: 'Accumulator strategy preset using a reverse D’Alembert stake progression.' },,
+            { file: '1 tick DIgit Over 2.xml', title: 'One-Tick Over 2', category: 'automated', description: 'One-tick digit over preset with the threshold set in the bot configuration.' },,
+            { file: 'Digit Over 3.xml', title: 'Digit Over 3', category: 'automated', description: 'Digit over preset with a threshold of 3; verify the market and stake settings.' },,
+            { file: 'Mavic-Air-RF Vix Bot.xml', title: 'Mavic Rise/Fall', category: 'popular', description: 'Rise/fall strategy preset. Review duration, stake, and limits before running.' },,
+            { file: 'MD MASTER BOT Pro.  (2).xml', title: 'MD Master', category: 'popular', description: 'Multi-condition strategy preset. Inspect its blocks and controls in Builder.' },,
+            { file: 'Mega Heist Robot.xml', title: 'Mega Heist', category: 'popular', description: 'Strategy preset with configurable contract and money-management settings.' },,
+            { file: 'signals over bot.xml', title: 'Signals Over', category: 'automated', description: 'Digit-over signal strategy preset with editable threshold settings.' },,
+            { file: 'signals under bot.xml', title: 'Signals Under', category: 'automated', description: 'Digit-under signal strategy preset with editable threshold settings.' },,
+            { file: 'Upgraded Candlemine.xml', title: 'Candle Mine', category: 'popular', description: 'Candle-based strategy preset. Review its conditions and risk limits before use.' },,
+            { file: 'ldpanalyzer/-Binary Bot Pro- One Shot Strategy (22-Mar-2023).xml', title: 'One-Shot Strategy', category: 'popular', description: 'Single-shot strategy preset from the included LDP Analyzer collection.' },
             ];
-
-            const botPromises = botFiles.map(async ({ file, category, popularity, description, premium }) => {
-                try {
-                    console.log(`🔄 Fetching bot file: ${file}`);
-                    const response = await fetch(`/${file}`);
-                    if (!response.ok) {
-                        console.warn(`⚠️ Failed to fetch ${file}: ${response.status} ${response.statusText}`);
-                        // For demo purposes, create mock data if file doesn't exist
-                        return {
-                            title: file.split('/').pop()?.replace('.xml', '') || file,
-                            image: 'default_image_path',
-                            filePath: file,
-                            xmlContent: `<?xml version="1.0" encoding="UTF-8"?><xml><block type="root">${file}</block></xml>`,
-                            category,
-                            popularity,
-                            description,
-                            premium,
-                        };
-                    }
-                    const text = await response.text();
-                    console.log(`✅ Successfully fetched ${file}, content length: ${text.length}`);
-                    const parser = new DOMParser();
-                    const xml = parser.parseFromString(text, 'application/xml');
-                    return {
-                        title: file.split('/').pop()?.replace('.xml', '') || file,
-                        image: xml.getElementsByTagName('image')[0]?.textContent || 'default_image_path',
-                        filePath: file,
-                        xmlContent: text,
-                        category,
-                        popularity,
-                        description,
-                        premium,
-                    };
-                } catch (error) {
-                    console.error(`❌ Error fetching ${file}:`, error);
-                    // Return mock data for demo
-                    return {
-                        title: file.split('/').pop()?.replace('.xml', '') || file,
-                        image: 'default_image_path',
-                        filePath: file,
-                        xmlContent: `<?xml version="1.0" encoding="UTF-8"?><xml><block type="root">${file}</block></xml>`,
-                        category,
-                        popularity,
-                        description,
-                        premium,
-                    };
-                }
+            const results = await Promise.allSettled(botFiles.map(async bot => {
+                const response = await fetch(`/${encodeURI(bot.file)}`);
+                if (!response.ok) throw new Error(`Could not load ${bot.file} (${response.status})`);
+                const xmlContent = await response.text();
+                const parsed = new DOMParser().parseFromString(xmlContent, 'application/xml');
+                if (parsed.querySelector('parsererror') || !parsed.querySelector('xml')) throw new Error(`Invalid bot XML: ${bot.file}`);
+                return { ...bot, image: parsed.querySelector('image')?.textContent || 'default_image_path', filePath: bot.file, xmlContent, premium: false };
+            }));
+            const loaded = results.flatMap((result, index) => {
+                if (result.status === 'fulfilled') return [result.value];
+                console.error('Failed to load bot file:', botFiles[index].file, result.reason);
+                return [];
             });
-            const bots = (await Promise.all(botPromises)).filter(Boolean);
-            console.log('Bots fetched successfully:', bots.length, 'bots');
-            console.log(
-                'Bot titles:',
-                bots.map(b => b.title)
-            );
-            setBots(bots);
+            setBots(loaded);
         };
-
         fetchBots();
     }, []);
 
@@ -866,47 +719,16 @@ const AppWrapper = observer(() => {
                                     {/* Header Section */}
                                     <div className='free-bots-header'>
                                         <h1 className='free-bots-header__title'>
-                                            <Localize i18n_default_text='Premium Trading Bots' />
+                                            <Localize i18n_default_text='Strategy library' />
                                         </h1>
                                         <p className='free-bots-header__subtitle'>
-                                            <Localize i18n_default_text='Discover our collection of professionally designed trading bots. Choose from automated strategies, popular community favorites, or reliable everyday trading solutions.' />
+                                            <Localize i18n_default_text='Browse all included Deriv Bot XML bots by name and description. This library is informational; open Bot Builder separately to load and review a strategy.' />
                                         </p>
 
-                                        {/* Statistics */}
                                         <div className='free-bots-stats'>
                                             <div className='free-bots-stats__item'>
                                                 <div className='free-bots-stats__number'>{bots.length}</div>
-                                                <div className='free-bots-stats__label'>
-                                                    <Localize i18n_default_text='Available Bots' />
-                                                </div>
-                                            </div>
-                                            <div className='free-bots-stats__item'>
-                                                <div className='free-bots-stats__number'>95%</div>
-                                                <div className='free-bots-stats__label'>
-                                                    <Localize i18n_default_text='Success Rate' />
-                                                </div>
-                                            </div>
-                                            <div className='free-bots-stats__item'>
-                                                <div className='free-bots-stats__number'>24/7</div>
-                                                <div className='free-bots-stats__label'>
-                                                    <Localize i18n_default_text='Trading' />
-                                                </div>
-                                            </div>
-                                            <div className='free-bots-stats__item'>
-                                                <div className='free-bots-stats__number'>
-                                                    {bots.filter(bot => bot.category === botsCategory).length}
-                                                </div>
-                                                <div className='free-bots-stats__label'>
-                                                    {botsCategory === 'automated' && (
-                                                        <Localize i18n_default_text='Auto Bots' />
-                                                    )}
-                                                    {botsCategory === 'popular' && (
-                                                        <Localize i18n_default_text='Popular' />
-                                                    )}
-                                                    {botsCategory === 'regular' && (
-                                                        <Localize i18n_default_text='Regular' />
-                                                    )}
-                                                </div>
+                                                <div className='free-bots-stats__label'><Localize i18n_default_text='Available bot files' /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -925,9 +747,9 @@ const AppWrapper = observer(() => {
                                     {/* Category Filters */}
                                     <div className='free-bots-filters'>
                                         {[
-                                            { key: 'automated', label: 'Automated Strategies', icon: '🤖' },
-                                            { key: 'popular', label: 'Community Favorites', icon: '⭐' },
-                                            { key: 'regular', label: 'Reliable Classics', icon: '📊' },
+                                            { key: 'all', label: 'All bots', icon: '▦' },
+                                            { key: 'automated', label: 'Digit strategies', icon: '🤖' },
+                                            { key: 'popular', label: 'Other strategies', icon: '▤' },
                                         ].map(category => (
                                             <button
                                                 key={category.key}
@@ -946,210 +768,22 @@ const AppWrapper = observer(() => {
 
                                     {/* Bots Grid */}
                                     {bots.length === 0 ? (
-                                        <div className='loading-skeleton'>
-                                            <div className='free-bots-grid'>
-                                                {Array.from({ length: 6 }).map((_, index) => (
-                                                    <div key={index} className='bot-card'>
-                                                        <div className='bot-card__header'>
-                                                            <div className='bot-card__icon'>
-                                                                <BotIcon />
-                                                            </div>
-                                                            <div>
-                                                                <h3 className='bot-card__title'>Loading...</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div className='bot-card__content'>
-                                                            <p className='bot-card__description'>
-                                                                Loading bot details...
-                                                            </p>
-                                                            <div className='bot-card__features'>
-                                                                <span className='bot-card__feature'>Loading</span>
-                                                            </div>
-                                                            <button className='bot-card__action'>
-                                                                <Localize i18n_default_text='Load Bot' />
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
+                                        <p className='free-bots-empty__description'>Loading bot files…</p>
                                     ) : (
                                         <div className='free-bots-grid'>
                                             {bots
-                                                .filter(bot => bot.category === botsCategory)
-                                                .filter(
-                                                    bot =>
-                                                        searchQuery === '' ||
-                                                        bot.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                                        bot.description
-                                                            .toLowerCase()
-                                                            .includes(searchQuery.toLowerCase())
-                                                )
-                                                .map((bot, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className={`bot-card ${bot.premium ? 'bot-card--premium' : ''} ${bot.premium && isCurrentUserPremium ? 'bot-card--unlocked' : ''}`}
-                                                        onClick={e => {
-                                                            e.stopPropagation();
-                                                            handleBotClick(bot);
-                                                        }}
-                                                    >
-                                                        {bot.premium && (
-                                                            <div className={`bot-card__premium-ribbon ${isCurrentUserPremium ? 'bot-card__premium-ribbon--unlocked' : ''}`}>
-                                                                <span>{isCurrentUserPremium ? 'UNLOCKED ✓' : 'PREMIUM ★'}</span>
-                                                            </div>
-                                                        )}
+                                                .filter(bot => botsCategory === 'all' || bot.category === botsCategory)
+                                                .filter(bot => !searchQuery || bot.title.toLowerCase().includes(searchQuery.toLowerCase()) || bot.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                                                .map(bot => (
+                                                    <article key={bot.filePath} className='bot-card'>
                                                         <div className='bot-card__header'>
-                                                            <div className='bot-card__icon'>
-                                                                <BotIcon />
-                                                            </div>
-                                                            <div style={{ flex: 1 }}>
-                                                                <h3 className='bot-card__title'>
-                                                                    {bot.title
-                                                                        .replace('.xml', '')
-                                                                        .replace(/[-_]/g, ' ')}
-                                                                </h3>
-                                                                {bot.popularity && (
-                                                                    <div
-                                                                        style={{
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            gap: '4px',
-                                                                            marginTop: '4px',
-                                                                        }}
-                                                                    >
-                                                                        <span
-                                                                            style={{
-                                                                                fontSize: '0.75rem',
-                                                                                color: 'var(--text-general)',
-                                                                            }}
-                                                                        >
-                                                                            Rating:
-                                                                        </span>
-                                                                        <div
-                                                                            style={{
-                                                                                display: 'flex',
-                                                                                alignItems: 'center',
-                                                                                gap: '2px',
-                                                                            }}
-                                                                        >
-                                                                            {Array.from({ length: 5 }).map((_, i) => (
-                                                                                <span
-                                                                                    key={i}
-                                                                                    style={{
-                                                                                        fontSize: '0.75rem',
-                                                                                        color:
-                                                                                            i <
-                                                                                            Math.floor(
-                                                                                                bot.popularity / 20
-                                                                                            )
-                                                                                                ? '#FFD700'
-                                                                                                : 'var(--border-normal)',
-                                                                                    }}
-                                                                                >
-                                                                                    ⭐
-                                                                                </span>
-                                                                            ))}
-                                                                            <span
-                                                                                style={{
-                                                                                    fontSize: '0.7rem',
-                                                                                    color: 'var(--text-general)',
-                                                                                    marginLeft: '4px',
-                                                                                }}
-                                                                            >
-                                                                                ({bot.popularity}%)
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <button
-                                                                className='bot-card__share-button'
-                                                                onClick={e => handleShareBot(bot, e)}
-                                                                title='Share this bot'
-                                                                aria-label='Share bot link'
-                                                            >
-                                                                <svg
-                                                                    width='16'
-                                                                    height='16'
-                                                                    viewBox='0 0 24 24'
-                                                                    fill='currentColor'
-                                                                >
-                                                                    <path d='M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z' />
-                                                                </svg>
-                                                            </button>
+                                                            <div className='bot-card__icon'><BotIcon /></div>
+                                                            <h3 className='bot-card__title'>{bot.title}</h3>
                                                         </div>
                                                         <div className='bot-card__content'>
-                                                            <p className='bot-card__description'>
-                                                                {bot.description || (
-                                                                    <>
-                                                                        {botsCategory === 'automated' && (
-                                                                            <Localize i18n_default_text='Advanced automated trading strategy with intelligent market analysis and risk management.' />
-                                                                        )}
-                                                                        {botsCategory === 'popular' && (
-                                                                            <Localize i18n_default_text='Highly rated bot trusted by thousands of traders worldwide for consistent performance.' />
-                                                                        )}
-                                                                        {botsCategory === 'regular' && (
-                                                                            <Localize i18n_default_text='Stable and reliable trading bot perfect for long-term trading strategies.' />
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                            </p>
-                                                            <div className='bot-card__features'>
-                                                                {botsCategory === 'automated' && (
-                                                                    <>
-                                                                        <span className='bot-card__feature'>
-                                                                            Auto-Execute
-                                                                        </span>
-                                                                        <span className='bot-card__feature'>
-                                                                            Risk Control
-                                                                        </span>
-                                                                        <span className='bot-card__feature'>
-                                                                            24/7 Trading
-                                                                        </span>
-                                                                    </>
-                                                                )}
-                                                                {botsCategory === 'popular' && (
-                                                                    <>
-                                                                        <span className='bot-card__feature'>
-                                                                            Community Tested
-                                                                        </span>
-                                                                        <span className='bot-card__feature'>
-                                                                            High Performance
-                                                                        </span>
-                                                                        <span className='bot-card__feature'>
-                                                                            User Favorite
-                                                                        </span>
-                                                                    </>
-                                                                )}
-                                                                {botsCategory === 'regular' && (
-                                                                    <>
-                                                                        <span className='bot-card__feature'>
-                                                                            Stable
-                                                                        </span>
-                                                                        <span className='bot-card__feature'>
-                                                                            Low Risk
-                                                                        </span>
-                                                                        <span className='bot-card__feature'>
-                                                                            Beginner Friendly
-                                                                        </span>
-                                                                    </>
-                                                                )}
-                                                            </div>
-                                                            <button
-                                                                className='bot-card__action'
-                                                                onClick={e => {
-                                                                    e.stopPropagation();
-                                                                    handleBotClick(bot);
-                                                                }}
-                                                            >
-                                                                <Localize i18n_default_text='Load Bot' />
-                                                                <svg viewBox='0 0 24 24' fill='currentColor'>
-                                                                    <path d='M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z' />
-                                                                </svg>
-                                                            </button>
+                                                            <p className='bot-card__description'>{bot.description}</p>
                                                         </div>
-                                                    </div>
+                                                    </article>
                                                 ))}
                                         </div>
                                     )}
@@ -1157,7 +791,7 @@ const AppWrapper = observer(() => {
                                     {/* Empty State */}
                                     {bots.length > 0 &&
                                         bots
-                                            .filter(bot => bot.category === botsCategory)
+                                            .filter(bot => botsCategory === 'all' || bot.category === botsCategory)
                                             .filter(
                                                 bot =>
                                                     searchQuery === '' ||

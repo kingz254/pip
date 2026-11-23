@@ -17,10 +17,11 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
     w.location.hash = '#' + p; await tick(30);
     assert.ok(!d.getElementById('p-' + p).hidden, 'page ' + p);
   }
-  assert.equal(d.querySelectorAll('#tpls .tpl').length, 35);
-  assert.equal(d.querySelectorAll('#bgs .chip').length, 19);
+  assert.equal(d.querySelectorAll('#tpls .tpl').length, 45);
+  assert.equal(d.querySelectorAll('#bgs .chip').length, 68);
   assert.equal(d.querySelector('#bgs .chip:last-child').dataset.b, 'none', 'no background is the final choice');
-  assert.equal(d.querySelectorAll('#tpls [data-t^="market-"]').length, 0, 'legacy market palettes stay hidden from new selections');
+  assert.equal(d.querySelectorAll('#tpls [data-t^="market-"]').length, 10, 'restored market palettes are selectable');
+  for (const id of ['digits','moneyrain','img-mesh','network','img-trade-9']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `restored background ${id}`);
   const fontCards = [...d.querySelectorAll('#font-options .font-card')];
   assert.equal(fontCards.length, 15);
   assert.equal(new Set(fontCards.map((card) => card.dataset.font)).size, 15, 'font choices are distinct');
