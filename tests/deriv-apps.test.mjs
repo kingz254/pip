@@ -14,7 +14,7 @@ test('preview keeps one complete FXPro app mounted when design choices change', 
   frame.contentWindow.postMessage = (message, origin) => updates.push({ message, origin });
   input($('name'), 'Acme Markets');
   click(d.querySelector('#tpls [data-t="violet"]'));
-  click(d.querySelector('[data-loader="pulse"]'));
+  click(d.querySelector('[data-loader="dots-15"]'));
   const menu = d.querySelector('#mnu input[data-m="id-forex"]');
   menu.checked = false; menu.dispatchEvent(new w.Event('change', { bubbles: true }));
   assert.equal(d.querySelector('.pf-full-app'), frame, 'design edits preserve the app session and active workspace');
@@ -22,7 +22,7 @@ test('preview keeps one complete FXPro app mounted when design choices change', 
   const profile = updates.at(-1).message.profile;
   assert.equal(profile.name, 'Acme Markets');
   assert.equal(profile.template, 'violet');
-  assert.equal(profile.loader_style, 'pulse');
+  assert.equal(profile.loader_style, 'dots-15');
   assert.equal(profile.menu['id-forex'], false);
   assert.equal(updates.at(-1).origin, w.location.origin);
   assert.deepEqual(errors, []);

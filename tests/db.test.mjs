@@ -10,6 +10,7 @@ const oauthMigration = readFileSync(new URL('../supabase/migrations/202611161531
 const adminMigration = readFileSync(new URL('../supabase/migrations/20261117120000_client_owned_domains_admin_visits.sql', import.meta.url), 'utf8');
 const directDomainMigration = readFileSync(new URL('../supabase/migrations/20261117210251_client_buys_domains_directly.sql', import.meta.url), 'utf8');
 const setupOnlyMigration = readFileSync(new URL('../supabase/migrations/20261117223423_setup_fee_only.sql', import.meta.url), 'utf8');
+const ownerVisitMigration = readFileSync(new URL('../supabase/migrations/20261124173000_owner_visit_analytics.sql', import.meta.url), 'utf8');
 
 // Minimal stand-in for Supabase's auth schema + roles.
 const supabaseStub = `
@@ -31,6 +32,7 @@ await db.exec(migration);
 await db.exec(adminMigration);
 await db.exec(directDomainMigration);
 await db.exec(setupOnlyMigration);
+await db.exec(ownerVisitMigration);
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
@@ -188,11 +190,12 @@ test('fulfilment: only admins complete tasks; site goes live after the last one'
   }
 });
 
-test('public page views are counted without exposing analytics to clients', async () => {
+test('public page views are aggregated and visible only to the owning site client', async () => {
   const visit = await as('anon', null, `select public.record_public_site_visit('alpha.com')`); ok(visit, 'record public visit');
   const totals = await as('authenticated', ADMIN, 'select sum(views)::int n from public.site_visits');
   ok(totals, 'admin reads visits'); assert.ok(totals.rows[0].n >= 1);
-  assert.equal((await as('authenticated', B, 'select * from public.site_visits')).rows.length, 0, 'client cannot read visitor stats');
+  assert.equal((await as('authenticated', A, 'select * from public.site_visits')).rows.length, 1, 'site owner reads aggregate visit counts');
+  assert.equal((await as('authenticated', B, 'select * from public.site_visits')).rows.length, 0, 'other client cannot read visit counts');
 });
 
 test('public_site exposes only live sites and no private fields', async () => {

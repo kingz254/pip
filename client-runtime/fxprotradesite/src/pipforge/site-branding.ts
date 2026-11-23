@@ -1,6 +1,7 @@
 import { replaceGold } from './gold-accent.mjs';
 import { useSyncExternalStore } from 'react';
 import templateThemes from './template-themes.json' with { type: 'json' };
+import { loaderFamily, normalizeLoaderStyle } from './loader-styles.ts';
 
 export type PipforgeSiteBranding = {
     domain?: string;
@@ -53,7 +54,8 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.dataset.pfBold = site.menu?.bold_text ? 'true' : 'false';
     root.dataset.pfIconShape = site.icon_shape;
     root.dataset.pfIconPlace = site.icon_place;
-    root.dataset.pfLoader = site.loader_style;
+    root.dataset.pfLoader = normalizeLoaderStyle(site.loader_style);
+    root.dataset.pfLoaderFamily = loaderFamily(site.loader_style);
     root.style.setProperty('--pf-client-accent', theme.accent);
     root.style.setProperty('--pf-client-accent-rgb', rgb(theme.accent));
     root.style.setProperty('--pf-client-secondary', theme.secondary);
@@ -76,7 +78,11 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     const initial = site.name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 1) || 'T';
     icon.href = site.logo_data || `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${theme.accent}"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="${theme.ink}" font-family="sans-serif" font-size="30" font-weight="700">${initial}</text></svg>`)}`;
     document.querySelectorAll<HTMLLinkElement>('link[rel="apple-touch-icon"]').forEach(link => link.href = icon!.href);
-    if (window.parent === window) icon.href = '/api/client-manifest?icon=1';
+    if (window.parent === window) {
+        icon.href = '/api/client-manifest?icon=1';
+        const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+        if (manifest) manifest.href = '/api/client-manifest';
+    }
     icon.removeAttribute('type');
     let touchIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
     if (!touchIcon) { touchIcon=document.createElement('link');touchIcon.rel='apple-touch-icon';document.head.append(touchIcon); }

@@ -106,3 +106,19 @@
         }
     }
 }
+
+html[data-pf-tenant='true'] .pwa-install-modal-overlay .pwa-install-modal-content {
+    background: var(--pf-client-glass) !important;
+    color: var(--pf-client-ink) !important;
+    border: 1px solid var(--pf-client-edge) !important;
+    border-radius: 22px;
+    backdrop-filter: blur(var(--pf-client-blur)) saturate(145%);
+    -webkit-backdrop-filter: blur(var(--pf-client-blur)) saturate(145%);
+
+    .pwa-install-modal-button.install {
+        background: var(--pf-client-accent) !important;
+        color: var(--pf-client-ink) !important;
+    }
+
+    .pwa-install-modal-button.close { color: var(--pf-client-ink) !important; }
+}
