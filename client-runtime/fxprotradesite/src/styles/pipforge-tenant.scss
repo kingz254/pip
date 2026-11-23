@@ -316,3 +316,21 @@ html[data-pf-tenant=true][data-pf-header=account-focus] .app-header .pf-account{
 @media(max-width:380px){html[data-pf-tenant=true] .app-header .pf-social-profiles{order:3;flex-basis:100%;justify-content:center}}
 
 html[data-pf-tenant=true] .dc-tabs__content{position:relative}
+
+/* The result tray keeps a readable glass surface regardless of the site opacity slider. */
+html[data-pf-tenant=true] :is(.run-panel,.run-panel__container--mobile) :is(.dc-drawer__container,.run-panel__content,.run-panel__stat){
+    background:color-mix(in srgb,var(--pf-client-page) 80%,transparent)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(135%)!important;
+    backdrop-filter:blur(18px) saturate(135%)!important;
+}
+html[data-pf-tenant=true][data-pf-bold=true] body :is(h1,h2,h3,h4,p,button,a,label,span,small,td,th,li){font-weight:700!important}
+html[data-pf-tenant=true] .pf-mobile-run .toolbar__section{flex-direction:row!important;align-items:stretch!important;gap:8px!important}
+html[data-pf-tenant=true] .pf-mobile-run .pf-tray-toggle{order:2;align-self:stretch;width:42px;height:auto;min-height:48px;flex:0 0 42px;border:1px solid var(--pf-client-edge);border-radius:10px;background:var(--pf-client-glass)}
+html[data-pf-tenant=true] .pf-mobile-run .animation__wrapper{display:flex!important;align-items:stretch;gap:8px;flex:1;min-width:0;width:auto!important;min-height:52px}
+html[data-pf-tenant=true] .pf-mobile-run .animation__container{flex:1;min-width:0;width:auto!important}
+html[data-pf-tenant=true] .pf-mobile-run :is(#db-animation__run-button,#db-animation__stop-button){display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 30%;width:30%!important;min-width:108px;min-height:52px;height:auto!important;border-radius:10px!important}
+html[data-pf-tenant=true] .pf-drawer-controls{display:flex;align-items:center;gap:8px;min-height:44px;padding:4px 12px}
+html[data-pf-tenant=true] .pf-tray-toggle--top{width:44px;height:36px;min-height:36px;flex:none;border:1px solid var(--pf-client-edge);border-radius:10px;background:var(--pf-client-glass)}
+html[data-pf-tenant=true] .pf-drawer-controls .run-panel__clear-button{position:static!important;inset:auto!important;margin:0 0 0 auto!important}
+html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__content{padding-top:0!important}
+html[data-pf-tenant=true] .pf-tray-toggle svg{width:22px;height:22px}

@@ -45,11 +45,12 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.dataset.pfTemplate = site.template;
     root.dataset.pfTheme = light ? 'light' : 'dark';
     root.dataset.pfBackground = site.background;
-    const fontScale = Math.min(115, Math.max(80, Number(site.menu?.font_scale) || 100)) / 100;
+    const fontScale = Math.min(110, Math.max(70, Number(site.menu?.font_scale) || 100)) / 100;
     root.style.setProperty('--pf-client-font-scale', String(fontScale));
     root.style.fontSize = `${10 * fontScale}px`;
     root.dataset.pfHeader = site.header;
     root.dataset.pfNavigation = site.menu?.glass_navigation ? 'glass' : 'classic';
+    root.dataset.pfBold = site.menu?.bold_text ? 'true' : 'false';
     root.dataset.pfIconShape = site.icon_shape;
     root.dataset.pfIconPlace = site.icon_place;
     root.dataset.pfLoader = site.loader_style;

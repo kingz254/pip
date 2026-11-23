@@ -42,6 +42,7 @@ type TDrawerHeader = {
     is_mobile: boolean;
     is_drawer_open: boolean;
     onClearStatClick: () => void;
+    onToggleDrawer: () => void;
 };
 
 type TDrawerContent = {
@@ -117,17 +118,22 @@ export const StatisticsSummary = ({
     </div>
 );
 
-const DrawerHeader = ({ is_clear_stat_disabled, is_mobile, is_drawer_open, onClearStatClick }: TDrawerHeader) =>
+const DrawerHeader = ({ is_clear_stat_disabled, is_mobile, is_drawer_open, onClearStatClick, onToggleDrawer }: TDrawerHeader) =>
     is_mobile &&
     is_drawer_open && (
-        <Button
-            id='db-run-panel__clear-button'
-            className='run-panel__clear-button'
-            disabled={is_clear_stat_disabled}
-            text={localize('Reset')}
-            onClick={onClearStatClick}
-            secondary
-        />
+        <div className='pf-drawer-controls'>
+            <button className='pf-tray-toggle pf-tray-toggle--top' type='button' aria-label='Close trading results' aria-expanded='true' onClick={onToggleDrawer}>
+                <svg viewBox='0 0 24 24' aria-hidden='true'><path d='m5 8 7 7 7-7' /></svg>
+            </button>
+            <Button
+                id='db-run-panel__clear-button'
+                className='run-panel__clear-button'
+                disabled={is_clear_stat_disabled}
+                text={localize('Reset')}
+                onClick={onClearStatClick}
+                secondary
+            />
+        </div>
     );
 
 const DrawerContent = ({ active_index, is_drawer_open, active_tour, setActiveTabIndex, ...props }: TDrawerContent) => {
@@ -313,6 +319,7 @@ const RunPanel = observer(() => {
             is_mobile={!isDesktop}
             is_drawer_open={is_drawer_open}
             onClearStatClick={onClearStatClick}
+            onToggleDrawer={() => toggleDrawer(false)}
         />
     );
 

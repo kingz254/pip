@@ -6,6 +6,7 @@ import { useStore } from '@/hooks/useStore';
 import { api_base } from '@/external/bot-skeleton';
 import { doUntilDone } from '@/external/bot-skeleton/services/tradeEngine/utils/helpers';
 import { observer as globalObserver } from '@/external/bot-skeleton/utils/observer';
+import { executeTradesSequentially } from './execute-trades';
 import './speed-bot-display.scss';
 import EmojiAnimation from '@/components/emoji-animation';
 
@@ -453,18 +454,9 @@ const SpeedBotDisplay = observer(() => {
             console.log(`Speed Bot: Starting execution of ${numberOfTrades} trades immediately...`);
             continuousTradingRef.current = false;
             
-            // Create array of trade promises to execute all trades simultaneously
-            const tradePromises: Promise<TradeResult>[] = [];
-            
-            for (let i = 0; i < Number(numberOfTrades); i++) {
-                console.log(`Speed Bot: Preparing trade ${i + 1} of ${numberOfTrades}`);
-                tradePromises.push(executeSingleTrade());
-            }
-            
             try {
-                // Execute all trades simultaneously
-                console.log(`Speed Bot: Executing ${numberOfTrades} trades simultaneously...`);
-                const results = await Promise.all(tradePromises);
+                console.log(`Speed Bot: Executing ${numberOfTrades} trades sequentially...`);
+                const results = await executeTradesSequentially(Number(numberOfTrades), executeSingleTrade);
                 
                 // Update results and counts
                 setTradeResults(results);

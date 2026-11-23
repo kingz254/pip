@@ -23,5 +23,5 @@ test('nested analysis tools inherit palette, font and matching canvas scheme on 
  assert.equal(w.document.documentElement.dataset.pfLoader,'ripple');
  assert.equal(w.document.documentElement.dataset.pfHeader,'balanced');
  applySiteBranding({...site,menu:{font_scale:200}});
- assert.equal(w.document.documentElement.style.fontSize,'11.5px');
+ assert.equal(w.document.documentElement.style.fontSize,'11px');
 });
