@@ -11,7 +11,7 @@ test('mobile trading tabs follow the requested order and expose Signals in the m
     ]);
     const tabsStart = main.lastIndexOf('<Tabs', main.indexOf("className='main__tabs'"));
     const tabs = main.slice(tabsStart, main.indexOf('</Tabs>', tabsStart));
-    const expected = ['dashboard', 'bot-builder', 'speed-bot', 'free-bots', 'smart-trading', 'trading-hub', 'signals', 'analysis-tool', 'forex', 'accumulators', 'digits', 'rise-fall', 'charts', 'portfolio'].map(id => `id-${id === 'dashboard' ? 'dbot-dashboard' : id}`);
+    const expected = ['dashboard', 'bot-builder', 'speed-bot', 'free-bots', 'smart-trading', 'trading-hub', 'signals', 'analysis-tool', 'forex', 'accumulators', 'digits', 'rise-fall', 'charts', 'portfolio', 'risk-management', 'strategies', 'markup'].map(id => `id-${id === 'dashboard' ? 'dbot-dashboard' : id}`);
     assert.deepEqual([...tabs.matchAll(/id='(id-[^']+)'/g)].map(match => match[1]), expected);
     assert.match(tabs, /id='id-signals'.*Signals/s);
     assert.match(constants, /SIGNALS:\s*6/);

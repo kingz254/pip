@@ -32,7 +32,10 @@ export default Engine =>
                         });
 
                         if (this.afterPromise) {
-                            this.afterPromise();
+                            const continueBot = this.afterPromise;
+                            this.afterPromise = null;
+                            if (localStorage.getItem('pf_fast_trading') === 'true') continueBot();
+                            else setTimeout(continueBot, 1000);
                         }
 
                         this.store.dispatch(sell());

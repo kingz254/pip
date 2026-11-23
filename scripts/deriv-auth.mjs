@@ -70,6 +70,21 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
         await remove('session',sessionId); jsonWithCookie(res, cookie('pf_deriv', '', 0)); return true;
       }
       if (!session) { json(res, 401, { error: 'Connect your Deriv account first.' }); return true; }
+      if (url.pathname === '/api/deriv/markup' && req.method === 'GET') {
+        const dateFrom = url.searchParams.get('date_from'), dateTo = url.searchParams.get('date_to');
+        if (![dateFrom, dateTo].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value || '')) || dateFrom > dateTo) {
+          json(res, 400, { error: 'Choose a valid date range.' }); return true;
+        }
+        const response = await upstream('https://api.derivws.com/applications/v1/markup-statistics?' + new URLSearchParams({ date_from: dateFrom, date_to: dateTo }), {
+          headers: { Authorization: `Bearer ${session.token}`, 'Deriv-App-ID': clientId }, signal: AbortSignal.timeout(15000)
+        });
+        if (!response.ok) { json(res, 403, { error: 'Application owner access is required.' }); return true; }
+        const result = await response.json();
+        // Deriv returns only the caller's applications. Never expose other apps' totals.
+        const app = result.data?.breakdown?.find(row => String(row.app_id) === String(clientId));
+        if (!app) { json(res, 403, { error: 'Application ownership could not be verified.' }); return true; }
+        json(res, 200, { data: app }); return true;
+      }
       const otp = url.pathname.match(/^\/api\/deriv\/accounts\/([\w-]{1,64})\/otp$/);
       if (url.pathname !== '/api/deriv/accounts' && !otp) { json(res, 404, { error: 'Not found' }); return true; }
       if ((otp && req.method !== 'POST') || (!otp && req.method !== 'GET')) { json(res, 405, { error: 'Method not allowed' }); return true; }

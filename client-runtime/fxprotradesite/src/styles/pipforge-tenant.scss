@@ -351,3 +351,7 @@ html[data-pf-tenant=true] .advanced-display :is(input,select,label,p){color:var(
 @media(max-width:1023px){html[data-pf-tenant=true] .run-panel-tab__content--mobile{position:relative!important;bottom:auto!important;height:100%!important;width:100%!important;overflow:auto!important}html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__list{flex:none;min-height:40px;position:relative!important}}
 
 html[data-pf-tenant=true] .trading-hub-tabbed :is(.tabs-container,.tabs-header,.tabs-content,.tab-panel,.panel-header,.panel-body,.strategy-info,.current-analysis,.panel-footer){background:var(--pf-client-glass)!important;background-image:none!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}
+
+.pf-fast-trading{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:3px 8px;color:var(--text-general);width:100%}.pf-fast-trading input{width:32px;height:18px;accent-color:var(--brand-red-coral)}
+
+.pf-owner-markup{padding:16px;overflow:auto;height:100%;color:var(--text-general)}.pf-markup-periods{display:flex;gap:8px;margin:12px 0}.pf-markup-periods button{padding:10px;border-radius:12px;color:inherit;background:var(--pf-client-glass)}.pf-markup-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}.pf-markup-cards article{padding:18px;border:1px solid var(--pf-client-edge);border-radius:16px;background:var(--pf-client-glass)}

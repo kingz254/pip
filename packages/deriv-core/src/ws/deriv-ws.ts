@@ -190,7 +190,31 @@ export class DerivWS {
   /**
    * Send a one-shot request and wait for the response matched by req_id.
    */
+  private historyReads = new Map<string, { expires: number; result: Promise<unknown> }>();
+  private historyQueue: Promise<unknown> = Promise.resolve();
+
   send<T = Record<string, unknown>>(payload: Record<string, unknown>): Promise<T> {
+    if (!payload.ticks_history || payload.subscribe) return this.sendRequest<T>(payload);
+    const key = JSON.stringify(Object.entries(payload).filter(([name]) => name !== 'req_id').sort());
+    const cached = this.historyReads.get(key);
+    if (cached && cached.expires > Date.now()) return cached.result as Promise<T>;
+    const result = this.historyQueue.catch(() => {}).then(async () => {
+      for (let attempt = 0; ; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, attempt ? 1000 * 2 ** attempt : 250));
+        try { return await this.sendRequest<T>(payload); }
+        catch (error) {
+          if (!(error instanceof DerivApiError) || error.code !== 'RateLimit' || attempt >= 3) throw error;
+        }
+      }
+    });
+    this.historyQueue = result;
+    for (const [oldKey, entry] of this.historyReads) if (entry.expires < Date.now()) this.historyReads.delete(oldKey);
+    this.historyReads.set(key, { expires: Date.now() + 5000, result });
+    result.catch(() => { if (this.historyReads.get(key)?.result === result) this.historyReads.delete(key); });
+    return result;
+  }
+
+  private sendRequest<T = Record<string, unknown>>(payload: Record<string, unknown>): Promise<T> {
     return new Promise((resolve, reject) => {
       if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
         reject(new Error('WebSocket is not connected'));
@@ -226,7 +250,20 @@ export class DerivWS {
    * acknowledged the `forget` — await it before re-subscribing to the same
    * stream so the two requests cannot collide with `AlreadySubscribed`.
    */
-  subscribe(
+  async subscribe(
+    payload: Record<string, unknown>,
+    handler: MessageHandler
+  ): Promise<{ subscriptionId: string | null; unsubscribe: () => Promise<void> }> {
+    for (let attempt = 0; ; attempt++) {
+      try { return await this.subscribeRequest(payload, handler); }
+      catch (error) {
+        if (!payload.ticks_history || !(error instanceof DerivApiError) || error.code !== 'RateLimit' || attempt >= 3) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** attempt));
+      }
+    }
+  }
+
+  private subscribeRequest(
     payload: Record<string, unknown>,
     handler: MessageHandler
   ): Promise<{ subscriptionId: string | null; unsubscribe: () => Promise<void> }> {

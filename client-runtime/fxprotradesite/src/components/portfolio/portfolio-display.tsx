@@ -88,9 +88,9 @@ interface MartingaleCalculation {
     };
 }
 
-const PortfolioDisplay: React.FC = observer(() => {
+const PortfolioDisplay: React.FC<{ section?: 'portfolio' | 'risk-management' | 'strategies' }> = observer(({ section = 'portfolio' }) => {
     const { client } = useStore();
-    const [activeSection, setActiveSection] = useState<'portfolio' | 'risk-management' | 'strategies' | 'markup'>('portfolio');
+    const [activeSection, setActiveSection] = useState<'portfolio' | 'risk-management' | 'strategies' | 'markup'>(section);
     const [statements, setStatements] = useState<StatementTransaction[]>([]);
     const [loading, setLoading] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -102,6 +102,8 @@ const PortfolioDisplay: React.FC = observer(() => {
         action_type: '',
         time_period: '7d'
     });
+
+    useEffect(() => setActiveSection(section), [section]);
 
     // Markup Statistics State
     const [markupData, setMarkupData] = useState<any[]>([]);
@@ -925,7 +927,7 @@ const PortfolioDisplay: React.FC = observer(() => {
     };
 
     useEffect(() => {
-        fetchStatements();
+        if (section === 'portfolio') fetchStatements();
         // Only fetch the most common contract types on initial load
         fetchInitialPayoutRates();
     }, []);
@@ -1650,32 +1652,7 @@ const PortfolioDisplay: React.FC = observer(() => {
                 <h1 className="portfolio-title">{localize('Portfolio & Account Statement')}</h1>
                 
                 {/* Section Toggle - matching chart-toggle style */}
-                <div className="portfolio-toggle">
-                    <button 
-                        className={`portfolio-toggle__button ${activeSection === 'portfolio' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('portfolio')}
-                    >
-                        {localize('Portfolio')}
-                    </button>
-                    <button 
-                        className={`portfolio-toggle__button ${activeSection === 'risk-management' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('risk-management')}
-                    >
-                        {localize('Risk Management')}
-                    </button>
-                    <button 
-                        className={`portfolio-toggle__button ${activeSection === 'strategies' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('strategies')}
-                    >
-                        {localize('Strategies')}
-                    </button>
-                    <button 
-                        className={`portfolio-toggle__button ${activeSection === 'markup' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('markup')}
-                    >
-                        {localize('Markup')}
-                    </button>
-                </div>
+
 
                 {/* Portfolio Summary - Only show in portfolio section */}
                 {activeSection === 'portfolio' && (

@@ -67,3 +67,14 @@ test('login requires an explicitly registered callback, and unauthenticated acco
   assert.equal((await send('/api/deriv/login')).status,503);
   assert.equal((await send('/api/deriv/accounts')).status,401);
 });
+
+
+test('markup returns only the current application after Deriv verifies caller ownership', async () => {
+ const store={get:async()=>({token:'fixture-private',expires:Date.now()+60000})};
+ const {send}=harness({store,upstream:async()=>Response.json({data:{breakdown:[{app_id:'other-app',app_markup_usd:999},{app_id:'fixture-client',app_markup_usd:3}]}})});
+ const result=await send('/api/deriv/markup?date_from=2026-11-01&date_to=2026-11-23',{cookie:'pf_deriv=fixture'});
+ assert.equal(result.status,200);assert.equal(JSON.parse(result.body).data.app_markup_usd,3);assert.doesNotMatch(result.body,/other-app|999|fixture-private/);
+ const denied=harness({store,upstream:async()=>Response.json({data:{breakdown:[{app_id:'other-app'}]}})});
+ assert.equal((await denied.send('/api/deriv/markup?date_from=2026-11-01&date_to=2026-11-23',{cookie:'pf_deriv=fixture'})).status,403);
+ assert.equal((await send('/api/deriv/markup?date_from=bad&date_to=2026-11-23',{cookie:'pf_deriv=fixture'})).status,400);
+});

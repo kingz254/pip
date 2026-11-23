@@ -1,3 +1,4 @@
+import OwnerMarkup, { useOwnerMarkup } from '@/components/portfolio/owner-markup';
 import React, { lazy, Suspense, useCallback,useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -191,6 +192,7 @@ const ForexIcon = () => (
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
     const { dashboard, load_modal, run_panel, summary_card } = useStore();
+    const canViewMarkup = useOwnerMarkup();
     const { active_tab, is_chart_modal_visible, setActiveTab } = dashboard;
     useEffect(() => { document.documentElement.dataset.pfActiveTab = TAB_IDS[active_tab] || ''; }, [active_tab]);
     const {
@@ -272,7 +274,7 @@ const AppWrapper = observer(() => {
                 
                 // Handle subtab parameter for Analysis Tool
                 if (tab_param === 'id-analysis-tool' && subtab_param) {
-                    const validSubtabs = ['ai', 'ldpanalyzer', 'instances'];
+                    const validSubtabs = ['ai', 'instances'];
                     if (validSubtabs.includes(subtab_param)) {
                         setAnalysisToolUrl(subtab_param);
                     }
@@ -613,7 +615,6 @@ const AppWrapper = observer(() => {
     const showRunPanel = [
         DBOT_TABS.BOT_BUILDER,
         DBOT_TABS.CHART,
-        DBOT_TABS.TRADING_HUB,
         DBOT_TABS.SMART_TRADING,
         DBOT_TABS.SPEED_BOT,
         DBOT_TABS.ANALYSIS_TOOL,
@@ -852,15 +853,6 @@ const AppWrapper = observer(() => {
                                     >
                                         A Tool
                                     </button>
-
-                                    <button
-                                        onClick={() => toggleAnalysisTool('ldpanalyzer')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'ldpanalyzer' ? 'active' : ''
-                                        }`}
-                                    >
-                                        LDP Tool
-                                    </button>
                                 </div>
                                 {renderAnalysisToolContent()}
                             </div>
@@ -909,6 +901,13 @@ const AppWrapper = observer(() => {
                                 <PortfolioDisplay />
                             </div>
                         </div>
+                        <div label={<><PortfolioIcon /><Localize i18n_default_text='Risk Management' /></>} id='id-risk-management'>
+                            <div className='dashboard__portfolio-wrapper'><PortfolioDisplay section='risk-management' /></div>
+                        </div>
+                        <div label={<><PortfolioIcon /><Localize i18n_default_text='Strategies' /></>} id='id-strategies'>
+                            <div className='dashboard__portfolio-wrapper'><PortfolioDisplay section='strategies' /></div>
+                        </div>
+                        {canViewMarkup && <div label={<><PortfolioIcon /><Localize i18n_default_text='Markup' /></>} id='id-markup'><OwnerMarkup /></div>}
                     </Tabs>
                 </div>
             </div>

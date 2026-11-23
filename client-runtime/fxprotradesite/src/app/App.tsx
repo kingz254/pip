@@ -115,9 +115,17 @@ function App() {
             // If already installed or standalone, let the browser handle it naturally
         };
 
+        const installed = () => {
+            localStorage.setItem('dbot_pwa_already_installed', 'true');
+            setShowInstallModal(false);
+            setDeferredInstallPrompt(null);
+        };
+        if (window.matchMedia('(display-mode: standalone)').matches) installed();
+        window.addEventListener('appinstalled', installed);
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
         return () => {
+            window.removeEventListener('appinstalled', installed);
             window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
         };
     }, []);

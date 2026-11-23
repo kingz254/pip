@@ -47,7 +47,12 @@ const TradingHubDisplay: React.FC = () => {
     const [analysisCount, setAnalysisCount] = useState(0);
     const [lastAnalysisTime, setLastAnalysisTime] = useState<string>('');
     const analysisInfoInterval = useRef<NodeJS.Timeout | null>(null);
-    const [isTradeInProgress, setIsTradeInProgress] = useState(false);
+    const [isTradeInProgress, updateTradeInProgress] = useState(false);
+    const tradeInProgressRef = useRef(false);
+    const setIsTradeInProgress = (value: boolean) => {
+        tradeInProgressRef.current = value;
+        updateTradeInProgress(value);
+    };
     const [lastTradeId, setLastTradeId] = useState<string>('');
     const [tradeCount, setTradeCount] = useState(0);
     const lastTradeTime = useRef<number>(0);
@@ -2364,7 +2369,7 @@ const TradingHubDisplay: React.FC = () => {
             return;
         }
             
-        if (isTradeInProgress) {
+        if (tradeInProgressRef.current) {
             console.log('Trade already in progress, skipping new trade request');
             return;
         }
@@ -2525,7 +2530,7 @@ const TradingHubDisplay: React.FC = () => {
             return;
         }
         
-        if (isTradeInProgress) {
+        if (tradeInProgressRef.current) {
             console.log('Trade already in progress, skipping new trade request');
             return;
         }
@@ -2704,7 +2709,7 @@ const TradingHubDisplay: React.FC = () => {
             return;
         }
             
-        if (isTradeInProgress) {
+        if (tradeInProgressRef.current) {
             console.log('O5U4: Trade already in progress, skipping new trade request');
             return;
         }
@@ -3192,6 +3197,15 @@ const TradingHubDisplay: React.FC = () => {
         }
     };
 
+    // Timers must read the latest analysis and activation state after a restart.
+    const latestCardExecution = useRef({ o5u4: executeO5U4Trade, matches: executeMatchesTrades, overUnder: executeDigitOverTrade, differ: executeDigitDifferTrade });
+    latestCardExecution.current = {
+        o5u4: async () => { if (isAutoO5U4Active && checkO5U4Conditions()) await executeO5U4Trade(); },
+        matches: async () => { if (isAutoMatchesActive && matchesAnalysis.readySymbols.length) await executeMatchesTrades(); },
+        overUnder: async () => { if (isAutoOverUnderActive) await executeDigitOverTrade(); },
+        differ: async () => { if (isAutoDifferActive) await executeDigitDifferTrade(); },
+    };
+
     // Core function to start individual card trading
     const startCardTrading = (cardType: 'o5u4' | 'matches' | 'overUnder' | 'differ') => {
         console.log(`🚀 Starting ${cardType} card trading`);
@@ -3235,40 +3249,7 @@ const TradingHubDisplay: React.FC = () => {
                 isExecuting = true;
                 console.log(`📍 ${cardType}: Starting trade execution`);
                 
-                switch (cardType) {
-                    case 'o5u4':
-                        if (isAutoO5U4Active && checkO5U4Conditions()) {
-                            console.log(`🎯 O5U4: Conditions met, executing trade`);
-                            await executeO5U4Trade();
-                        } else {
-                            console.log(`🔍 O5U4: Conditions not met or strategy inactive`);
-                        }
-                        break;
-                    case 'matches':
-                        if (isAutoMatchesActive && matchesAnalysis.readySymbols.length > 0) {
-                            console.log(`🎯 Matches: Analysis ready, executing trades`);
-                            await executeMatchesTrades();
-                        } else {
-                            console.log(`🔍 Matches: Not ready or strategy inactive`);
-                        }
-                        break;
-                    case 'overUnder':
-                        if (isAutoOverUnderActive) {
-                            console.log(`🎯 Over/Under: Executing trade`);
-                            await executeDigitOverTrade();
-                        } else {
-                            console.log(`🔍 Over/Under: Strategy inactive`);
-                        }
-                        break;
-                    case 'differ':
-                        if (isAutoDifferActive) {
-                            console.log(`🎯 Differ: Executing trade`);
-                            await executeDigitDifferTrade();
-                        } else {
-                            console.log(`🔍 Differ: Strategy inactive`);
-                        }
-                        break;
-                }
+                await latestCardExecution.current[cardType]();
             } catch (error) {
                 console.error(`❌ Error in ${cardType} trading:`, error);
             } finally {
