@@ -12,7 +12,7 @@ export const SIDEBAR_INTRO = (): TSidebarItem[] => [
         content: [
             {
                 data: localize(
-                    'Where Strategy Meets Success'
+                    String(window.__PF_SITE_BRANDING__?.menu?.tagline || 'Your trading workspace')
                 ),
             },
             { data: localize('Check out these guides and FAQs to learn more about building your bot:') },

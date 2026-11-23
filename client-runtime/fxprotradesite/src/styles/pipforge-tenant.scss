@@ -270,7 +270,14 @@ html[data-pf-navigation=glass] .dc-tabs__list--main__tabs{border:1px solid var(-
 html[data-pf-navigation=glass] .dc-tabs__item--main__tabs{border-radius:24px!important;min-height:42px!important;height:42px!important;font-size:14px!important;padding:0 14px!important;color:var(--pf-client-ink)!important}
 html[data-pf-navigation=glass] .dc-tabs__active{background:linear-gradient(110deg,var(--pf-client-accent),var(--pf-client-secondary))!important;color:#000!important}
 
-html[data-pf-tenant=true] .blocklyBlockCanvas .blocklyText{fill:var(--pf-client-ink)!important}
-html[data-pf-tenant=true] .blocklyBlockCanvas .blocklyPath{fill:var(--pf-client-glass)!important;stroke:var(--pf-client-edge);stroke-width:1px}
-html[data-pf-tenant=true] .blocklyDropdownRect{fill:var(--pf-client-page)!important}
 html[data-pf-tenant=true] .dashboard-title,html[data-pf-tenant=true] .dashboard-subtitle{color:var(--pf-client-ink)!important;opacity:1}
+html[data-pf-tenant=true] .transactions .transactions__profit--win,html[data-pf-tenant=true] .transactions .transactions__profit--win *{color:var(--pf-client-accent)!important}
+html[data-pf-tenant=true] .transactions .transactions__profit--loss,html[data-pf-tenant=true] .transactions .transactions__profit--loss *{color:#ff444f!important}
+html[data-pf-tenant=true] .pf-mobile-run .toolbar__section{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+html[data-pf-tenant=true] .pf-tray-toggle{order:-1;align-self:center;flex:none;width:100%;height:22px;position:static!important}
+html[data-pf-tenant=true] .run-panel__clear-button{position:static!important;display:block;margin:8px 12px 8px auto;flex:none}
+html[data-pf-tenant=true] .app-footer{height:36px!important;min-height:36px!important}
+html[data-pf-tenant=true] .app-footer .pf-social-profiles a{width:25px!important;height:25px!important;min-height:25px!important}
+html[data-pf-tenant=true] .app-footer .pf-social-profiles svg{width:15px;height:15px}
+html[data-pf-tenant=true] .pf-mobile-run{bottom:36px!important}
+@media(max-width:1023px){html[data-pf-tenant=true] .run-panel__content{position:relative}html[data-pf-tenant=true] .run-panel__clear-button{position:absolute!important;top:48px;right:12px;z-index:2;margin:8px 0!important}html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__content{padding-top:48px}}

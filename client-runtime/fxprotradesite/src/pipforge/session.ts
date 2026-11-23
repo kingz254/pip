@@ -12,7 +12,7 @@ let selected: TradingAccount | null = null;
 let generation = 0;
 
 async function request(path: string, method = 'GET') {
-    const response = await fetch(`/api/deriv/${path}`, { method, cache: 'no-store', credentials: 'same-origin' });
+    const response = await fetch(`/api/deriv/${path}`, { method, cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(12000) });
     if (!response.ok) throw new Error(response.status === 401 ? 'Please sign in to Deriv again.' : 'Account service unavailable. Please try again.');
     return response.json();
 }

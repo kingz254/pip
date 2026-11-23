@@ -133,11 +133,15 @@ export class DerivWS {
       return Promise.resolve();
     }
     if (this.connecting) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        const started = Date.now();
         const check = setInterval(() => {
           if (this.ws?.readyState === WebSocket.OPEN) {
             clearInterval(check);
             resolve();
+          } else if (!this.connecting || Date.now() - started > 15000) {
+            clearInterval(check);
+            reject(new Error('Trading connection could not be established.'));
           }
         }, 100);
       });
@@ -170,6 +174,7 @@ export class DerivWS {
       };
 
       this.ws.onclose = () => {
+        reject(new Error('Trading connection closed before opening.'));
         this.connecting = false;
         this.stopPing();
         this.subscriptionHandlers.clear();
@@ -389,10 +394,11 @@ export class DerivWS {
     }
 
     this.reconnectAttempts++;
-    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts - 1), 30000);
 
     this.reconnectTimeout = setTimeout(() => {
-      this.connect().catch(() => {});
+      this.reconnectTimeout = null;
+      this.connect().catch(() => { if (!this.disposed && !this.reconnectTimeout) this.attemptReconnect(); });
     }, delay);
   }
 }

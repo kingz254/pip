@@ -24,7 +24,7 @@ declare global {
     interface Window { __PF_SITE_BRANDING__?: PipforgeSiteBranding }
 }
 
-const fonts: Record<string, string> = {
+const fonts: Record<string, string> = {"anton":"Anton","bebas-neue":"Bebas Neue","oswald":"Oswald","archivo-black":"Archivo Black","abril-fatface":"Abril Fatface","righteous":"Righteous","orbitron":"Orbitron","rajdhani":"Rajdhani","teko":"Teko","caveat":"Caveat","patrick-hand":"Patrick Hand","courgette":"Courgette","cinzel":"Cinzel","special-elite":"Special Elite","roboto-slab":"Roboto Slab",
     inter: 'Inter', 'dm-sans': 'DM Sans', manrope: 'Manrope', 'space-grotesk': 'Space Grotesk', outfit: 'Outfit',
     'plus-jakarta': 'Plus Jakarta Sans', sora: 'Sora', urbanist: 'Urbanist', montserrat: 'Montserrat', lato: 'Lato',
     roboto: 'Roboto', 'open-sans': 'Open Sans', nunito: 'Nunito Sans', 'work-sans': 'Work Sans', rubik: 'Rubik',
@@ -71,6 +71,12 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     if (!icon) { icon = document.createElement('link'); icon.rel = 'icon'; document.head.append(icon); }
     const initial = site.name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 1) || 'T';
     icon.href = site.logo_data || `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="${theme.accent}"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="${theme.ink}" font-family="sans-serif" font-size="30" font-weight="700">${initial}</text></svg>`)}`;
+    document.querySelectorAll<HTMLLinkElement>('link[rel="apple-touch-icon"]').forEach(link => link.href = icon!.href);
+    if (window.parent === window) icon.href = '/api/client-manifest?icon=1';
+    icon.removeAttribute('type');
+    let touchIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
+    if (!touchIcon) { touchIcon=document.createElement('link');touchIcon.rel='apple-touch-icon';document.head.append(touchIcon); }
+    touchIcon.href=icon.href;
     const fontLink = document.getElementById('pf-client-font') as HTMLLinkElement || document.createElement('link');
     fontLink.id = 'pf-client-font';
     fontLink.rel = 'stylesheet';

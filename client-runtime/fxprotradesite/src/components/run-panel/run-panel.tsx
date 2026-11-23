@@ -332,13 +332,14 @@ const RunPanel = observer(() => {
                         'run-panel__container--tour-active': isDesktop && active_tour,
                     })}
                     contentClassName='run-panel__content'
-                    header={header}
+                    header={undefined}
                     footer={isDesktop ? footer : undefined}
                     is_open={is_drawer_open}
                     toggleDrawer={toggleDrawer}
                     width={366}
                     zIndex={popover_zindex.RUN_PANEL}
                 >
+                    {header}
                     {content}
                 </Drawer>
                 {!isDesktop && <MobileDrawerFooter />}

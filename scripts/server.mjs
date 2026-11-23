@@ -1,4 +1,5 @@
 import siteEntry from '../api/site-entry.mjs';
+import clientManifest from '../api/client-manifest.mjs';
 import clientSite from '../api/client-site.mjs';
 import { createServer, request as proxyRequest } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -25,6 +26,7 @@ const server = createServer(async (req,res) => {
   try { url = new URL(req.url, origin); } catch { res.writeHead(400).end(); return; }
   if (await auth(req,res,url)) return;
   if (url.pathname === '/') { await siteEntry(req,res); return; }
+  if (url.pathname === '/api/client-manifest') { await clientManifest(req,res); return; }
   if (url.pathname === '/api/client-site') { await clientSite(req,res); return; }
   const appKey = url.pathname.match(/^\/apps\/([^/]+)/)?.[1];
   if (dev && process.env.PF_LEGACY_APPS === '1' && apps[appKey]) {

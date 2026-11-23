@@ -348,5 +348,105 @@
     "glass": "rgba(255,255,255,.12)",
     "edge": "rgba(255,255,255,.2)",
     "light": false
+  },
+  "market-cobalt": {
+    "accent": "#246bff",
+    "secondary": "#66e0ff",
+    "page": "#06112c",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-amethyst": {
+    "accent": "#be7bff",
+    "secondary": "#f4b7ff",
+    "page": "#1b092b",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-jade": {
+    "accent": "#25d6a2",
+    "secondary": "#a3f0ba",
+    "page": "#04291f",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-ruby": {
+    "accent": "#ff4868",
+    "secondary": "#ff9c82",
+    "page": "#2a0914",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-tangerine": {
+    "accent": "#ff9138",
+    "secondary": "#ffd26f",
+    "page": "#291304",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-electric-lime": {
+    "accent": "#c2ef32",
+    "secondary": "#54e0b1",
+    "page": "#142104",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-sapphire": {
+    "accent": "#608aff",
+    "secondary": "#a0b5ff",
+    "page": "#0a1033",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-rosewood": {
+    "accent": "#ed719f",
+    "secondary": "#ffbd9b",
+    "page": "#2e1020",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-silverline": {
+    "accent": "#cad9ec",
+    "secondary": "#66c7dd",
+    "page": "#101c28",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
+  },
+  "market-turquoise": {
+    "accent": "#00d7de",
+    "secondary": "#68a6ff",
+    "page": "#04272d",
+    "ink": "#f4f4f6",
+    "muted": "rgba(244,244,246,.76)",
+    "glass": "rgba(255,255,255,.12)",
+    "edge": "rgba(255,255,255,.2)",
+    "light": false
   }
 }
