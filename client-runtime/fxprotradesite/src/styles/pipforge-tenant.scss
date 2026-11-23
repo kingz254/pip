@@ -257,6 +257,11 @@ html[data-pf-tenant=true] .pf-theme-toggle{display:flex;gap:4px;align-items:cent
 .pf-tray-toggle{display:flex;justify-content:center;width:100%;height:24px;border:0;background:transparent;color:var(--pf-client-ink,var(--text-general));cursor:pointer;touch-action:manipulation}.pf-tray-toggle svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.5}
 html[data-pf-tenant=true] :is(.blocklySvg,.blocklyWorkspace,.injectionDiv,#scratch_div,.run-panel,.run-panel__content,.dc-drawer__header,.dc-tabs__list,.transactions__header,.transactions__content,.run-panel__stat,.toolbar__section,.dashboard-container){background:transparent!important;background-image:none!important;color:var(--pf-client-ink)!important}
 html[data-pf-tenant=true] :is(.blocklyMainBackground,.blocklyFlyoutBackground){fill:transparent!important}
+html[data-pf-tenant=true] .theme--dark :is(.blocklyMainBackground,.blocklyFlyoutBackground){fill:transparent!important}
+html[data-pf-tenant=true] .theme--dark .zelos-renderer.zelos_renderer-theme .blocklyMainBackground,
+html[data-pf-tenant=true] .theme--dark .load-strategy__container .blocklyMainBackground,
+html[data-pf-tenant=true] .theme--dark .flyout .zelos-renderer.classic-theme .blocklyMainBackground{fill:transparent!important}
+html[data-pf-tenant=true] :is(.blocklySvg,.blocklyWorkspace,.injectionDiv,#scratch_div){background:transparent!important;background-color:transparent!important}
 html[data-pf-tenant=true] :is(.bot-builder,.dc-drawer__container,.run-panel__stat,.pf-mobile-run){background:var(--pf-client-glass)!important;backdrop-filter:blur(var(--pf-client-blur));border-color:var(--pf-client-edge)!important}
 html[data-pf-tenant=true] :is(.tab__dashboard,.dc-drawer,.transactions,.run-panel) :is(p,span,label,h1,h2,h3,h4,small,td,th,.dc-text){color:var(--pf-client-ink)!important;opacity:1}
 html[data-pf-tenant=true] .dashboard-container{width:100%;max-width:none;padding:20px 14px}
