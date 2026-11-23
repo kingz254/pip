@@ -18,14 +18,30 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
     assert.ok(!d.getElementById('p-' + p).hidden, 'page ' + p);
   }
   assert.equal(d.querySelectorAll('#tpls .tpl').length, 45);
-  assert.equal(d.querySelectorAll('#bgs .chip').length, 68);
-  assert.equal(d.querySelector('#bgs .chip:last-child').dataset.b, 'none', 'no background is the final choice');
+  assert.equal(d.querySelectorAll('#bgs .chip').length, 46);
+  assert.equal(d.querySelector('#bgs .bg-choice-group:last-child .chip:last-child').dataset.b, 'none', 'no background is the final choice');
+  for (const id of ['img-chart','img-mesh','img-trade-1','img-trade-2','img-trade-3','img-trade-4','img-trade-6','img-trade-7','img-trade-8','img-trade-9','img-linen']) assert.equal(d.querySelector(`#bgs [data-b="${id}"]`), null, `removed background ${id}`);
+  for (const group of d.querySelectorAll('#bgs .bg-choice-group')) {
+    const names = [...group.querySelectorAll('.chip')].map((button) => button.textContent);
+    assert.deepEqual(names, [...names].sort((a, b) => a.localeCompare(b)), 'background choices are alphabetical within each group');
+  }
+  const themeNames = [...d.querySelectorAll('#tpls .tpl b')].map((button) => button.textContent);
+  assert.deepEqual(themeNames, [...themeNames].sort((a, b) => a.localeCompare(b)), 'themes are alphabetical');
   assert.equal(d.querySelectorAll('#tpls [data-t^="market-"]').length, 10, 'restored market palettes are selectable');
-  for (const id of ['digits','moneyrain','img-mesh','network','img-trade-9']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `restored background ${id}`);
+  for (const id of ['digits','moneyrain','network','img-trade-5']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `retained background ${id}`);
   const fontCards = [...d.querySelectorAll('#font-options .font-card')];
   assert.equal(fontCards.length, 15);
   assert.equal(new Set(fontCards.map((card) => card.dataset.font)).size, 15, 'font choices are distinct');
   assert.ok(fontCards.every((card) => card.querySelector('.font-sample')?.textContent.includes('Aa Bb 123')));
+  assert.deepEqual(fontCards.map((card) => card.querySelector('b').textContent), fontCards.map((card) => card.querySelector('b').textContent).sort((a, b) => a.localeCompare(b)), 'fonts are alphabetical');
+  const headerNames = [...d.querySelectorAll('#hds .chip')].map((button) => button.textContent);
+  assert.deepEqual(headerNames, [...headerNames].sort((a, b) => a.localeCompare(b)), 'header styles are alphabetical');
+  assert.equal(d.querySelector('#font-options').closest('.font-control').querySelector('.lab').textContent, '15 distinct typefaces');
+  assert.equal(d.querySelector('[data-tab="typ"]').textContent, 'Fonts');
+  assert.equal(d.querySelector('#blur-amount').textContent, '75%');
+  input($('blur-range'), '82');
+  assert.equal(d.querySelector('#blur-amount').textContent, '82%', 'blur percentage follows the slider in real time');
+  assert.equal($('site').style.getPropertyValue('--pf-client-blur'), '19.68px', 'preview blur follows slider value');
   for (const b of d.querySelectorAll('#bgs .chip')) click(b);
   for (const t of d.querySelectorAll('#tpls .tpl')) click(t);
   input($('name'), 'Alpha Trades'); assert.equal($('url').textContent, 'alphatrades.site');
