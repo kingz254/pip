@@ -18,9 +18,9 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
     assert.ok(!d.getElementById('p-' + p).hidden, 'page ' + p);
   }
   assert.equal(d.querySelectorAll('#tpls .tpl').length, 45);
-  assert.equal(d.querySelectorAll('#bgs .chip').length, 46);
+  assert.equal(d.querySelectorAll('#bgs .chip').length, 37);
   assert.equal(d.querySelector('#bgs .bg-choice-group:last-child .chip:last-child').dataset.b, 'none', 'no background is the final choice');
-  for (const id of ['img-chart','img-mesh','img-trade-1','img-trade-2','img-trade-3','img-trade-4','img-trade-6','img-trade-7','img-trade-8','img-trade-9','img-linen']) assert.equal(d.querySelector(`#bgs [data-b="${id}"]`), null, `removed background ${id}`);
+  for (const id of ['img-chart','img-mesh','img-grid','img-watercolor','img-trade-1','img-trade-2','img-trade-3','img-trade-4','img-trade-5','img-trade-6','img-trade-7','img-trade-8','img-trade-9','img-botanical','img-art-nouveau','waves','bars','ticker','trend','spiral','spark','gauge','ticks','pulsegrid','matrix','radar','heatmap','comet','aurora','auroraVeil','starlight']) assert.equal(d.querySelector(`#bgs [data-b="${id}"]`), null, `removed background ${id}`);
   for (const group of d.querySelectorAll('#bgs .bg-choice-group')) {
     const names = [...group.querySelectorAll('.chip')].map((button) => button.textContent);
     assert.deepEqual(names, [...names].sort((a, b) => a.localeCompare(b)), 'background choices are alphabetical within each group');
@@ -28,7 +28,8 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
   const themeNames = [...d.querySelectorAll('#tpls .tpl b')].map((button) => button.textContent);
   assert.deepEqual(themeNames, [...themeNames].sort((a, b) => a.localeCompare(b)), 'themes are alphabetical');
   assert.equal(d.querySelectorAll('#tpls [data-t^="market-"]').length, 10, 'restored market palettes are selectable');
-  for (const id of ['digits','moneyrain','network','img-trade-5']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `retained background ${id}`);
+  for (const id of ['digits','moneyrain','network','motion-breeze','motion-candlelight','motion-cloud-drift','motion-dusk-bloom','motion-ink-wash','motion-koi-glide','motion-prism-shift','motion-silk-current','motion-slow-orbit','motion-tidal-glass','img-bougainvillea','img-checker-weave','img-cloudbank','img-ceramic','img-fan-palm','img-marbled-stone','img-moon-phase','img-origami','img-sunprint','img-tulip']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `retained background ${id}`);
+  for (const id of ['dock-arc','dock-capsule','dock-frost','dock-island','dock-orbit','dock-shelf','dock-soft','dock-spring','dock-stacked','dock-underline']) assert.ok(d.querySelector(`#hds [data-v="${id}"]`), `header choice ${id}`);
   const fontCards = [...d.querySelectorAll('#font-options .font-card')];
   assert.equal(fontCards.length, 15);
   assert.equal(new Set(fontCards.map((card) => card.dataset.font)).size, 15, 'font choices are distinct');
@@ -81,11 +82,11 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   assert.equal(w.location.hash, '#home'); assert.match($('acct').textContent, /Hi, Jane/);
 
   // Autosave creates the site row, then updates it
-  input($('name'), 'Alpha Trades'); click(d.querySelector('#tpls [data-t="gold"]')); click(d.querySelector('#bgs [data-b="radar"]'));
+  input($('name'), 'Alpha Trades'); click(d.querySelector('#tpls [data-t="gold"]')); click(d.querySelector('#bgs [data-b="candles"]'));
   await tick(1700);
   assert.equal(sb.db.sites.length, 1);
   let s = sb.db.sites[0];
-  assert.equal(s.owner, USER.id); assert.equal(s.name, 'Alpha Trades'); assert.equal(s.template, 'gold'); assert.equal(s.background, 'radar');
+  assert.equal(s.owner, USER.id); assert.equal(s.name, 'Alpha Trades'); assert.equal(s.template, 'gold'); assert.equal(s.background, 'candles');
   assert.equal(s.domain, 'alphatrades.site'); assert.equal(s.domain_mode, 'new'); assert.equal(s.markup, 1);
   assert.equal(s.status, 'draft', 'client never sets status');
   assert.equal($('dm'), null, 'markup is configured in Deriv, not Pipforge');
@@ -158,7 +159,7 @@ test('backend mode: returning user gets their saved site loaded into the builder
   assert.equal(w.location.hash, '#home');
   assert.equal($('name').value, 'Saved Site'); assert.equal($('url').textContent, 'mybrand.com');
   assert.equal(d.querySelector('#tpls [data-t="mint"]').getAttribute('aria-pressed'), 'true');
-  assert.equal(d.querySelector('#bgs [data-b="heatmap"]').getAttribute('aria-pressed'), 'true');
+  assert.equal($('site').dataset.bg, 'heatmap', 'legacy saved backgrounds still render even though they are no longer offered for new choices');
   assert.equal($('site').dataset.h, 'split'); assert.equal($('site').dataset.bg, 'heatmap');
   assert.equal(d.querySelector('#socs input[data-k="tg"]').value, 'saved');
   assert.equal(d.querySelector('#mnu input[data-m="id-analysis-tool"]').checked, false);
