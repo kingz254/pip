@@ -111,17 +111,17 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
         () => (
             <div className='dashboard-container'>
                 <div className='dashboard-header'>
-                    <h1 className='dashboard-title'>DBot Dashboard</h1>
+                    <h1 className='dashboard-title'>Load or build your bot</h1>
                     <p className='dashboard-subtitle'>
-                        Choose an action to get started with your trading bot
+                        Import a bot from your computer, build it from scratch, or start with a quick strategy.
                     </p>
                 </div>
-                
+
                 {/* Free Bot Search Bar */}
-                <FreeBotSearchBar />
-                
+
+
                 <div className='dashboard-actions'>
-                    {actions.map(action => {
+                    {[actions[0], actions[2], actions[1]].map(action => {
                         const { label, callback, id, icon, variant } = action;
                         return (
                             <button
@@ -142,7 +142,13 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                         );
                     })}
                 </div>
-                
+
+                <section className='pf-explore'><h2>Explore more tools</h2><div className='pf-explore-grid'>{[
+                    ['Free bot library','Browse starter strategies you can edit.',DBOT_TABS.FREE_BOTS,'✦'],
+                    ['Live analysis','Review live ticks and digit statistics.',DBOT_TABS.ANALYSIS_TOOL,'◷'],
+                    ['Market charts','Follow price movement on a live chart.',DBOT_TABS.CHART,'⌁'],
+                    ['Trading Hub','Configure and monitor your strategies.',DBOT_TABS.TRADING_HUB,'▧'],
+                ].map(([title,description,tab,icon])=><button key={String(tab)} onClick={()=>setActiveTab(Number(tab))}><span>{icon}</span><h3>{title}</h3><p>{description}</p><strong>Explore →</strong></button>)}</div></section>
                 <DashboardBotList />
             </div>
         ),

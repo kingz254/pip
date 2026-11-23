@@ -72,12 +72,12 @@ export default class TransactionsStore {
                 if (is_completed) {
                     if (profit > 0) {
                         stats.won_contracts += 1;
-                        stats.total_payout += payout ?? bid_price ?? 0;
                     } else {
                         stats.lost_contracts += 1;
                     }
-                    stats.total_profit += profit;
-                    stats.total_stake += buy_price;
+                    stats.total_payout += Number((data as TContractInfo).sell_price ?? bid_price ?? (Number(profit) > 0 ? payout : 0) ?? 0);
+                    stats.total_profit += Number(profit);
+                    stats.total_stake += Number(buy_price);
                     total_runs += 1;
                 }
                 return stats;

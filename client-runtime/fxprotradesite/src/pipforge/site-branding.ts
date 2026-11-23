@@ -46,6 +46,7 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.dataset.pfTheme = light ? 'light' : 'dark';
     root.dataset.pfBackground = site.background;
     root.dataset.pfHeader = site.header;
+    root.dataset.pfNavigation = site.menu?.glass_navigation ? 'glass' : 'classic';
     root.dataset.pfIconShape = site.icon_shape;
     root.dataset.pfIconPlace = site.icon_place;
     root.dataset.pfLoader = site.loader_style;
@@ -53,8 +54,8 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.style.setProperty('--pf-client-accent-rgb', rgb(theme.accent));
     root.style.setProperty('--pf-client-secondary', theme.secondary);
     root.style.setProperty('--pf-client-page', theme.page || '#10131b');
-    root.style.setProperty('--pf-client-ink', theme.ink);
-    root.style.setProperty('--pf-client-muted', theme.ink);
+    root.style.setProperty('--pf-client-ink', light ? '#000000' : '#ffffff');
+    root.style.setProperty('--pf-client-muted', light ? '#000000' : '#ffffff');
     root.style.setProperty('--pf-client-glass', theme.glass);
     root.style.setProperty('--pf-client-edge', theme.edge);
     root.style.setProperty('--pf-client-blur', `${Math.round(Math.max(0, Math.min(100, site.blur)) * 0.24)}px`);

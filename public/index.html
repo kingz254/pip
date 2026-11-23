@@ -1568,7 +1568,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function fromRow(s){
     var i,ext=null;
     st.n=s.name;st.logo=s.logo_data||"";st.ld=s.loader_style||"ring";st.t=s.template;st.b=s.background;st.blur=Number(s.blur??75);st.h=({center:"brand",minimal:"edge",pill:"dock",banner:"ticker"})[s.header]||s.header;st.ft=s.font_theme||"inter";st.ann=s.announcement;st.sh=s.icon_shape;st.sp=s.icon_place;
-    st.soc=s.social||{};st.menu=s.menu||{};Object.entries({home:'id-dbot-dashboard',bld:'id-bot-builder',ana:'id-analysis-tool',smt:'id-smart-trading',frb:'id-free-bots',cht:'id-charts'}).forEach(function(pair){if(st.menu[pair[1]]===undefined&&st.menu[pair[0]]!==undefined)st.menu[pair[1]]=st.menu[pair[0]]});st.as=st.menu.account_style||"compact";st.accountDisplay=st.menu.account_display||"switch";st.m=Number(s.markup);st.dm=s.domain_mode;st.deriv_app_id=s.deriv_app_id||"";
+    st.soc=s.social||{};st.menu=s.menu||{};Object.entries({home:'id-dbot-dashboard',bld:'id-bot-builder',ana:'id-analysis-tool',smt:'id-smart-trading',frb:'id-free-bots',cht:'id-charts'}).forEach(function(pair){if(st.menu[pair[1]]===undefined&&st.menu[pair[0]]!==undefined)st.menu[pair[1]]=st.menu[pair[0]]});if($("glass-nav-choice"))$("glass-nav-choice").checked=!!st.menu.glass_navigation;st.as=st.menu.account_style||"compact";st.accountDisplay=st.menu.account_display||"switch";st.m=Number(s.markup);st.dm=s.domain_mode;st.deriv_app_id=s.deriv_app_id||"";
     if(s.domain_mode==="own"){st.own=s.domain||"";st.dn=""}
     else if(s.domain){for(i=0;i<EX.length;i++)if(s.domain.length>EX[i][0].length+1&&s.domain.slice(-EX[i][0].length)===EX[i][0]&&(!ext||EX[i][0].length>ext[0].length))ext=EX[i];
       if(ext){st.e=ext[0];st.f=ext[1];st.dn=s.domain.slice(0,-ext[0].length)}}
@@ -1743,6 +1743,10 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   render=function(){renderFullRuntime();if(window.PipforgeRuntime)window.PipforgeRuntime.update(st);};
   var runtimeMenu=[["id-dbot-dashboard","Dashboard"],["id-bot-builder","Bot Builder"],["id-trading-hub","Trading Hub"],["id-smart-trading","Smart Trading"],["id-speed-bot","Speed Bot"],["id-charts","Charts"],["id-analysis-tool","Analysis Tool"],["id-free-bots","Free Bots"],["id-portfolio","Portfolio"],["id-forex","Forex"],["id-digits","Digits"],["id-accumulators","Accumulators"],["id-rise-fall","Rise / Fall"]];
   $("mnu").innerHTML=runtimeMenu.map(function(item){return '<label><input type="checkbox" data-m="'+item[0]+'" '+(st.menu[item[0]]!==false?'checked':'')+'> '+item[1]+'</label>'}).join('');
+  $("mnu").insertAdjacentHTML("beforebegin",'<label class="chk">Rounded glass navigation <input id="glass-nav-choice" type="checkbox" aria-label="Rounded glass navigation"></label>');
+  $("glass-nav-choice").checked=!!st.menu.glass_navigation;
+  $("glass-nav-choice").addEventListener("change",function(e){st.menu.glass_navigation=e.target.checked;render();showPreviewAfterEdit()});
+
   render();route();
 })();
 </script>

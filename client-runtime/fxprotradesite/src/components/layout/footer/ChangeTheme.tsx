@@ -11,12 +11,12 @@ const ChangeTheme = observer(() => {
     return (
         <Tooltip
             as='button'
-            className='app-footer__icon'
+            className='app-footer__icon pf-theme-toggle'
             tooltipContent={localize('Change theme')}
             onClick={toggleTheme}
         >
             {!is_dark_mode_on ? <LegacyThemeLightIcon iconSize='xs' /> : <LegacyThemeDarkIcon iconSize='xs' />}
-        </Tooltip>
+        <span>{is_dark_mode_on ? 'Dark' : 'Light'}</span></Tooltip>
     );
 });
 
