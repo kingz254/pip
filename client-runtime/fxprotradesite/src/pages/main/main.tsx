@@ -619,6 +619,7 @@ const AppWrapper = observer(() => {
         DBOT_TABS.SPEED_BOT,
         DBOT_TABS.ANALYSIS_TOOL,
         DBOT_TABS.FREE_BOTS,
+        DBOT_TABS.TRADING_HUB,
     ].includes(active_tab);
 
     // Scroll to top functionality
@@ -913,7 +914,7 @@ const AppWrapper = observer(() => {
             </div>
             <DesktopWrapper>
                 <div className='main__run-strategy-wrapper'>
-                    {showRunPanel && <RunStrategy />}
+                    {showRunPanel && <RunStrategy showExecutionControls={active_tab !== DBOT_TABS.TRADING_HUB} />}
                     {showRunPanel && <RunPanel />}
                 </div>
                 <ChartModal />
@@ -923,7 +924,7 @@ const AppWrapper = observer(() => {
                 <StandaloneChartModal />
             </DesktopWrapper>
             <MobileWrapper>
-                {showRunPanel && <div className='pf-mobile-run'><RunStrategy /></div>}
+                {showRunPanel && <div className='pf-mobile-run'><RunStrategy showExecutionControls={active_tab !== DBOT_TABS.TRADING_HUB} /></div>}
                 {showRunPanel && <RunPanel />}
             </MobileWrapper>
             <Dialog

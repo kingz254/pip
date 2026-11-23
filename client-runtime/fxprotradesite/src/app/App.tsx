@@ -87,6 +87,7 @@ const router = createBrowserRouter(
 function App() {
     const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [showInstallModal, setShowInstallModal] = useState(false);
+    const [isInstalled, setIsInstalled] = useState(false);
 
     useEffect(() => {
         initSurvicate();
@@ -117,10 +118,18 @@ function App() {
 
         const installed = () => {
             localStorage.setItem('dbot_pwa_already_installed', 'true');
-            setShowInstallModal(false);
+            if (localStorage.getItem('dbot_pwa_install_confirmed') === 'true') return;
+            setIsInstalled(true);
+            setShowInstallModal(true);
             setDeferredInstallPrompt(null);
         };
-        if (window.matchMedia('(display-mode: standalone)').matches) installed();
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            localStorage.setItem('dbot_pwa_already_installed', 'true');
+            if (localStorage.getItem('dbot_pwa_install_confirmed') !== 'true') {
+                setIsInstalled(true);
+                setShowInstallModal(true);
+            }
+        }
         window.addEventListener('appinstalled', installed);
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
@@ -147,7 +156,8 @@ function App() {
 
     const handlePWAModalClose = () => {
         setShowInstallModal(false);
-        sessionStorage.setItem('dbot_pwa_prompt_dismissed_this_session', 'true');
+        if (isInstalled) localStorage.setItem('dbot_pwa_install_confirmed', 'true');
+        else sessionStorage.setItem('dbot_pwa_prompt_dismissed_this_session', 'true');
     };
 
 
@@ -156,7 +166,8 @@ function App() {
             <>
                 <RouterProvider router={router} />
                 <PWAInstallModal
-                    show={showInstallModal && !!deferredInstallPrompt}
+                    show={showInstallModal && (isInstalled || !!deferredInstallPrompt)}
+                    installed={isInstalled}
                     onInstall={handlePWAInstall}
                     onClose={handlePWAModalClose}
                 />

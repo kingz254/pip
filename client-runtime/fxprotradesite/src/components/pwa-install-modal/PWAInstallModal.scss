@@ -12,6 +12,7 @@
     padding: 1rem; // Add some padding for smaller screens
 
     .pwa-install-modal-content {
+        position: relative;
         padding: 24px; // Increased padding
         border-radius: 8px;
         text-align: center;
@@ -54,6 +55,8 @@
             max-width: 180px; // Max width for buttons
         }
     }
+
+    .pwa-install-modal-dismiss{position:absolute;right:12px;top:10px;border:0;background:transparent;color:inherit;font-size:28px;line-height:1;cursor:pointer}
 
     &.theme--light .pwa-install-modal-content {
         background-color: var(--general-main-1, #fff);

@@ -6,9 +6,10 @@ interface PWAInstallModalProps {
     onInstall: () => void;
     onClose: () => void;
     show: boolean;
+    installed?: boolean;
 }
 
-const PWAInstallModal: React.FC<PWAInstallModalProps> = ({ onInstall, onClose, show }) => {
+const PWAInstallModal: React.FC<PWAInstallModalProps> = ({ onInstall, onClose, show, installed = false }) => {
     const [delayedShow, setDelayedShow] = useState(false);
 
     useEffect(() => {
@@ -17,7 +18,7 @@ const PWAInstallModal: React.FC<PWAInstallModalProps> = ({ onInstall, onClose, s
         if (show) {
             timerId = setTimeout(() => {
                 setDelayedShow(true);
-            }, 8000); // 10 seconds delay
+            }, installed ? 0 : 8000);
         } else {
             setDelayedShow(false); // If show becomes false, hide immediately
         }
@@ -27,7 +28,7 @@ const PWAInstallModal: React.FC<PWAInstallModalProps> = ({ onInstall, onClose, s
                 clearTimeout(timerId); // Cleanup timer on unmount or if show changes
             }
         };
-    }, [show]); // Re-run effect if show prop changes
+    }, [show, installed]);
 
     if (!show || !delayedShow) {
         return null;
@@ -36,16 +37,14 @@ const PWAInstallModal: React.FC<PWAInstallModalProps> = ({ onInstall, onClose, s
     const currentTheme = localStorage.getItem('theme') ?? 'light';
 
     return (
-        <div className={`pwa-install-modal-overlay ${currentTheme === 'dark' ? 'theme--dark' : 'theme--light'}`}>
+        <div className={`pwa-install-modal-overlay ${currentTheme === 'dark' ? 'theme--dark' : 'theme--light'}`} role='presentation'>
             <div className='pwa-install-modal-content'>
-                <h3>{localize('Install App?')}</h3>
-                <p>{localize(`Add ${window.__PF_SITE_BRANDING__?.name || 'this trading site'} to your home screen for quick access.`)}</p>
+                <button className='pwa-install-modal-dismiss' type='button' aria-label={localize('Close')} onClick={onClose}>×</button>
+                <h3>{installed ? localize('This site is installed') : localize(`Install ${window.__PF_SITE_BRANDING__?.name || 'this trading site'}`)}</h3>
+                <p>{installed ? localize('Launch it from your home screen or app list for the full experience.') : localize(`Add ${window.__PF_SITE_BRANDING__?.name || 'this trading site'} to your home screen for quick access.`)}</p>
                 <div className='pwa-install-modal-actions'>
-                    <button onClick={onInstall} className='pwa-install-modal-button install'>
-                        {localize('Install')}
-                    </button>
-                    <button onClick={onClose} className='pwa-install-modal-button close'>
-                        {localize('Not Now')}
+                    <button onClick={installed ? onClose : onInstall} className='pwa-install-modal-button install'>
+                        {installed ? localize('Got it') : localize('Install')}
                     </button>
                 </div>
             </div>

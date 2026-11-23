@@ -81,6 +81,9 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     let touchIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
     if (!touchIcon) { touchIcon=document.createElement('link');touchIcon.rel='apple-touch-icon';document.head.append(touchIcon); }
     touchIcon.href=icon.href;
+    if (window.parent === window && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+    }
     const fontLink = document.getElementById('pf-client-font') as HTMLLinkElement || document.createElement('link');
     fontLink.id = 'pf-client-font';
     fontLink.rel = 'stylesheet';
