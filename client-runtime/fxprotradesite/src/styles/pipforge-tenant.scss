@@ -317,20 +317,37 @@ html[data-pf-tenant=true][data-pf-header=account-focus] .app-header .pf-account{
 
 html[data-pf-tenant=true] .dc-tabs__content{position:relative}
 
-/* The result tray keeps a readable glass surface regardless of the site opacity slider. */
-html[data-pf-tenant=true] :is(.run-panel,.run-panel__container--mobile) :is(.dc-drawer__container,.run-panel__content,.run-panel__stat){
-    background:color-mix(in srgb,var(--pf-client-page) 80%,transparent)!important;
-    -webkit-backdrop-filter:blur(18px) saturate(135%)!important;
-    backdrop-filter:blur(18px) saturate(135%)!important;
-}
+/* Results are an isolated solid surface, independent of the site opacity. */
+html[data-pf-tenant=true] :is(.run-panel,.run-panel__container--mobile) :is(.dc-drawer__container,.run-panel__content,.run-panel__stat,.dc-drawer__header){background:var(--pf-client-page)!important;backdrop-filter:none!important}
 html[data-pf-tenant=true][data-pf-bold=true] body :is(h1,h2,h3,h4,p,button,a,label,span,small,td,th,li){font-weight:700!important}
-html[data-pf-tenant=true] .pf-mobile-run .toolbar__section{flex-direction:row!important;align-items:stretch!important;gap:8px!important}
-html[data-pf-tenant=true] .pf-mobile-run .pf-tray-toggle{order:2;align-self:stretch;width:42px;height:auto;min-height:48px;flex:0 0 42px;border:1px solid var(--pf-client-edge);border-radius:10px;background:var(--pf-client-glass)}
-html[data-pf-tenant=true] .pf-mobile-run .animation__wrapper{display:flex!important;align-items:stretch;gap:8px;flex:1;min-width:0;width:auto!important;min-height:52px}
-html[data-pf-tenant=true] .pf-mobile-run .animation__container{flex:1;min-width:0;width:auto!important}
-html[data-pf-tenant=true] .pf-mobile-run :is(#db-animation__run-button,#db-animation__stop-button){display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 30%;width:30%!important;min-width:108px;min-height:52px;height:auto!important;border-radius:10px!important}
-html[data-pf-tenant=true] .pf-drawer-controls{display:flex;align-items:center;gap:8px;min-height:44px;padding:4px 12px}
-html[data-pf-tenant=true] .pf-tray-toggle--top{width:44px;height:36px;min-height:36px;flex:none;border:1px solid var(--pf-client-edge);border-radius:10px;background:var(--pf-client-glass)}
-html[data-pf-tenant=true] .pf-drawer-controls .run-panel__clear-button{position:static!important;inset:auto!important;margin:0 0 0 auto!important}
+html[data-pf-tenant=true] .pf-tray-toggle{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:var(--pf-client-ink);display:flex;align-items:center;justify-content:center}
+html[data-pf-tenant=true] .pf-tray-toggle svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2}
+html[data-pf-tenant=true] .pf-mobile-run .toolbar__section{flex-direction:column!important;gap:4px!important;align-items:stretch!important}
+html[data-pf-tenant=true] .pf-mobile-run .pf-tray-toggle{order:-1;align-self:center;width:100%;height:28px;min-height:28px;flex:none}
+html[data-pf-tenant=true] .pf-mobile-run .animation__wrapper{display:flex!important;align-items:stretch;flex:none;min-width:0;width:100%!important;height:40px;gap:0}
+html[data-pf-tenant=true] .pf-mobile-run .animation__container{flex:1;min-width:0;width:auto!important;height:40px!important}
+html[data-pf-tenant=true] .pf-mobile-run :is(#db-animation__run-button,#db-animation__stop-button){display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 24%;width:24%!important;min-width:80px;min-height:40px;height:40px!important;border-radius:4px 0 0 4px!important;font-size:14px!important}
+html[data-pf-tenant=true] .pf-drawer-controls{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;min-height:36px;padding:2px 12px;flex:none}
+html[data-pf-tenant=true] .pf-tray-toggle--top{grid-column:2;width:100%;height:32px;min-height:32px}
+html[data-pf-tenant=true] .pf-drawer-controls .run-panel__clear-button{grid-column:3;position:static!important;inset:auto!important;margin:0 0 0 auto!important}
 html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__content{padding-top:0!important}
-html[data-pf-tenant=true] .pf-tray-toggle svg{width:22px;height:22px}
+@media(max-width:1023px){
+ html[data-pf-tenant=true] .run-panel__container--mobile .dc-drawer{top:var(--pf-header-height,112px)!important;bottom:116px!important;height:auto!important;transform:none!important}
+ html[data-pf-tenant=true] .run-panel__content{display:flex!important;flex-direction:column;min-height:0;overflow:hidden}
+ html[data-pf-tenant=true] .run-panel__content>.dc-tabs{display:flex;flex-direction:column;flex:1;min-height:0}
+ html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__content{flex:1;min-height:0;overflow:auto}
+ html[data-pf-tenant=true] .run-panel__stat--mobile{position:static!important;flex:none;width:100%!important}
+ html[data-pf-tenant=true] .dc-tabs__item--main__tabs{font-size:13px!important;min-height:40px!important;height:40px!important;padding-inline:12px!important}
+ html[data-pf-tenant=true] .dashboard-title{font-size:20px!important}
+ html[data-pf-tenant=true] .dashboard-subtitle{font-size:13px!important;line-height:1.5}
+ html[data-pf-tenant=true] .pf-explore h2{font-size:18px}html[data-pf-tenant=true] .pf-explore-grid h3{font-size:15px}html[data-pf-tenant=true] .pf-explore-grid p{font-size:13px}
+}
+html[data-pf-tenant=true] :is(.trading-hub-display,.trading-hub-tabbed,.advanced-display){--surface-primary:transparent;--surface-secondary:var(--pf-client-glass);--surface-elevated:var(--pf-client-glass);--surface-glass:var(--pf-client-glass);--text-primary:var(--pf-client-ink);--text-secondary:var(--pf-client-ink);--text-muted:var(--pf-client-ink);background:transparent!important;color:var(--pf-client-ink)!important}
+
+html[data-pf-tenant=true] .trading-hub-tabbed :is(.trading-hub-content,.strategy-container,.strategy-content,.strategy-panel,.strategy-description,.analysis-section,.analysis-card,.analysis-item,.strategy-tabs,.tab-content,.strategy-details,.analysis-grid){background:var(--pf-client-glass)!important;background-image:none!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}
+html[data-pf-tenant=true] .advanced-display{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur));font-family:var(--pf-client-font)!important}
+html[data-pf-tenant=true] .advanced-display :is(input,select,label,p){color:var(--pf-client-ink)!important;background-color:transparent!important}
+
+@media(max-width:1023px){html[data-pf-tenant=true] .run-panel-tab__content--mobile{position:relative!important;bottom:auto!important;height:100%!important;width:100%!important;overflow:auto!important}html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__list{flex:none;min-height:40px;position:relative!important}}
+
+html[data-pf-tenant=true] .trading-hub-tabbed :is(.tabs-container,.tabs-header,.tabs-content,.tab-panel,.panel-header,.panel-body,.strategy-info,.current-analysis,.panel-footer){background:var(--pf-client-glass)!important;background-image:none!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}

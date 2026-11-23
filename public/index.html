@@ -1257,9 +1257,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   pick("hds",function(b){st.h=b.dataset.v});pick("shp",function(b){st.sh=b.dataset.v});pick("spl",function(b){st.sp=b.dataset.v});
   $("ann").parentNode.insertAdjacentHTML("beforeend",'<label class="chk">Show announcement bar <input type="checkbox" id="announcement-visible" checked></label>');
   $("announcement-visible").addEventListener("change",function(e){st.menu.announcement_visible=e.target.checked;render();showPreviewAfterEdit()});
-  $("font-search").parentNode.insertAdjacentHTML("beforeend",'<label for="font-size-control">Text size <output id="font-size-value">100%</output></label><input id="font-size-control" type="range" min="70" max="110" step="5" value="100" aria-label="Text size"><p class="mini">Reduce text size to fit more content. Default is 100%.</p><label class="font-bold-toggle"><input id="font-bold-control" type="checkbox"> Bold text</label>');
-  $("font-size-control").addEventListener("input",function(e){st.menu.font_scale=Number(e.target.value);$("font-size-value").textContent=e.target.value+"%";render()});
-  $("font-size-control").addEventListener("change",showPreviewAfterEdit);
+  $("font-search").parentNode.insertAdjacentHTML("beforeend",'<label class="font-bold-toggle"><input id="font-bold-control" type="checkbox"> Bold text</label>');
   $("font-bold-control").addEventListener("change",function(e){st.menu.bold_text=e.target.checked;render();showPreviewAfterEdit()});
   $("ann").addEventListener("input",function(){st.ann=this.value;render()});$("ann").addEventListener("change",showPreviewAfterEdit);
   $("socs").addEventListener("input",function(e){var k=e.target.dataset.k;if(k){st.soc[k]=e.target.value;render()}});
