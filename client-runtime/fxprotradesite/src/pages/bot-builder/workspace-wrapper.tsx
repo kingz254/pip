@@ -1,3 +1,4 @@
+import BrandedLoader from '@/components/loader/branded-loader';
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import Flyout from '@/components/flyout';
@@ -31,7 +32,7 @@ const WorkspaceWrapper = observer(() => {
         };
     }, []);
 
-    if (is_loading) return null;
+    if (is_loading) return <BrandedLoader message="Loading Bot Builder…" />;
 
     if (window.Blockly?.derivWorkspace)
         return (

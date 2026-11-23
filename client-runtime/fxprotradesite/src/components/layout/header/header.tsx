@@ -42,7 +42,7 @@ const AppHeader = observer(() => {
             </div>}
             {isAuthorizing && <span role='status' className='pf-account-status'>Connecting…</span>}
             {!isAuthorizing && !isAuthorized && <span role='status' className='pf-account-status'>Reconnecting…</span>}
-          </> : <><a href={'/api/deriv/login?return='+returnUrl}>Log in</a><a href={'/api/deriv/login?signup=1&return='+returnUrl}>Sign up</a></>}
+          </> : <><a className='pf-auth-login' href={'/api/deriv/login?return='+returnUrl}>Log in</a><a className='pf-auth-signup' href={'/api/deriv/login?signup=1&return='+returnUrl}>Sign up</a></>}
         </div>{error&&<p role='alert'>{error}</p>}
     </header>;
 });

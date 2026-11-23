@@ -18,4 +18,10 @@ test('nested analysis tools inherit palette, font and matching canvas scheme on 
  applySiteBranding({...site,name:'Atlas',template:'snow'});
  assert.equal(frame.style.colorScheme,'light');assert.equal(frame.contentDocument.querySelector('h1').textContent,'Atlas');
  assert.equal(frame.contentDocument.querySelectorAll('#pf-tool-theme').length,1);
+ applySiteBranding({...site,menu:{font_scale:85},loader_style:'ripple',header:'balanced'});
+ assert.equal(w.document.documentElement.style.fontSize,'8.5px');
+ assert.equal(w.document.documentElement.dataset.pfLoader,'ripple');
+ assert.equal(w.document.documentElement.dataset.pfHeader,'balanced');
+ applySiteBranding({...site,menu:{font_scale:200}});
+ assert.equal(w.document.documentElement.style.fontSize,'11.5px');
 });

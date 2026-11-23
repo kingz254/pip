@@ -6,6 +6,7 @@ import AnalysistoolModal from '@/components/analysistool/analysistool-modal';
 import { botNotification } from '@/components/bot-notification/bot-notification';
 import PortfolioIcon from '@/components/icons/portfolio-icon';
 import ChunkLoader from '@/components/loader/chunk-loader';
+import LoadingFrame from '@/components/loader/loading-frame';
 import AdvancedDisplayModal from '@/components/modals/advanced-display-modal';
 import PortfolioDisplay from '@/components/portfolio/portfolio-display';
 import DesktopWrapper from '@/components/shared_ui/desktop-wrapper';
@@ -772,7 +773,7 @@ const AppWrapper = observer(() => {
         }
         
         return (
-            <iframe
+            <LoadingFrame
                 src={'/'+analysisToolUrl+'/index.html'}
                 width='100%'
                 height='600px'
@@ -1202,7 +1203,7 @@ const AppWrapper = observer(() => {
                         </div>
                         <div id='id-smart-trading' label={<><AnalysisToolIcon /><Localize i18n_default_text='Smart Trading' /></>}><Suspense fallback={<ChunkLoader />}><SmartTrading /></Suspense></div>
                         <div id='id-trading-hub' label={<><ChartsIcon /><Localize i18n_default_text='Trading Hub' /></>}><Suspense fallback={<ChunkLoader />}><TradingHub /></Suspense></div>
-                        <div id='id-signals' label={<><SignalsIcon /><Localize i18n_default_text='Signals' /></>}><iframe src='/signals' title='Trading Signals' className='main-signals-frame' /></div>
+                        <div id='id-signals' label={<><SignalsIcon /><Localize i18n_default_text='Signals' /></>}><LoadingFrame src='/signals' title='Trading Signals' className='main-signals-frame' /></div>
                         <div
                             label={
                                 <>

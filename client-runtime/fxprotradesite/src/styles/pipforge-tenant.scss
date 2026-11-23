@@ -281,3 +281,29 @@ html[data-pf-tenant=true] .app-footer .pf-social-profiles a{width:25px!important
 html[data-pf-tenant=true] .app-footer .pf-social-profiles svg{width:15px;height:15px}
 html[data-pf-tenant=true] .pf-mobile-run{bottom:36px!important}
 @media(max-width:1023px){html[data-pf-tenant=true] .run-panel__content{position:relative}html[data-pf-tenant=true] .run-panel__clear-button{position:absolute!important;top:48px;right:12px;z-index:2;margin:8px 0!important}html[data-pf-tenant=true] .run-panel__content>.dc-tabs>.dc-tabs__content{padding-top:48px}}
+
+/* Header controls wrap as a group; signup remains the primary action. */
+html[data-pf-tenant=true]{--pf-auth-ink:var(--pf-client-page);overflow-x:clip}
+html[data-pf-tenant=true] body{overflow-x:clip}
+html[data-pf-tenant=true] .pf-account:has(.pf-auth-login){display:flex;align-items:center;gap:8px;flex-shrink:0}
+html[data-pf-tenant=true] .pf-account :is(.pf-auth-login,.pf-auth-signup){display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;white-space:nowrap;text-decoration:none;border:1px solid var(--pf-client-edge);border-radius:12px;font:inherit;line-height:1.2;color:var(--pf-client-ink);background:var(--pf-client-glass)}
+html[data-pf-tenant=true] .pf-account .pf-auth-signup{background:linear-gradient(110deg,var(--pf-client-accent),var(--pf-client-secondary));color:var(--pf-auth-ink);font-weight:700;border-color:transparent}
+html[data-pf-tenant=true] .app-header :is(a,button):focus-visible{outline:2px solid var(--pf-client-accent);outline-offset:3px}
+html[data-pf-tenant=true][data-pf-header=brandline] .app-header{border-bottom:2px solid var(--pf-client-accent);border-radius:0}
+html[data-pf-tenant=true][data-pf-header=balanced] .app-header{border:1px solid var(--pf-client-edge);border-radius:16px;margin:6px}
+html[data-pf-tenant=true][data-pf-header=social-row] .app-header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important}
+html[data-pf-tenant=true][data-pf-header=social-row] .app-header .pf-social-profiles{grid-column:1/-1;grid-row:2;justify-content:center;padding-block:6px}
+html[data-pf-tenant=true][data-pf-header=account-focus] .app-header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important}
+html[data-pf-tenant=true][data-pf-header=account-focus] .app-header .pf-account{grid-column:2;grid-row:1/3;align-self:center}
+@media(max-width:1023px){
+ html[data-pf-tenant=true] .app-header{flex-wrap:wrap!important;gap:8px!important;padding:8px!important;min-height:56px}
+ html[data-pf-tenant=true] .app-header__logo{max-width:40%;flex:1;min-width:64px}
+ html[data-pf-tenant=true] .pf-account :is(.pf-auth-login,.pf-auth-signup){padding:8px 10px;min-height:38px;font-size:calc(13px * var(--pf-client-font-scale,1))}
+ html[data-pf-tenant=true][data-pf-header=stacked] .app-header,html[data-pf-tenant=true][data-pf-header=brand] .app-header{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important}
+ html[data-pf-tenant=true][data-pf-header=stacked] .app-header .pf-social-profiles{grid-row:2;grid-column:1/-1;justify-content:center}
+ html[data-pf-tenant=true][data-pf-header=brand] .app-header .pf-account{grid-column:2;grid-row:1}
+ html[data-pf-tenant=true][data-pf-header=brand] .app-header .pf-social-profiles{grid-row:2;grid-column:1/-1}
+}
+@media(max-width:380px){html[data-pf-tenant=true] .app-header .pf-social-profiles{order:3;flex-basis:100%;justify-content:center}}
+
+html[data-pf-tenant=true] .dc-tabs__content{position:relative}

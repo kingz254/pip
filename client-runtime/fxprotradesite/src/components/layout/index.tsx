@@ -28,7 +28,7 @@ const Layout = () => {
     return (
         <div className={clsx('layout', { responsive: isDesktop })}>
             {!isCallbackPage && <AppHeader />}
-            {!isCallbackPage && !!brand?.announcement && <NotificationBanner message={brand.announcement} />}
+            {!isCallbackPage && !!brand?.announcement && brand.menu?.announcement_visible !== false && <NotificationBanner message={brand.announcement} />}
             <Body>
                 <Outlet />
             </Body>

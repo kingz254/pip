@@ -1,26 +1,10 @@
-import React from 'react';
-import './simple-loader.scss';
+import { useClientBranding } from '../../pipforge/site-branding';
+import './workspace-loader.scss';
 
-type BrandedLoaderProps = {
-    message?: string;
-    subMessage?: string;
-};
-
-const BrandedLoader: React.FC<BrandedLoaderProps> = ({ 
-    message = "Loading...", 
-    subMessage
-}) => {
-    return (
-        <div className="simple-loader light-theme">
-            <div className="simple-loader__content">
-                <div className="simple-loader__spinner"></div>
-                <div className="simple-loader__message">{message}</div>
-                {subMessage && (
-                    <div className="simple-loader__sub-message">{subMessage}</div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-export default BrandedLoader;
+type BrandedLoaderProps = { message?: string; subMessage?: string };
+export default function BrandedLoader({ message = 'Loading workspace…', subMessage }: BrandedLoaderProps) {
+    const brand = useClientBranding();
+    return <div className='pf-workspace-loader' data-style={brand?.loader_style || 'ring'} role='status' aria-live='polite'>
+        <div className='loader-overlay-inner'><span className='loader-visual' aria-hidden='true'><i /></span><span>{message}</span>{subMessage && <small>{subMessage}</small>}</div>
+    </div>;
+}

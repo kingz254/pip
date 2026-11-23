@@ -45,6 +45,9 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.dataset.pfTemplate = site.template;
     root.dataset.pfTheme = light ? 'light' : 'dark';
     root.dataset.pfBackground = site.background;
+    const fontScale = Math.min(115, Math.max(80, Number(site.menu?.font_scale) || 100)) / 100;
+    root.style.setProperty('--pf-client-font-scale', String(fontScale));
+    root.style.fontSize = `${10 * fontScale}px`;
     root.dataset.pfHeader = site.header;
     root.dataset.pfNavigation = site.menu?.glass_navigation ? 'glass' : 'classic';
     root.dataset.pfIconShape = site.icon_shape;
@@ -138,7 +141,7 @@ function brandEmbeddedTool(frame: HTMLIFrameElement, site: PipforgeSiteBranding)
         for (const property of Array.from(root.style)) if (property.startsWith('--pf-client-')) doc.documentElement.style.setProperty(property,root.style.getPropertyValue(property));
         let style = doc.getElementById('pf-tool-theme') as HTMLStyleElement;
         if (!style) { style=doc.createElement('style');style.id='pf-tool-theme';doc.head.append(style); }
-        style.textContent = 'html,body{background:transparent!important;color:var(--pf-client-ink)!important;font-family:var(--pf-client-font)!important}header,section,.menu,.settings-panel{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}input,select,button{font-family:var(--pf-client-font)}';
+        style.textContent = 'html{font-size:calc(16px * var(--pf-client-font-scale,1))!important}html,body{background:transparent!important;color:var(--pf-client-ink)!important;font-family:var(--pf-client-font)!important}header,section,.menu,.settings-panel{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}input,select,button{font-family:var(--pf-client-font)}';
         if(frame.getAttribute('src')?.startsWith('/signals'))style.textContent+='html{--bg-primary:transparent;--bg-secondary:var(--pf-client-glass);--bg-card:var(--pf-client-glass);--text-primary:var(--pf-client-ink);--text-secondary:var(--pf-client-ink);--text-muted:var(--pf-client-muted);--border-color:var(--pf-client-edge);--gold-primary:var(--pf-client-accent);--gold-secondary:var(--pf-client-accent);--gold-dark:var(--pf-client-accent);--gold-light:var(--pf-client-accent);--gold-gradient:linear-gradient(135deg,var(--pf-client-accent),var(--pf-client-secondary))}body{background:transparent!important;color:var(--pf-client-ink)!important}.theme-toggle{display:none!important}';
         if(frame.getAttribute('src')?.startsWith('/apps/'))style.textContent+='html{--primary:from var(--pf-client-accent) r g b!important;--ring:from var(--pf-client-accent) r g b!important;--primary-foreground:from var(--pf-client-ink) r g b!important;--foreground:from var(--pf-client-ink) r g b!important;--muted-foreground:from var(--pf-client-muted) r g b!important}header,footer,.footer-bar{display:none!important}.bg-popover,[role=dialog]{background:var(--pf-client-page)!important}.bg-background{background:transparent!important}.bg-card,.bg-muted{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}html,body,main{margin:0!important;max-width:100%!important}main{min-height:100%!important;height:100dvh!important}main>[class*=max-w-]{max-width:none!important;width:100%!important}';
         style.textContent += '.smartcharts,.chartContainer,.chartContainer .chartArea,.ciq-chart-area,.ciq-chart{background:transparent!important;color:var(--pf-client-ink)!important}.text-muted-foreground{color:var(--pf-client-ink)!important}';
