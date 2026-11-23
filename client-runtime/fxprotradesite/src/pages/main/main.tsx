@@ -286,35 +286,9 @@ const AppWrapper = observer(() => {
 
     useEffect(() => {
         const fetchBots = async () => {
-            const botFiles = [
-            { file: 'Legacy 2026 Over.xml', title: 'Legacy Over', category: 'automated', description: 'Digit Over preset with configurable prediction and stake progression.' },,
-            { file: 'Ultra Recovery.xml', title: 'Ultra Recovery', category: 'automated', description: 'Recovery-style preset. Review its stake progression and loss limits before use.' },,
-            { file: 'Elite Startrader.xml', title: 'Elite Startrader', category: 'automated', description: 'Trading preset with digit analysis and configurable prediction settings.' },,
-            { file: 'Oracle OverUnder Pro.xml', title: 'Oracle Over/Under', category: 'automated', description: 'Over/under digit preset with configurable prediction and money-management values.' },,
-            { file: '2025 Bot  Over Under.xml', title: 'Over/Under 2025', category: 'automated', description: 'Over/under strategy preset. Check the selected market and prediction before running.' },,
-            { file: '2025 Original Version.xml', title: 'Even/Odd 2025', category: 'popular', description: 'Even/odd digit strategy preset with adjustable trade limits.' },,
-            { file: 'Turbo O_U Accelerator.xml', title: 'Turbo O/U', category: 'automated', description: 'Over/under strategy preset with configurable stake progression.' },,
-            { file: 'Market Legend v2.xml', title: 'Market Legend', category: 'popular', description: 'General-purpose strategy preset. Inspect contract and risk settings before running.' },,
-            { file: 'Auto Differ Recovery O_U.xml', title: 'Differ Recovery', category: 'automated', description: 'Differs and over/under recovery preset with adjustable stake settings.' },,
-            { file: 'Godzilla.xml', title: 'Godzilla', category: 'popular', description: 'Multi-setting strategy preset. Review all risk controls in Builder first.' },,
-            { file: 'Envy Pro Differ.xml', title: 'Envy Differ', category: 'automated', description: 'Digit differs preset with configurable prediction and stake values.' },,
-            { file: 'H_L Auto Fortress.xml', title: 'High/Low Fortress', category: 'automated', description: 'Higher/lower preset with configurable contract and money-management settings.' },,
-            { file: 'Top-notch 2.xml', title: 'Top-Notch 2', category: 'popular', description: 'Strategy preset with configurable trade conditions and limits.' },,
-            { file: 'Core Bot V3.xml', title: 'Core Bot V3', category: 'popular', description: 'Core strategy preset. Load it to inspect its conditions and money management.' },,
-            { file: 'EvenOdd Dominator.xml', title: 'Even/Odd Dominator', category: 'automated', description: 'Even/odd digit strategy preset with adjustable stake settings.' },,
-            { file: '🫰Pro  Differ Bot .xml', title: 'Pro Differ', category: 'automated', description: 'Digit differs strategy preset with configurable prediction and stake values.' },,
-            { file: 'Under 9 Bot.xml', title: 'Under 9', category: 'automated', description: 'Digit under strategy preset. Confirm its threshold and selected market before running.' },,
-            { file: "Accumulator Reverse D'Alembert.xml", title: 'Reverse D’Alembert Accumulator', category: 'automated', description: 'Accumulator strategy preset using a reverse D’Alembert stake progression.' },,
-            { file: '1 tick DIgit Over 2.xml', title: 'One-Tick Over 2', category: 'automated', description: 'One-tick digit over preset with the threshold set in the bot configuration.' },,
-            { file: 'Digit Over 3.xml', title: 'Digit Over 3', category: 'automated', description: 'Digit over preset with a threshold of 3; verify the market and stake settings.' },,
-            { file: 'Mavic-Air-RF Vix Bot.xml', title: 'Mavic Rise/Fall', category: 'popular', description: 'Rise/fall strategy preset. Review duration, stake, and limits before running.' },,
-            { file: 'MD MASTER BOT Pro.  (2).xml', title: 'MD Master', category: 'popular', description: 'Multi-condition strategy preset. Inspect its blocks and controls in Builder.' },,
-            { file: 'Mega Heist Robot.xml', title: 'Mega Heist', category: 'popular', description: 'Strategy preset with configurable contract and money-management settings.' },,
-            { file: 'signals over bot.xml', title: 'Signals Over', category: 'automated', description: 'Digit-over signal strategy preset with editable threshold settings.' },,
-            { file: 'signals under bot.xml', title: 'Signals Under', category: 'automated', description: 'Digit-under signal strategy preset with editable threshold settings.' },,
-            { file: 'Upgraded Candlemine.xml', title: 'Candle Mine', category: 'popular', description: 'Candle-based strategy preset. Review its conditions and risk limits before use.' },,
-            { file: 'ldpanalyzer/-Binary Bot Pro- One Shot Strategy (22-Mar-2023).xml', title: 'One-Shot Strategy', category: 'popular', description: 'Single-shot strategy preset from the included LDP Analyzer collection.' },
-            ];
+            const catalog = await fetch('/bot-catalog.json');
+            if (!catalog.ok) throw new Error('Bot catalog could not load');
+            const botFiles: { file: string; title: string; category: string; description: string }[] = await catalog.json();
             const results = await Promise.allSettled(botFiles.map(async bot => {
                 const response = await fetch(`/${encodeURI(bot.file)}`);
                 if (!response.ok) throw new Error(`Could not load ${bot.file} (${response.status})`);
@@ -781,7 +755,7 @@ const AppWrapper = observer(() => {
                                                             <h3 className='bot-card__title'>{bot.title}</h3>
                                                         </div>
                                                         <div className='bot-card__content'>
-                                                            <p className='bot-card__description'>{bot.description}</p>
+                                                            <p className='bot-card__description'>{bot.description}</p><button className='bot-card__action' onClick={() => handleBotClick(bot)}>Load in Bot Builder</button>
                                                         </div>
                                                     </article>
                                                 ))}
