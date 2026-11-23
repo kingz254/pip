@@ -16,7 +16,7 @@ export const initChunkErrorHandler = () => {
         // Check if this is a CSS chunk loading error
         if (
             errorMessage.includes('Loading CSS chunk') ||
-            errorMessage.includes('Failed to fetch') ||
+            errorMessage.includes('Loading chunk') ||
             (event.filename && event.filename.includes('.css'))
         ) {
             console.error('🚨 Chunk loading error detected:', {
@@ -40,7 +40,7 @@ export const initChunkErrorHandler = () => {
 
         if (
             error?.message?.includes('Loading CSS chunk') ||
-            error?.message?.includes('Failed to fetch') ||
+            error?.message?.includes('Loading chunk') ||
             (typeof error === 'string' && error.includes('CSS chunk'))
         ) {
             console.error('🚨 Unhandled chunk loading promise rejection:', error);
@@ -262,8 +262,7 @@ const showChunkErrorNotification = (title: string, message: string, type: string
             });
         } else {
             // Fallback: Clear localStorage and session storage
-            localStorage.clear();
-            sessionStorage.clear();
+            // Preserve saved designs and account selection.
             (window as any).location.reload();
         }
     });

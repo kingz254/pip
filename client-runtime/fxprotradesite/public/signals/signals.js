@@ -65,7 +65,12 @@ ws.onmessage = event => {
     }
 };
 
+let pressingSignal = false;
+document.addEventListener('pointerdown', event => { pressingSignal = Boolean(event.target.closest('button[data-symbol]')); });
+window.addEventListener('pointerup', () => setTimeout(() => { pressingSignal = false; }, 0));
+window.addEventListener('pointercancel', () => { pressingSignal = false; });
 function updateTables() {
+    if (pressingSignal) return;
     const riseFallTable = document.getElementById('riseFallTable');
     const overUnderTable = document.getElementById('overUnderTable');
     const combinedTable = document.getElementById('combinedTable');

@@ -318,6 +318,7 @@ export default class LoadModalStore {
                 }
             } catch (err) {
                 console.error('Error loading strategy:', err);
+                throw err;
             }
         }
     };

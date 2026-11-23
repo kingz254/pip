@@ -272,7 +272,7 @@ const AppWrapper = observer(() => {
                 
                 // Handle subtab parameter for Analysis Tool
                 if (tab_param === 'id-analysis-tool' && subtab_param) {
-                    const validSubtabs = ['ai', 'ldpanalyzer', 'arbitrage', 'instances'];
+                    const validSubtabs = ['ai', 'ldpanalyzer', 'instances'];
                     if (validSubtabs.includes(subtab_param)) {
                         setAnalysisToolUrl(subtab_param);
                     }
@@ -1243,14 +1243,7 @@ const AppWrapper = observer(() => {
                                     >
                                         A Tool
                                     </button>
-                                    <button
-                                        onClick={() => toggleAnalysisTool('arbitrage')}
-                                        className={`analysis-tool-toggle__button ${
-                                            analysisToolUrl === 'arbitrage' ? 'active' : ''
-                                        }`}
-                                    >
-                                        Arbitrage
-                                    </button>
+
                                     <button
                                         onClick={() => toggleAnalysisTool('ldpanalyzer')}
                                         className={`analysis-tool-toggle__button ${

@@ -235,3 +235,15 @@ html[data-pf-tenant=true] .app-footer{height:40px!important;min-height:40px!impo
 html[data-pf-tenant=true] .app-footer :is(.pf-social-profiles a,.pf-risk-button){width:28px!important;height:28px!important;min-height:28px!important;padding:4px!important}
 .pf-mobile-run{position:fixed;bottom:40px;left:0;right:0;z-index:1300;padding:4px 8px;background:var(--pf-client-page,var(--general-main-1))}
 @media(max-width:1023px){html[data-pf-tenant=true] .controls__section{display:none!important}html[data-pf-tenant=true] .dc-drawer{bottom:96px!important}}
+
+/* Tenant surfaces use the same glass and ink as the builder preview. */
+html[data-pf-tenant=true] body{--text-less-prominent:var(--pf-client-ink);--text-hint:var(--pf-client-ink);--text-disabled:var(--pf-client-ink)}
+html[data-pf-tenant=true] :is(.speed-bot-display,.smart-trading-display,.trading-hub-tabbed,.forex-container,.free-bots,.free-bots-container,.blocklyMainBackground,.blocklySvg,.run-panel__content,.statistics,.transactions){background:transparent!important;background-image:none!important;color:var(--pf-client-ink)!important}
+html[data-pf-tenant=true] :is(.trading-config-card,.config-header,.strategy-card,.analysis-panel,.run-panel__stat,.run-panel__footer,.summary,.forex-signals-header){background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}
+html[data-pf-tenant=true] .blocklyMainBackground{fill:transparent!important}
+html[data-pf-tenant=true] :is(.speed-bot-display,.smart-trading-display,.trading-hub-tabbed,.forex-container,.run-panel) :is(p,label,h1,h2,h3,h4,td,th,small){color:var(--pf-client-ink)!important}
+
+html[data-pf-tenant=true] :is(.results-card,.results-summary,.price-display,.smart-trading-header,.analysis-data,.recommendation,.config-group,.free-bot-card,.bot-card,.forex-container .signal-card,.trading-hub-content,.blocklyToolboxDiv,.blocklyFlyoutBackground){background:var(--pf-client-glass)!important;background-image:none!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}
+html[data-pf-tenant=true] :is(.smart-trading-display,.speed-bot-display,.trading-hub-content,.forex-container,.free-bots-container) span:not([class*=profit]):not([class*=loss]){color:var(--pf-client-ink)!important}
+
+html[data-pf-tenant=true] body{--surface-primary:var(--pf-client-glass);--surface-secondary:var(--pf-client-glass);--surface-elevated:var(--pf-client-glass);--surface-glass:var(--pf-client-glass);--text-secondary:var(--pf-client-ink);--text-muted:var(--pf-client-ink);--border-primary:var(--pf-client-edge);--border-secondary:var(--pf-client-edge);--primary-color:var(--pf-client-accent);--primary-gradient:linear-gradient(135deg,var(--pf-client-accent),var(--pf-client-secondary))}

@@ -331,7 +331,7 @@ export function RiseFallView({
           )}
         </div>
       ) : (
-        <div className="relative max-lg:h-[45dvh] lg:h-[min(33.6rem,66vh)] lg:min-h-[384px]">
+        <div className="relative max-lg:h-[58dvh] max-lg:min-h-[320px] lg:h-[min(33.6rem,66vh)] lg:min-h-[384px]">
           <div className={`h-full ${editMode ? 'pointer-events-none select-none' : ''}`}>
             {chartData ? (
               <RiseFallChart

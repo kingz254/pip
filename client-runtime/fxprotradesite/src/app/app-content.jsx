@@ -160,6 +160,11 @@ const AppContent = observer(() => {
                     // Use the load modal's loadStrategyToBuilder method (same as free bots)
                     if (store?.load_modal?.loadStrategyToBuilder) {
                         console.log('🔄 Loading strategy to builder...');
+                        const deadline = Date.now() + 10000;
+                        while ((!window.Blockly?.derivWorkspace || store.blockly_store?.is_loading) && Date.now() < deadline) {
+                            await new Promise(resolve => setTimeout(resolve, 50));
+                        }
+                        if (!window.Blockly?.derivWorkspace || store.blockly_store?.is_loading) throw new Error('Bot workspace is not ready');
                         await store.load_modal.loadStrategyToBuilder(tempStrategy);
                         console.log('✅ Bot loaded successfully!');
                         

@@ -54,7 +54,7 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.style.setProperty('--pf-client-secondary', theme.secondary);
     root.style.setProperty('--pf-client-page', theme.page || '#10131b');
     root.style.setProperty('--pf-client-ink', theme.ink);
-    root.style.setProperty('--pf-client-muted', theme.muted);
+    root.style.setProperty('--pf-client-muted', theme.ink);
     root.style.setProperty('--pf-client-glass', theme.glass);
     root.style.setProperty('--pf-client-edge', theme.edge);
     root.style.setProperty('--pf-client-blur', `${Math.round(Math.max(0, Math.min(100, site.blur)) * 0.24)}px`);
@@ -134,6 +134,7 @@ function brandEmbeddedTool(frame: HTMLIFrameElement, site: PipforgeSiteBranding)
         style.textContent = 'html,body{background:transparent!important;color:var(--pf-client-ink)!important;font-family:var(--pf-client-font)!important}header,section,.menu,.settings-panel{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}input,select,button{font-family:var(--pf-client-font)}';
         if(frame.getAttribute('src')?.startsWith('/signals'))style.textContent+='html{--bg-primary:transparent;--bg-secondary:var(--pf-client-glass);--bg-card:var(--pf-client-glass);--text-primary:var(--pf-client-ink);--text-secondary:var(--pf-client-ink);--text-muted:var(--pf-client-muted);--border-color:var(--pf-client-edge);--gold-primary:var(--pf-client-accent);--gold-secondary:var(--pf-client-accent);--gold-dark:var(--pf-client-accent);--gold-light:var(--pf-client-accent);--gold-gradient:linear-gradient(135deg,var(--pf-client-accent),var(--pf-client-secondary))}body{background:transparent!important;color:var(--pf-client-ink)!important}.theme-toggle{display:none!important}';
         if(frame.getAttribute('src')?.startsWith('/apps/'))style.textContent+='html{--primary:from var(--pf-client-accent) r g b!important;--ring:from var(--pf-client-accent) r g b!important;--primary-foreground:from var(--pf-client-ink) r g b!important;--foreground:from var(--pf-client-ink) r g b!important;--muted-foreground:from var(--pf-client-muted) r g b!important}header,footer,.footer-bar{display:none!important}.bg-popover,[role=dialog]{background:var(--pf-client-page)!important}.bg-background{background:transparent!important}.bg-card,.bg-muted{background:var(--pf-client-glass)!important;color:var(--pf-client-ink)!important;backdrop-filter:blur(var(--pf-client-blur))}html,body,main{margin:0!important;max-width:100%!important}main{min-height:100%!important;height:100dvh!important}main>[class*=max-w-]{max-width:none!important;width:100%!important}';
+        style.textContent += '.smartcharts,.chartContainer,.chartContainer .chartArea,.ciq-chart-area,.ciq-chart{background:transparent!important;color:var(--pf-client-ink)!important}.text-muted-foreground{color:var(--pf-client-ink)!important}';
         if (doc.title === 'Binaryfx' || doc.documentElement.dataset.pfBrandHeading === 'true') { doc.documentElement.dataset.pfBrandHeading='true';doc.title=site.name; const heading=doc.querySelector('h1');if(heading)heading.textContent=site.name; }
     } catch { /* External charts retain their provider's own rendering. */ }
 }
