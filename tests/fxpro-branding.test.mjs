@@ -31,8 +31,9 @@ test('nested analysis tools inherit palette, font and matching canvas scheme on 
  assert.equal(normalizeLoaderStyle('ripple'),'spinner');
  const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
  const choices=JSON.parse(html.match(/var LOADER_CHOICES=(\[[^\n]+\]);/)[1]);
- assert.equal(choices.length,31);
- assert.ok(['bars','bounce','dual','scan','blocks','spinner','flip','sweep'].every(id=>choices.some(choice=>choice[0]===id)));
+ assert.equal(choices.length,29);
+ assert.ok(['bounce','sweep'].every(id=>!choices.some(choice=>choice[0]===id)));
+ assert.ok(['bars','dual','scan','blocks','spinner','flip'].every(id=>choices.some(choice=>choice[0]===id)));
  assert.ok(['wavy-12','wavy-15','blob-14','blob-19','blob-12','pulsing-8','squishy-1','wobbling-20','nature-4','cut-8','shuriken-9','spinner-30','bars-20'].every(id=>!choices.some(choice=>choice[0]===id)));
  assert.ok(['wavy-12','wavy-15','blob-14','blob-19','blob-12','pulsing-8','squishy-1','wobbling-20','nature-4','cut-8','shuriken-9','spinner-30','bars-20'].every(id=>LOADER_STYLES.includes(id)));
 });
