@@ -1,49 +1,24 @@
-# Premium launch requirements
+# Premium packages and bot access
 
-Status: admin pricing, offer controls, package checkout boundary, private contacts and owner bot grants are implemented. Premium sales remain closed until private execution is deployed and validated. Existing purchases remain Regular.
+The package uses the existing browser Bot Builder. No persistent worker or extra hosting service is provisioned.
 
-## Packages
+## Owner workflow
 
-Regular: $200 one-time setup. Include branding choices, mobile layout, existing free bot library, DNS setup instructions, Deriv OAuth setup, and installation support at no extra charge.
+1. Configure Regular/Premium prices, optional offer deadline, Telegram invitation and WhatsApp contact in the Pipforge admin page. Offers expire on the server; existing invoices keep their price.
+2. The buyer selects a package. An administrator verifies payment using the existing confirmation flow. Payment amount alone does not grant Premium.
+3. A paid Premium owner opens **Dashboard → Premium owner tools** in Pipforge. After confirming their own buyer's payment, they select a bot and enter that buyer's exact Deriv account ID to grant access. Repeat for each purchased bot. Access can be revoked from the same form.
+4. The buyer signs in through Deriv on that owner's live domain, selects the account that was granted access and opens **Premium Bots**. They load an unlocked bot into Bot Builder, review its settings and press Run.
 
-Premium: $300 one-time setup. Include everything in Regular, priority one-to-one contact for change requests, a premium education/community channel, and a tenant-managed catalogue of 20 paid bots. Agree support scope and response hours before publishing; contact availability does not mean unlimited custom development.
+The API verifies the server session's Deriv account list, live tenant, paid Premium order and matching unrevoked bot grant before delivering XML. Premium XML is stored in a private database table, not public assets or GitHub. Browser roles cannot read the source table directly.
 
-Copy trading is pending verification of a supported provider integration. Do not expose the old token tools or sell this as available yet.
+## Limits
 
-No claims of guaranteed profit, fake sales counts or resetting countdowns. A promotional deadline must be a single configured timestamp enforced in checkout. The requested $300/$450 comparison prices need a truthful basis; until then show package prices without fictitious previous prices. Use “recommended” rather than “most chosen” until paid-order counts establish that claim. Extras included in a paid package should say “included at no extra charge”.
+- There are 20 catalog entries. Nineteen can be loaded; SMART RISE AND FALL BOT remains disabled because its custom SmartRisk/virtualhook definitions are missing. Static block inspection and source integrity checks do not prove demo execution, strategy correctness or profitability.
+- Once XML reaches Bot Builder, a determined buyer can copy it. Revocation blocks future downloads, not copies already loaded. There is no fingerprint, DRM or private server execution.
+- These bots run in the browser and require the browser to remain active. They are not unattended hosted strategies.
+- Copy trading is not implemented or included. Do not restore old token-sharing tools.
+- Priority contact and the Telegram channel are available to paid Premium owners after an administrator configures them. Support scope and response hours should be agreed separately.
 
-## Money and permissions
+## Verification
 
-- Snapshot the selected package and price into each order on the server. A payment amount alone is not a package selector; partial payments must never grant premium.
-- Grant premium only after existing admin payment confirmation succeeds. Preserve existing paid sites as Regular unless explicitly upgraded.
-- Prevent browsers changing package entitlements through site updates or menu settings.
-- Scope bot grants to site, authenticated Deriv account identity and bot ID. A buyer on one domain must not gain access on another domain.
-- Let a verified site owner grant/revoke purchased bot access with an audit trail. Never authorize with browser email, user metadata or localStorage.
-- Refund/suspension must revoke paid execution access. Revocation must also be checked when a run starts.
-
-## Bot execution decision
-
-Authenticated XML delivery plus an embedded site/account watermark provides attribution and delivery controls. It cannot prevent copying after delivery, even if download/export controls are hidden. A hash is a fingerprint for integrity, not DRM.
-
-To keep source private, retain XML on the server and execute validated strategies there using the buyer's authorized Deriv session. The browser sends settings and receives state, never XML. This requires an execution service with run lifecycle, idempotent purchases, reconnect reconciliation, stop controls, bounded exposure and resource limits. Do not put provider credentials or paid XML in public assets or a public GitHub repo.
-
-## Source audit
-
-`premium-bot-audit.json` records the 20 supplied file hashes, contract fields and block types. Static inspection does not prove trading compatibility or profitability. Eight block names need review: main_account, smartrisk_prepare, smartrisk_query, smartrisk_result, smartrisk_settings, trade, tradeOptions, virtualhook. Some may be converted by backward compatibility hooks; verify each conversion and generator before enabling execution.
-
-Every bot needs demo validation of entry rules, stake progression, stop loss, take profit, repeat purchases, account switching and settlement. Never use a real-money trade to validate migration.
-
-## Current implementation and remaining work
-
-- Admin controls prices, offer enabled/expiry, Telegram invite and WhatsApp contact.
-- create_package_order validates package and snapshots the price on the server. Premium rejects checkout until package_prices reports execution availability; it currently reports false.
-- premium_bot_catalog contains 20 short names and integrity hashes, never XML. All execution_ready flags remain false.
-- set_premium_bot_access grants or revokes a bot for one tenant and buyer account. It checks a live site owned by the caller with a paid Premium order. Browser roles cannot write grant rows directly.
-- Owner tools are present in the Pipforge dashboard and shown after the backend authorizes premium_contacts. Contact links and buyer grant controls use server validation.
-- XML has not been uploaded to public assets, a public repository, or buyers' browsers.
-
-The user selected private server execution. A worker still needs to be built and deployed; this commit does not implement execution. Vercel Daemons can host continuous container workers (https://vercel.com/docs/daemons), but provisioned memory is billed while running. Do not enable it without checking costs and the account's budget.
-
-The source for SMART RISE AND FALL BOT.xml's main_account, smartrisk_* and virtualhook blocks is missing from the current runtime. Obtain the source or an explicit behavior specification before claiming an exact migration. Other old trade/tradeOptions names need validation through existing backward compatibility hooks. All 20 strategies still need demo execution checks.
-
-Copy trading is still unimplemented. No paid checkout or marketing claim should present it as available.
+Tests cover package pricing and expiry, owner-only grants, cross-tenant/account restrictions, unauthenticated requests, private source permissions and authorized delivery. A production runtime build checks bundling. The supplied strategies still need individual demo trade checks, including entry rules, stake progression, stop limits, repeat trades, account switching and settlement. Never validate them with real-money trades.

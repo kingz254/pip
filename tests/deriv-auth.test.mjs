@@ -78,3 +78,14 @@ test('markup returns only the current application after Deriv verifies caller ow
  assert.equal((await denied.send('/api/deriv/markup?date_from=2026-11-01&date_to=2026-11-23',{cookie:'pf_deriv=fixture'})).status,403);
  assert.equal((await send('/api/deriv/markup?date_from=bad&date_to=2026-11-23',{cookie:'pf_deriv=fixture'})).status,400);
 });
+
+
+test('premium XML requires the authenticated account identity before checking tenant grants',async()=>{
+ const seen=[];const {send}=harness({premiumBots:async input=>{seen.push(input);return input.botId?'<xml>fixture</xml>':[{id:'premium-01',unlocked:true}]}});
+ assert.equal((await send('/api/deriv/premium-bots?account_id=DOT123')).status,401);
+ const login=await send('/api/deriv/login');const state=new URL(login.headers.Location).searchParams.get('state');
+ const result=await send('/api/deriv/callback?code=fixture&state='+state,{cookie:cookieValue(login.headers['Set-Cookie'])});const cookie=cookieValue(result.headers['Set-Cookie'][1]);
+ assert.equal((await send('/api/deriv/premium-bots?account_id=OTHER&bot_id=premium-01',{cookie})).status,403);assert.equal(seen.length,0);
+ assert.equal((await send('/api/deriv/premium-bots?account_id=DOT123&bot_id=premium-01',{cookie,requestOrigin:'https://attacker.test'})).status,403);
+ const response=await send('/api/deriv/premium-bots?account_id=DOT123&bot_id=premium-01',{cookie});assert.equal(response.status,200);assert.deepEqual(JSON.parse(response.body),{xml:'<xml>fixture</xml>'});assert.equal(seen[0].domain,'pipforge.test');
+});

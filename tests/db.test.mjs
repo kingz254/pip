@@ -35,6 +35,7 @@ await db.exec(setupOnlyMigration);
 await db.exec(ownerVisitMigration);
 await db.exec(readFileSync(new URL('../supabase/migrations/20261125090000_package_settings.sql', import.meta.url), 'utf8'));
 await db.exec(readFileSync(new URL('../supabase/migrations/20261125100000_premium_access.sql', import.meta.url), 'utf8'));
+await db.exec(readFileSync(new URL('../supabase/migrations/20261125110000_private_bot_delivery.sql', import.meta.url), 'utf8'));
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
@@ -277,3 +278,7 @@ test('premium checkout stays closed without execution; only paid site owners can
  r=await as('authenticated',site.owner,"select public.set_premium_bot_access($1,'premium-01','ROT12345',false)",[site.id]);assert.ok(!r.error,r.error?.message);
  r=await as('authenticated',site.owner,'select * from public.premium_bot_grants');assert.ok(r.rows[0].revoked_at);
 });
+
+test('premium XML stays private even when public catalog is readable',async()=>{assert.ok((await as('anon',null,'select * from public.premium_bot_sources')).error);assert.ok((await as('authenticated',A,'select * from public.premium_bot_sources')).error);});
+
+test('premium checkout opens with configured sources and snapshots its own price',async()=>{await db.exec('reset role');await db.exec("insert into public.premium_bot_sources(bot_id,xml_content) select id,'<xml/>' from public.premium_bot_catalog limit 19;update public.premium_bot_catalog set execution_ready=true where id in(select bot_id from public.premium_bot_sources)");let r=await as('anon',null,'select public.package_prices() as prices');assert.equal(r.rows[0].prices.premium_available,true);const uid='99999999-9999-4999-8999-999999999999';await db.query('insert into auth.users(id,email) values($1,$2)',[uid,'premium@example.com']);const site=(await db.query("insert into public.sites(owner,name,domain,domain_mode) values($1,'Premium fixture','premiumfixture.site','own') returning id",[uid])).rows[0];r=await as('authenticated',uid,"select to_jsonb(public.create_package_order($1,'premium')) as invoice",[site.id]);assert.ok(!r.error,r.error);assert.equal(r.rows[0].invoice.package,'premium');assert.equal(Number(r.rows[0].invoice.total_usd),450);});

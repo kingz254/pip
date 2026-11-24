@@ -35,7 +35,7 @@
       var style = getComputedStyle(site);
       profile = { name: state.n || 'Your site', logo_data: state.logo || null, template: state.t,
         background: state.b, blur: state.blur, header: state.h, font_theme: state.ft,
-        loader_style: state.ld, announcement: state.ann || '', icon_shape: state.sh,
+        premium_enabled: !!state.premium_enabled, loader_style: state.ld, announcement: state.ann || '', icon_shape: state.sh,
         icon_place: state.sp, social: state.soc || {}, menu: Object.assign({}, state.menu, { account_style: state.as, account_display: state.accountDisplay }),
         palette: { accent: style.getPropertyValue('--a1').trim(), secondary: style.getPropertyValue('--a2').trim(),
           ink: style.getPropertyValue('--st').trim(), muted: style.getPropertyValue('--sm').trim(),

@@ -1,7 +1,7 @@
 import { resolveSiteAuth } from '../scripts/site-auth-config.mjs';
 
 const publicFields = [
-  'domain', 'name', 'logo_data', 'loader_style', 'template', 'background', 'blur', 'header',
+  'premium_enabled', 'domain', 'name', 'logo_data', 'loader_style', 'template', 'background', 'blur', 'header',
   'font_theme', 'announcement', 'icon_shape', 'icon_place', 'social', 'menu', 'deriv_app_id', 'referral_url',
 ];
 

@@ -1,3 +1,4 @@
+import { createPremiumBots } from './premium-bots.mjs';
 import siteEntry from '../api/site-entry.mjs';
 import clientManifest from '../api/client-manifest.mjs';
 import clientSite from '../api/client-site.mjs';
@@ -12,7 +13,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const dev = process.argv.includes('--dev'), port = Number(process.env.PORT || 5173);
 const origin = process.env.APP_ORIGIN || `http://localhost:${port}`;
 const apps = { bot: ['bot-app', 4003], digits: ['digits-no-chart-app', 3002], 'rise-fall': ['rise-fall-app', 3003], accumulators: ['accumulators-app', 3001] };
-const auth = createDerivAuth({ origin, clientId: process.env.DERIV_CLIENT_ID, redirectUri: process.env.DERIV_REDIRECT_URI });
+const auth = createDerivAuth({ origin, clientId: process.env.DERIV_CLIENT_ID, redirectUri: process.env.DERIV_REDIRECT_URI, premiumBots: process.env.SUPABASE_SERVICE_ROLE_KEY ? createPremiumBots({url:process.env.SUPABASE_URL,serviceKey:process.env.SUPABASE_SERVICE_ROLE_KEY}) : undefined });
 const children = [];
 const types = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.webp':'image/webp', '.woff2':'font/woff2', '.wasm':'application/wasm' };
 if (dev && process.env.PF_LEGACY_APPS === '1') for (const [key, [name, appPort]] of Object.entries(apps)) {

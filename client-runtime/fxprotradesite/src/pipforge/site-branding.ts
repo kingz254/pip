@@ -5,6 +5,7 @@ import { loaderFamily, normalizeLoaderStyle } from './loader-styles.ts';
 
 export type PipforgeSiteBranding = {
     domain?: string;
+    premium_enabled?: boolean;
     palette?: { accent: string; secondary: string; page: string; ink: string; muted: string; glass: string; edge: string; font?: string; light: boolean };
     name: string;
     logo_data?: string | null;

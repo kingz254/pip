@@ -5,7 +5,7 @@ const API = 'https://api.derivws.com/trading/v1/options';
 const opaque = () => randomBytes(32).toString('base64url');
 
 // Local development uses memory; Vercel supplies encrypted durable credential storage.
-export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetch, now = Date.now, store }) {
+export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetch, now = Date.now, store, premiumBots }) {
   const transactions = new Map(), sessions = new Map();
   const read = async (kind,id) => {
     const map=kind==='transaction'?transactions:sessions;
@@ -70,6 +70,19 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
         await remove('session',sessionId); jsonWithCookie(res, cookie('pf_deriv', '', 0)); return true;
       }
       if (!session) { json(res, 401, { error: 'Connect your Deriv account first.' }); return true; }
+      if(url.pathname==='/api/deriv/premium-bots') {
+        if(req.method!=='GET'){json(res,405,{error:'Method not allowed'});return true;}
+        const accountId=url.searchParams.get('account_id'),botId=url.searchParams.get('bot_id');
+        if(!/^[A-Za-z0-9_-]{3,64}$/.test(accountId||'')||(botId&&!/^premium-[0-9]{2}$/.test(botId))){json(res,400,{error:'Choose a valid account and bot'});return true;}
+        if(!premiumBots){json(res,503,{error:'Premium library is not configured'});return true;}
+        const response=await upstream(API+'/accounts',{headers:{Authorization:'Bearer '+session.token,'Deriv-App-ID':clientId},signal:AbortSignal.timeout(15000)});
+        if(!response.ok){json(res,401,{error:'Reconnect your Deriv account'});return true;}
+        const accounts=await response.json();
+        if(!Array.isArray(accounts.data)||!accounts.data.some(a=>a.account_id===accountId&&a.status==='active')){json(res,403,{error:'Account unavailable'});return true;}
+        const data=await premiumBots({domain:new URL(origin).hostname.replace(/^www\./,''),accountId,botId});
+        if(!data){json(res,403,{error:'This site and account do not have access to this premium bot'});return true;}
+        json(res,200,botId?{xml:data}:{data});return true;
+      }
       if (url.pathname === '/api/deriv/markup' && req.method === 'GET') {
         const dateFrom = url.searchParams.get('date_from'), dateTo = url.searchParams.get('date_to');
         if (![dateFrom, dateTo].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value || '')) || dateFrom > dateTo) {
