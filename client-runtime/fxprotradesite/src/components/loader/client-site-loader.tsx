@@ -1,7 +1,7 @@
 import { useClientBranding } from '../../pipforge/site-branding';
 import { useEffect, useState } from 'react';
 import FuturisticLoader from './futuristic-loader';
-import { loaderFamily } from '../../pipforge/loader-styles.ts';
+
 import './client-site-loader.scss';
 
 const ClientSiteLoader = () => {
@@ -17,7 +17,7 @@ const ClientSiteLoader = () => {
     if (elapsed) return <div className='pf-site-loader-error' role='alert'>We could not connect to the trading service. Refresh to try again.</div>;
     return (
         <div className='pf-site-loader' role='status' aria-live='polite'>
-            <span className='pf-site-loader__mark loader-glyph' data-family={loaderFamily(site.loader_style)} aria-hidden='true'><i /><i /><i /></span>
+            <span className='pf-site-loader__mark loader-glyph' data-style={site.loader_style} aria-hidden='true'><i /><i /><i /></span>
             <strong>{site.name}</strong>
             <span>Loading your trading workspace</span>
         </div>

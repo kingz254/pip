@@ -3,5 +3,5 @@
 .pf-site-loader,.pf-site-loader-error{position:fixed;inset:0;z-index:2147483000;display:grid;align-content:center;justify-items:center;gap:12px;padding:24px;color:var(--pf-client-ink,#f4f4f6);background:var(--pf-client-page,#10131b);font:500 14px/1.4 var(--pf-client-font,sans-serif);text-align:center}
 .pf-site-loader strong{font-size:18px}
 .pf-site-loader>span:last-child{color:var(--pf-client-muted)}
-.pf-site-loader__mark{width:42px;height:42px;color:var(--pf-client-accent)}
+.pf-site-loader__mark{color:var(--pf-client-accent)}
 .pf-site-loader-error{background:#10131b}

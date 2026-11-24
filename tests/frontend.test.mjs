@@ -18,7 +18,7 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
     assert.ok(!d.getElementById('p-' + p).hidden, 'page ' + p);
   }
   assert.equal(d.querySelectorAll('#tpls .tpl').length, 45);
-  assert.equal(d.querySelectorAll('#bgs .chip').length, 37);
+  assert.equal(d.querySelectorAll('#bgs .chip').length, 34);
   assert.equal(d.querySelector('#bgs .bg-choice-group:last-child .chip:last-child').dataset.b, 'none', 'no background is the final choice');
   for (const id of ['img-chart','img-mesh','img-grid','img-watercolor','img-trade-1','img-trade-2','img-trade-3','img-trade-4','img-trade-5','img-trade-6','img-trade-7','img-trade-8','img-trade-9','img-botanical','img-art-nouveau','waves','bars','ticker','trend','spiral','spark','gauge','ticks','pulsegrid','matrix','radar','heatmap','comet','aurora','auroraVeil','starlight']) assert.equal(d.querySelector(`#bgs [data-b="${id}"]`), null, `removed background ${id}`);
   for (const group of d.querySelectorAll('#bgs .bg-choice-group')) {
@@ -28,7 +28,7 @@ test('demo mode (no Supabase keys): full flow runs with no script errors', async
   const themeNames = [...d.querySelectorAll('#tpls .tpl b')].map((button) => button.textContent);
   assert.deepEqual(themeNames, [...themeNames].sort((a, b) => a.localeCompare(b)), 'themes are alphabetical');
   assert.equal(d.querySelectorAll('#tpls [data-t^="market-"]').length, 10, 'restored market palettes are selectable');
-  for (const id of ['digits','moneyrain','network','motion-breeze','motion-candlelight','motion-cloud-drift','motion-dusk-bloom','motion-ink-wash','motion-koi-glide','motion-prism-shift','motion-silk-current','motion-slow-orbit','motion-tidal-glass','img-bougainvillea','img-checker-weave','img-cloudbank','img-ceramic','img-fan-palm','img-marbled-stone','img-moon-phase','img-origami','img-sunprint','img-tulip']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `retained background ${id}`);
+  for (const id of ['digits','moneyrain','network','motion-breeze','motion-candlelight','motion-cloud-drift','motion-dusk-bloom','motion-ink-wash','motion-koi-glide','motion-prism-shift','motion-slow-orbit','motion-tidal-glass','img-bougainvillea','img-checker-weave','img-cloudbank','img-ceramic','img-fan-palm','img-marbled-stone','img-moon-phase','img-sunprint','img-sunprint']) assert.ok(d.querySelector(`#bgs [data-b="${id}"]`), `retained background ${id}`);
   for (const id of ['dock-arc','dock-capsule','dock-frost','dock-island','dock-orbit','dock-shelf','dock-soft','dock-spring','dock-stacked','dock-underline']) assert.ok(d.querySelector(`#hds [data-v="${id}"]`), `header choice ${id}`);
   const fontCards = [...d.querySelectorAll('#font-options .font-card')];
   assert.equal(fontCards.length, 15);

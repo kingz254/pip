@@ -1,5 +1,889 @@
 .loader-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.loader-choice{min-width:0;min-height:82px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--glass);color:var(--ink);font:inherit;text-align:left;display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;cursor:pointer}.loader-choice[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 2px color-mix(in srgb,var(--red) 15%,transparent)}.loader-choice b,.loader-choice small{grid-column:2}.loader-choice b{font-size:11px}.loader-choice small{font-size:9px;color:var(--muted)}.loader-swatch{grid-row:1/3;width:30px;height:30px;color:var(--red)}
-.site[data-loader] .s-main{position:relative}.loader-overlay{position:absolute;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--sb) 93%,transparent);backdrop-filter:blur(5px);color:var(--st)}.loader-overlay.on{display:flex}.loader-overlay-inner{display:grid;justify-items:center;gap:13px;padding:24px}.loader-visual{width:52px;height:52px;color:var(--a1)}.loader-glyph{position:relative;display:flex;align-items:center;justify-content:center;gap:4px;box-sizing:border-box;flex:none}.loader-glyph:before,.loader-glyph:after,.loader-glyph i{position:absolute;box-sizing:border-box;content:""}.loader-glyph i{display:block;position:relative;width:6px;height:6px;background:currentColor;border-radius:50%;animation:glyphPulse 1s ease-in-out infinite alternate}.loader-glyph i:nth-child(2){animation-delay:.14s}.loader-glyph i:nth-child(3){animation-delay:.28s}.loader-text{font-weight:650;font-size:13px}
-.loader-glyph[data-family=dots] i{width:7px;height:7px}.loader-glyph[data-family=bars] i,.loader-glyph[data-family=dots-bars] i{width:5px;height:17px;border-radius:3px;animation:glyphBars .75s ease-in-out infinite alternate}.loader-glyph[data-family=spinner]:before{inset:4px;border:3px solid color-mix(in srgb,currentColor 22%,transparent);border-top-color:currentColor;border-radius:50%;animation:glyphSpin .8s linear infinite}.loader-glyph[data-family=progress]{height:8px;border:1px solid color-mix(in srgb,currentColor 55%,transparent);border-radius:99px;background:color-mix(in srgb,currentColor 12%,transparent);overflow:hidden}.loader-glyph[data-family=progress]:before{inset:0 auto 0 0;width:42%;border-radius:inherit;background:currentColor;animation:glyphProgress 1.1s ease-in-out infinite}.loader-glyph[data-family=wobbling]:before{width:24px;height:24px;border-radius:7px;background:currentColor;animation:glyphWobble 1.1s ease-in-out infinite}.loader-glyph[data-family=wavy] i{width:5px;height:22px;border-radius:4px;animation:glyphWave .65s ease-in-out infinite alternate}.loader-glyph[data-family=squishy]:before{width:26px;height:18px;border-radius:50%;background:currentColor;animation:glyphSquish .9s ease-in-out infinite}.loader-glyph[data-family=rolling]{border:1px solid color-mix(in srgb,currentColor 45%,transparent);border-radius:99px}.loader-glyph[data-family=rolling]:before{width:11px;height:11px;left:1px;border-radius:50%;background:currentColor;animation:glyphRoll 1.1s ease-in-out infinite alternate}.loader-glyph[data-family=pulsing]:before{inset:9px;border:2px solid currentColor;border-radius:50%;animation:glyphPulseRing 1s ease-out infinite}.loader-glyph[data-family=arcade] i{width:8px;height:8px;border-radius:1px;animation:glyphArcade .8s steps(2,end) infinite alternate}.loader-glyph[data-family=nature]:before{width:20px;height:28px;border-radius:100% 0 100% 0;background:currentColor;animation:glyphLeaf 1.2s ease-in-out infinite alternate}.loader-glyph[data-family=time]:before{inset:5px;border:2px solid currentColor;border-radius:50%}.loader-glyph[data-family=time]:after{width:2px;height:12px;top:8px;left:24px;background:currentColor;transform-origin:1px 9px;animation:glyphSpin 2s linear infinite}.loader-glyph[data-family=hungry]:before{inset:7px;border-radius:50%;background:conic-gradient(currentColor 0 78%,transparent 78% 100%);animation:glyphChomp .7s ease-in-out infinite alternate}.loader-glyph[data-family=shuriken]:before{inset:7px;background:currentColor;clip-path:polygon(50% 0,61% 37%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:glyphSpin .9s linear infinite}.loader-glyph[data-family=eyes]:before{width:28px;height:16px;border:2px solid currentColor;border-radius:50% 50% 45% 45%}.loader-glyph[data-family=eyes]:after{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:10px 0 currentColor;transform:translateX(-5px);animation:glyphEyes .8s ease-in-out infinite alternate}.loader-glyph[data-family=cut]:before{inset:5px;border:3px solid currentColor;border-right-color:transparent;border-radius:50%;animation:glyphSpin .85s linear infinite}.loader-glyph[data-family=arrow]:before{width:20px;height:20px;border:3px solid currentColor;border-left:0;border-bottom:0;transform:rotate(45deg);animation:glyphArrow .8s ease-in-out infinite alternate}.loader-glyph[data-family=blob]:before{inset:7px;border-radius:38% 62% 65% 35%/42% 40% 60% 58%;background:currentColor;animation:glyphBlob 1.4s ease-in-out infinite alternate}.loader-glyph[data-family=factory] i{width:8px;height:8px;border-radius:1px;animation:glyphFactory .8s ease-in-out infinite alternate}.loader-glyph[data-family=factory] i:nth-child(2){animation-delay:.18s}.loader-glyph[data-family=factory] i:nth-child(3){animation-delay:.36s}
-@keyframes glyphSpin{to{transform:rotate(360deg)}}@keyframes glyphPulse{to{transform:translateY(-4px);opacity:.45}}@keyframes glyphBars{to{transform:scaleY(.45)}}@keyframes glyphProgress{to{transform:translateX(140%)}}@keyframes glyphWobble{25%{transform:rotate(-18deg) scale(.84,1.1)}75%{transform:rotate(18deg) scale(1.1,.84)}}@keyframes glyphWave{to{transform:scaleY(.35)}}@keyframes glyphSquish{50%{transform:scaleX(.58) scaleY(1.22)}}@keyframes glyphRoll{to{transform:translateX(18px) rotate(360deg)}}@keyframes glyphPulseRing{to{transform:scale(1.35);opacity:0}}@keyframes glyphArcade{to{transform:translateY(-6px);opacity:.5}}@keyframes glyphLeaf{to{transform:rotate(35deg) scale(.82)}}@keyframes glyphChomp{to{clip-path:polygon(50% 50%,100% 0,100% 100%)}}@keyframes glyphEyes{to{transform:translateX(4px)}}@keyframes glyphArrow{to{transform:translate(3px,-3px) rotate(45deg)}}@keyframes glyphBlob{to{border-radius:65% 35% 35% 65%/55% 62% 38% 45%;transform:rotate(18deg)}}@keyframes glyphFactory{to{transform:translateY(-5px);opacity:.48}}
-@media(max-width:540px){.loader-choices{grid-template-columns:1fr}.loader-choice{min-height:68px}}@media(prefers-reduced-motion:reduce){.loader-glyph,.loader-glyph:before,.loader-glyph:after,.loader-glyph i{animation-duration:3s!important}}
+.site[data-loader] .s-main{position:relative}.loader-overlay{position:absolute;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:color-mix(in srgb,var(--sb) 93%,transparent);backdrop-filter:blur(5px);color:var(--st)}.loader-overlay.on{display:flex}.loader-overlay-inner{display:grid;justify-items:center;gap:13px;padding:24px}.loader-visual{width:52px;height:52px;color:var(--a1)}/* Numbered designs by Temani Afif, https://css-loaders.com (MIT). */
+.loader-glyph{position:relative;display:block;flex:none;color:var(--a1,var(--pf-client-accent,#ff4d5d));box-sizing:border-box}.loader-glyph i{display:none}.loader-glyph:before,.loader-glyph:after{box-sizing:border-box}.loader-swatch{scale:.55;transform-origin:center}.loader-choice{grid-template-columns:72px 1fr;overflow:hidden}.loader-swatch{grid-column:1;justify-self:center}.loader-visual,.pf-site-loader__mark{flex:none}
+.loader-glyph[data-style="dots-15"] {
+  width: 60px;
+  aspect-ratio: 4;
+  background: radial-gradient(closest-side at calc(100%/6) 50%,#000 90%,#0000) 0/75% 100%;
+  position: relative;
+  animation: pf-dots-15-l15-0 1s infinite linear;
+}
+.loader-glyph[data-style="dots-15"]::before {
+  content:"";
+  position: absolute;
+  background: inherit;
+  clip-path: inset(0 0 0 50%);
+  inset: 0;
+  animation: pf-dots-15-l15-1 0.5s infinite linear;
+}
+@keyframes pf-dots-15-l15-0 {
+    0%,49.99% {transform: scale(1)}
+    50%,100%  {transform: scale(-1)}
+}
+@keyframes pf-dots-15-l15-1 {
+    0%       {transform: translateX(-37.5%) rotate(0turn)}
+    80%,100% {transform: translateX(-37.5%) rotate(1turn)}
+}
+.loader-glyph[data-style="dots-14"] {
+  --s: 64px;
+  width: var(--s);
+  aspect-ratio: 2;
+  --_g: #000 90%,#0000;
+  background:
+    radial-gradient(farthest-side,var(--_g)) 0   50%/25% 50%,
+    radial-gradient(farthest-side at bottom,var(--_g)) 50%  calc(50% - var(--s)/16)/25% 25%,
+    radial-gradient(farthest-side at top   ,var(--_g)) 50%  calc(50% + var(--s)/16)/25% 25%,
+    radial-gradient(farthest-side at bottom,var(--_g)) 100% calc(50% - var(--s)/16)/25% 25%,
+    radial-gradient(farthest-side at top   ,var(--_g)) 100% calc(50% + var(--s)/16)/25% 25%;
+  background-repeat: no-repeat;
+  animation: pf-dots-14-l14 1s infinite;
+}
+@keyframes pf-dots-14-l14 {
+    25%  {background-position:0    50%,50% 0,50% 100%,100% 0,100% 100%}
+    50%  {background-position:100% 50%,0   0,0   100%,50%  0,50%  100%}
+    75%,
+    100% {background-position:100% 50%,0 calc(50% - var(--s)/16),0 calc(50% + var(--s)/16),50% calc(50% - var(--s)/16),50% calc(50% + var(--s)/16)}
+}
+.loader-glyph[data-style="bars-20"] {
+  width: 45px;
+  aspect-ratio: 1;
+  --c: conic-gradient(from -90deg,#000 90deg,#0000 0);
+  background: var(--c), var(--c);
+  background-size: 40% 40%;
+  animation: pf-bars-20-l20 1.5s infinite;
+}
+@keyframes pf-bars-20-l20 {
+ 0%,
+ 20%  {background-position: 0 0           ,0            calc(100%/3)}
+ 33%  {background-position: 0 0           ,calc(100%/3) calc(100%/3)}
+ 66%  {background-position: 0 calc(100%/3),calc(100%/3) 0  }
+ 80%,
+ 100% {background-position: 0 calc(100%/3),0            0  }
+}
+.loader-glyph[data-style="dots-bars-4"] {
+  width: 40px;
+  height: 20px;
+  --c:no-repeat radial-gradient(farthest-side,#000 93%,#0000);
+  background:
+    var(--c) 0    0,
+    var(--c) 50%  0,
+    var(--c) 100% 0;
+  background-size: 8px 8px;
+  position: relative;
+  animation: pf-dots-bars-4-l4-0 1s linear infinite alternate;
+}
+.loader-glyph[data-style="dots-bars-4"]:before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: #000;
+  left: 0;
+  top: 0;
+  animation:
+    pf-dots-bars-4-l4-1 1s  linear infinite alternate,
+    pf-dots-bars-4-l4-2 0.5s cubic-bezier(0,200,.8,200) infinite;
+}
+@keyframes pf-dots-bars-4-l4-0 {
+  0%      {background-position: 0  100%,50% 0   ,100% 0}
+  8%,42%  {background-position: 0  0   ,50% 0   ,100% 0}
+  50%     {background-position: 0  0   ,50% 100%,100% 0}
+  58%,92% {background-position: 0  0   ,50% 0   ,100% 0}
+  100%    {background-position: 0  0   ,50% 0   ,100% 100%}
+}
+@keyframes pf-dots-bars-4-l4-1 {
+  100% {left:calc(100% - 8px)}
+}
+@keyframes pf-dots-bars-4-l4-2 {
+  100% {top:-0.1px}
+}
+.loader-glyph[data-style="dots-bars-6"] {
+  width: 40px;
+  height: 20px;
+  --c:no-repeat radial-gradient(farthest-side,#000 93%,#0000);
+  background:
+    var(--c) 0    0,
+    var(--c) 50%  0;
+  background-size: 8px 8px;
+  position: relative;
+  clip-path: inset(-200% -100% 0 0);
+  animation: pf-dots-bars-6-l6-0 1.5s linear infinite;
+}
+.loader-glyph[data-style="dots-bars-6"]:before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: #000;
+  left: -16px;
+  top: 0;
+  animation:
+    pf-dots-bars-6-l6-1 1.5s linear infinite,
+    pf-dots-bars-6-l6-2 0.5s cubic-bezier(0,200,.8,200) infinite;
+}
+.loader-glyph[data-style="dots-bars-6"]:after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #000;
+  animation: pf-dots-bars-6-l6-3 1.5s linear infinite;
+}
+@keyframes pf-dots-bars-6-l6-0 {
+  0%,30%  {background-position: 0  0   ,50% 0   }
+  33%     {background-position: 0  100%,50% 0   }
+  41%,63% {background-position: 0  0   ,50% 0   }
+  66%     {background-position: 0  0   ,50% 100%}
+  74%,100%{background-position: 0  0   ,50% 0   }
+}
+@keyframes pf-dots-bars-6-l6-1 {
+  90%  {transform:translateY(0)}
+  95%  {transform:translateY(15px)}
+  100% {transform:translateY(15px);left:calc(100% - 8px)}
+}
+@keyframes pf-dots-bars-6-l6-2 {
+  100% {top:-0.1px}
+}
+@keyframes pf-dots-bars-6-l6-3 {
+  0%,80%,100% {transform:translate(0)}
+  90%         {transform:translate(26px)}
+}
+.loader-glyph[data-style="spinner-30"] {
+  --R: 30px;
+  --g1: #514b82 96%, #0000;
+  --g2: #eeeeee 96%, #0000;
+  width: calc(2*var(--R));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  -webkit-mask: linear-gradient(#000 0 0);
+  animation: pf-spinner-30-l30 2s infinite linear;
+}
+.loader-glyph[data-style="spinner-30"]::before,
+.loader-glyph[data-style="spinner-30"]::after{
+  content:"";
+  grid-area: 1/1;
+  width: 50%;
+  background:
+    radial-gradient(farthest-side,var(--g1)) calc(var(--R) + 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+    radial-gradient(farthest-side,var(--g1)) calc(var(--R) + 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+    radial-gradient(farthest-side,var(--g2)) calc(var(--R) + 0.5*var(--R)   - var(--R)) calc(var(--R) - 0.866*var(--R) - var(--R)),
+    radial-gradient(farthest-side,var(--g1)) 0 calc(-1*var(--R)),
+    radial-gradient(farthest-side,var(--g2)) calc(var(--R) - 0.5*var(--R)   - var(--R)) calc(var(--R) - 0.866*var(--R) - var(--R)),
+    radial-gradient(farthest-side,var(--g1)) calc(var(--R) - 0.866*var(--R) - var(--R)) calc(var(--R) - 0.5*var(--R)   - var(--R)),
+    radial-gradient(farthest-side,var(--g2)) calc(-1*var(--R))  0,
+    radial-gradient(farthest-side,var(--g1)) calc(var(--R) - 0.866*var(--R) - var(--R)) calc(var(--R) + 0.5*var(--R)   - var(--R));
+   background-size: calc(2*var(--R)) calc(2*var(--R));
+   background-repeat :no-repeat;
+}
+.loader-glyph[data-style="spinner-30"]::after {
+ transform: rotate(180deg);
+ transform-origin: right;
+}
+
+@keyframes pf-spinner-30-l30 {
+  100% {transform: rotate(-1turn)}
+}
+.loader-glyph[data-style="progress-5"] {
+  width: 80px;
+  height: 40px;
+  color: #000;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  padding: 3px;
+  background:
+    repeating-linear-gradient(90deg,currentColor 0 10px,#0000 0 15px)
+    0/0% no-repeat content-box content-box;
+  position: relative;
+  box-sizing: border-box;
+  animation: pf-progress-5-l5 2s infinite steps(6);
+}
+.loader-glyph[data-style="progress-5"]::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: 100%;
+  width: 10px;
+  background:
+    linear-gradient(
+        #0000   calc(50% - 7px),currentColor 0 calc(50% - 5px),
+        #0000 0 calc(50% + 5px),currentColor 0 calc(50% + 7px),#0000 0) left /100% 100%,
+    linear-gradient(currentColor calc(50% - 5px),#0000        0 calc(50% + 5px),currentColor 0) left /2px 100%,
+    linear-gradient(#0000        calc(50% - 5px),currentColor 0 calc(50% + 5px),#0000        0) right/2px 100%;
+  background-repeat:no-repeat;
+}
+@keyframes pf-progress-5-l5 {
+    100% {background-size:120%}
+}
+.loader-glyph[data-style="progress-19"] {
+  width: 60px;
+  aspect-ratio: 1;
+  background: linear-gradient(#dc1818 0 0) bottom/100% 0% no-repeat #ccc;
+  -webkit-mask:
+    radial-gradient(circle at 60% 65%, #000 62%, #0000 65%) top left,
+    radial-gradient(circle at 40% 65%, #000 62%, #0000 65%) top right,
+    linear-gradient(to bottom left, #000 42%,#0000 43%) bottom left ,
+    linear-gradient(to bottom right,#000 42%,#0000 43%) bottom right;
+  -webkit-mask-size: 50% 50%;
+  -webkit-mask-repeat: no-repeat;
+  animation: pf-progress-19-l19 2s infinite linear;
+}
+@keyframes pf-progress-19-l19 {
+    90%,100% {background-size:100% 100%}
+}
+.loader-glyph[data-style="wobbling-12"] {
+  width: 100px;
+  height: 60px;
+  display: flex;
+  animation: pf-wobbling-12-l12-0 2s infinite linear;
+}
+.loader-glyph[data-style="wobbling-12"]::before,
+.loader-glyph[data-style="wobbling-12"]::after  {
+  content:"";
+  flex:4;
+  background:
+    radial-gradient(at 50% 20%,#0000,#000a) bottom left/20px 20px repeat-x,
+    linear-gradient(red 0 0) bottom/100% 20px no-repeat
+    #ddd;
+  -webkit-mask:
+    repeating-linear-gradient(90deg,#000 0 4px,#0000 0 20px) 8px 0,
+    radial-gradient(farthest-side,#000 90%,#0000) left bottom/20px 20px repeat-x;
+}
+.loader-glyph[data-style="wobbling-12"]::after {
+  flex: 1;
+  transform-origin: top;
+  animation: pf-wobbling-12-l12-1 1s cubic-bezier(0,20,1,20) infinite;
+}
+@keyframes pf-wobbling-12-l12-0 {
+ 0%,49.9% {transform: scaleX(1)}
+ 50%,100% {transform: scaleX(-1)}
+}
+@keyframes pf-wobbling-12-l12-1 {
+ 100% {transform: rotate(-2deg)}
+}
+.loader-glyph[data-style="wobbling-20"] {
+  height: 60px;
+  aspect-ratio: 1;
+  position: relative;
+}
+.loader-glyph[data-style="wobbling-20"]::before,
+.loader-glyph[data-style="wobbling-20"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform-origin: bottom;
+}
+.loader-glyph[data-style="wobbling-20"]::after {
+  background:
+    radial-gradient(at 75% 15%,#fffb,#0000 35%),
+    radial-gradient(at 80% 40%,#0000,#0008),
+    radial-gradient(circle  5px,currentColor 94%,#0000),
+    radial-gradient(circle 10px,#000 94%,#0000),
+    linear-gradient(#F93318 0 0) top   /100% calc(50% - 5px),
+    linear-gradient(currentColor    0 0) bottom/100% calc(50% - 5px)
+    #000;
+  background-repeat: no-repeat;
+  animation: pf-wobbling-20-l20 1s infinite cubic-bezier(0.5,120,0.5,-120);
+}
+.loader-glyph[data-style="wobbling-20"]::before {
+  background:#ddd;
+  filter: blur(8px);
+  transform: scaleY(0.4) translate(-13px, 0px);
+}
+@keyframes pf-wobbling-20-l20 {
+ 30%,70% {transform:rotate(0deg)}
+ 49.99%  {transform:rotate(0.2deg)}
+ 50%     {transform:rotate(-0.2deg)}
+}
+.loader-glyph[data-style="wavy-12"] {
+  display: inline-grid;
+  padding: 5px;
+  background: currentColor;
+  filter: blur(4px) contrast(12);
+}
+.loader-glyph[data-style="wavy-12"]:before {
+  content: "";
+  height: 40px;
+  aspect-ratio: 3;
+  --c: #0000 64%,#000 66% 98%,#0000 101%;
+  background:
+    radial-gradient(35% 146% at 50% 159%,var(--c)) 0 0,
+    radial-gradient(35% 146% at 50% -59%,var(--c)) 100% 100%;
+  background-size: calc(200%/3) 50%;
+  background-repeat: repeat-x;
+  -webkit-mask: repeating-linear-gradient(90deg,#000 0 10%,#0000 0 20%);
+  animation: pf-wavy-12-l12 .8s infinite linear;
+}
+@keyframes pf-wavy-12-l12{
+  to {background-position: -200% 0,-100% 100%}
+}
+.loader-glyph[data-style="wavy-15"] {
+  display: inline-grid;
+  padding: 5px;
+  background: currentColor;
+  filter: blur(4px) contrast(12);
+}
+.loader-glyph[data-style="wavy-15"]:before,
+.loader-glyph[data-style="wavy-15"]:after {
+  content: "";
+  grid-area: 1/1;
+  height: 40px;
+  aspect-ratio: 3;
+  --c: #0000 64%,#000 66% 98%,#0000 101%;
+  background:
+    radial-gradient(35% 146% at 50% 159%,var(--c)) 0 0,
+    radial-gradient(35% 146% at 50% -59%,var(--c)) 100% 100%;
+  background-size: calc(200%/3) 50%;
+  background-repeat: repeat-x;
+  clip-path: inset(0 100% 0 0);
+  animation: pf-wavy-15-l15 1.5s infinite linear;
+}
+.loader-glyph[data-style="wavy-15"]:after {
+  scale: -1 1;
+}
+@keyframes pf-wavy-15-l15{
+  50% {clip-path: inset(0)}
+  to {clip-path: inset(0 0 0 100%)}
+}
+.loader-glyph[data-style="squishy-1"] {
+  height: 70px;
+  aspect-ratio: 1;
+  animation: pf-squishy-1-l1 .8s infinite alternate;
+  background: #dd2d4a;
+}
+@keyframes pf-squishy-1-l1 {
+  0% {clip-path: shape(from 97.5242216976% 60.8470934779%, curve to 88.111466744% 80.3928805396% with 95.0484433951% 71.6941869559%, curve to 71.1502683954% 93.9189848662% with 81.1744900929% 89.0915741234%, curve to 50% 98.7463956091% with 61.1260466978% 98.7463956091%, curve to 28.8497316046% 93.9189848662% with 38.8739533022% 98.7463956091%, curve to 11.888533256% 80.3928805396% with 18.8255099071% 89.0915741234%, curve to 2.4757783024% 60.8470934779% with 4.9515566049% 71.6941869559%, curve to 2.4757783024% 39.1529065221% with 0% 50%, curve to 11.888533256% 19.6071194604% with 4.9515566049% 28.3058130441%, curve to 28.8497316046% 6.0810151338% with 18.8255099071% 10.9084258766%, curve to 50% 1.2536043909% with 38.8739533022% 1.2536043909%, curve to 71.1502683954% 6.0810151338% with 61.1260466978% 1.2536043909%, curve to 88.111466744% 19.6071194604% with 81.1744900929% 10.9084258766%, curve to 97.5242216976% 39.1529065221% with 95.0484433951% 28.3058130441%, curve to 97.5242216976% 60.8470934779% with 100% 50%)}
+  100% {clip-path: shape(from 85.0242216976% 60.8470934779%, curve to 80.3178442208% 70.6199870088% with 95.0484433951% 71.6941869559%, curve to 63.3566458721% 84.1460913354% with 65.5872450465% 69.5457870617%, curve to 52.7815116745% 86.5597967068% with 61.1260466978% 98.7463956091%, curve to 31.6312432791% 81.732385964% with 44.4369766511% 74.3731978045%, curve to 23.1506441048% 74.9693338007% with 18.8255099071% 89.0915741234%, curve to 13.7378891512% 55.423546739% with 27.4757783024% 60.8470934779%, curve to 13.7378891512% 44.576453261% with 0% 50%, curve to 23.1506441048% 25.0306661993% with 27.4757783024% 39.1529065221%, curve to 31.6312432791% 18.267614036% with 18.8255099071% 10.9084258766%, curve to 52.7815116745% 13.4402032932% with 44.4369766511% 25.6268021955%, curve to 63.3566458721% 15.8539086646% with 61.1260466978% 1.2536043909%, curve to 80.3178442208% 29.3800129912% with 65.5872450465% 30.4542129383%, curve to 85.0242216976% 39.1529065221% with 95.0484433951% 28.3058130441%, curve to 85.0242216976% 60.8470934779% with 75% 50%)}
+}
+.loader-glyph[data-style="squishy-9"] {
+  height: 70px;
+  aspect-ratio: 1;
+  animation: pf-squishy-9-l9 2s infinite linear;
+  background: #3a86ff;
+}
+@keyframes pf-squishy-9-l9 {
+  0%,to {clip-path: shape(from 88.17% 44.57%,curve to 83.91% 54.42% with 80.53% 50.00%,curve to 87.09% 63.68% with 87.29% 58.84%,curve to 82.15% 70.76% with 86.89% 68.52%,curve to 78.45% 81.30% with 77.42% 73.00%,curve to 73.45% 89.98% with 79.48% 89.60%,curve to 62.06% 89.23% with 67.41% 90.37%,curve to 52.45% 84.62% with 56.72% 88.09%,curve to 43.33% 84.81% with 48.19% 81.14%,curve to 35.31% 84.71% with 38.48% 88.49%,curve to 27.93% 79.39% with 32.14% 80.93%,curve to 23.86% 72.48% with 23.73% 77.85%,curve to 21.30% 64.27% with 23.99% 67.11%,curve to 20.07% 57.38% with 18.60% 61.43%,curve to 13.68% 49.08% with 21.53% 53.33%,curve to 11.55% 41.46% with 5.84% 44.84%,curve to 13.34% 30.70% with 17.26% 38.08%,curve to 13.91% 19.90% with 9.42% 23.31%,curve to 25.30% 17.85% with 18.39% 16.50%,curve to 34.95% 14.04% with 32.22% 19.20%,curve to 42.89% 13.03% with 37.69% 8.89%,curve to 52.68% 12.97% with 48.09% 17.17%,curve to 59.46% 15.87% with 57.27% 8.77%,curve to 66.23% 22.52% with 61.66% 22.97%,curve to 78.26% 21.04% with 70.80% 22.07%,curve to 85.25% 26.28% with 85.73% 20.02%,curve to 90.29% 35.84% with 84.77% 32.54%,curve to 88.17% 44.57% with 95.81% 39.14%)}
+  34% {clip-path: shape(from 85.64% 45.40%,curve to 80.17% 53.30% with 82.48% 50.00%,curve to 83.85% 63.31% with 77.85% 56.60%,curve to 84.76% 72.45% with 89.85% 70.01%,curve to 76.40% 77.98% with 79.67% 74.90%,curve to 67.03% 78.20% with 73.13% 81.07%,curve to 57.66% 75.10% with 60.93% 75.33%,curve to 51.01% 82.71% with 54.39% 74.88%,curve to 43.15% 89.22% with 47.64% 90.54%,curve to 36.03% 83.32% with 38.66% 87.89%,curve to 32.48% 74.15% with 33.40% 78.75%,curve to 25.78% 69.64% with 31.55% 69.55%,curve to 15.32% 67.02% with 20.02% 69.72%,curve to 9.98% 59.54% with 10.63% 64.33%,curve to 6.34% 49.65% with 9.34% 54.75%,curve to 6.78% 40.03% with 3.35% 44.55%,curve to 12.58% 31.23% with 10.20% 35.52%,curve to 20.32% 25.59% with 14.95% 26.95%,curve to 28.84% 21.52% with 25.69% 24.23%,curve to 36.55% 19.54% with 31.99% 18.80%,curve to 44.10% 10.28% with 41.10% 20.28%,curve to 52.59% 2.25% with 47.10% 0.29%,curve to 62.64% 7.16% with 58.07% 4.21%,curve to 69.87% 14.93% with 67.20% 10.12%,curve to 72.61% 25.35% with 72.53% 19.74%,curve to 82.58% 29.82% with 72.68% 30.97%,curve to 90.63% 34.74% with 92.47% 28.67%,curve to 85.64% 45.40% with 88.80% 40.81%)}
+  66% {clip-path: shape(from 80.52% 46.38%,curve to 85.67% 54.84% with 80.51% 50.00%,curve to 91.15% 65.25% with 90.83% 59.68%,curve to 85.18% 72.53% with 91.47% 70.83%,curve to 73.79% 74.67% with 78.89% 74.24%,curve to 66.02% 78.04% with 68.68% 75.10%,curve to 60.09% 84.80% with 63.36% 80.98%,curve to 52.27% 88.84% with 56.81% 88.61%,curve to 42.62% 90.39% with 47.72% 89.08%,curve to 31.93% 91.34% with 37.51% 91.71%,curve to 26.73% 82.61% with 26.34% 90.97%,curve to 25.77% 70.54% with 27.12% 74.25%,curve to 25.58% 62.64% with 24.43% 66.82%,curve to 15.08% 56.96% with 26.74% 58.47%,curve to 3.72% 50.03% with 3.42% 55.44%,curve to 8.59% 40.61% with 4.01% 44.62%,curve to 19.65% 35.45% with 13.17% 36.60%,curve to 28.19% 31.69% with 26.13% 34.30%,curve to 31.99% 25.44% with 30.26% 29.08%,curve to 35.50% 14.65% with 33.71% 21.79%,curve to 42.72% 12.88% with 37.28% 7.51%,curve to 53.41% 9.55% with 48.15% 18.24%,curve to 62.85% 5.68% with 58.66% 0.86%,curve to 69.97% 14.87% with 67.04% 10.50%,curve to 76.95% 21.61% with 72.90% 19.24%,curve to 79.46% 29.98% with 81.00% 23.98%,curve to 79.23% 39.37% with 77.93% 35.98%,curve to 80.52% 46.38% with 80.53% 42.76%)}
+}
+.loader-glyph[data-style="rolling-8"] {
+  display: inline-grid;
+  width: 80px;
+  aspect-ratio: 2;
+  box-sizing: content-box;
+  border-bottom: 8px solid #0000;
+  background:
+    linear-gradient(90deg,#0B486B 50%,#C02942 0)
+    50% 100%/52% 8px border-box repeat-x;
+  animation: pf-rolling-8-l8-0 1s linear infinite;
+}
+.loader-glyph[data-style="rolling-8"]:before {
+  content:"";
+  margin: 0 25%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(#C02942 0 60deg,#0B486B 0 120deg);
+  animation: pf-rolling-8-l8-1 1s linear infinite;
+}
+@keyframes pf-rolling-8-l8-0 {to{background-position: -58% 100%}}
+@keyframes pf-rolling-8-l8-1 {to{rotate: 120deg}}
+.loader-glyph[data-style="pulsing-10"] {
+  display: inline-grid;
+  font-size: 50px;
+}
+.loader-glyph[data-style="pulsing-10"]:before,
+.loader-glyph[data-style="pulsing-10"]:after {
+  content: "💯";
+  grid-area: 1/1;
+}
+.loader-glyph[data-style="pulsing-10"]:after {
+  animation: pf-pulsing-10-l10 1s infinite;
+}
+@keyframes pf-pulsing-10-l10 {
+  to {transform:scale(1.8);opacity:0}
+}
+.loader-glyph[data-style="pulsing-8"] {
+  width: 65px;
+  height: 117px;
+  position: relative;
+}
+.loader-glyph[data-style="pulsing-8"]:before,
+.loader-glyph[data-style="pulsing-8"]:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #ff8001;
+  box-shadow: 0 0 0 50px;
+  clip-path: polygon(100% 0, 23% 46%, 46% 44%, 15% 69%, 38% 67%, 0 100%, 76% 57%, 53% 58%, 88% 33%, 60% 37%);;
+}
+.loader-glyph[data-style="pulsing-8"]:after {
+  animation: pf-pulsing-8-l8 1s infinite;
+  transform: perspective(300px) translateZ(0px)
+}
+@keyframes pf-pulsing-8-l8 {
+  to {transform:perspective(300px) translateZ(180px);opacity:0}
+}
+.loader-glyph[data-style="arcade-4"] {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(farthest-side,#000 98%,#0000) 55% 20%/8px 8px no-repeat,
+    #ffcc00;
+  box-shadow: 2px -6px 12px 0px inset rgba(0, 0, 0, 0.7);
+  animation: pf-arcade-4-l4 .5s infinite steps(5) alternate;
+}
+@keyframes pf-arcade-4-l4{
+    0% {clip-path: polygon(50% 50%,100%   0,100% 0,0 0,0 100%,100% 100%,100% 100%)}
+  100% {clip-path: polygon(50% 50%,100% 65%,100% 0,0 0,0 100%,100% 100%,100%  35%)}
+}
+.loader-glyph[data-style="arcade-5"] {
+  width: 90px;
+  height: 24px;
+  padding: 2px 0;
+  box-sizing: border-box;
+  display: flex;
+  animation: pf-arcade-5-l5-0 3s infinite steps(6);
+  background:
+    linear-gradient(#000 0 0) 0 0/0% 100% no-repeat,
+    radial-gradient(circle 3px,#eeee89 90%,#0000) 0 0/20% 100%
+    #000;
+  overflow: hidden;
+}
+.loader-glyph[data-style="arcade-5"]::before {
+  content: "";
+  width: 20px;
+  transform: translate(-100%);
+  border-radius: 50%;
+  background: #ffff2d;
+  animation:
+    pf-arcade-5-l5-1 .25s .153s infinite steps(5) alternate,
+    pf-arcade-5-l5-2  3s        infinite linear;
+}
+@keyframes pf-arcade-5-l5-1{
+    0% {clip-path: polygon(50% 50%,100%   0,100% 0,0 0,0 100%,100% 100%,100% 100%)}
+  100% {clip-path: polygon(50% 50%,100% 65%,100% 0,0 0,0 100%,100% 100%,100%  35%)}
+}
+@keyframes pf-arcade-5-l5-2{
+  100% {transform: translate(90px)}
+}
+@keyframes pf-arcade-5-l5-0{
+  100% {background-size:120% 100%,20% 100%}
+}
+.loader-glyph[data-style="nature-4"] {
+  width: 50px;
+  aspect-ratio: 1;
+  background-color: #8d847f;
+  border-radius: 50%;
+  animation: pf-nature-4-l4 3s infinite;
+}
+@keyframes pf-nature-4-l4 {
+  12.5% {background-image:radial-gradient(80% 65% at left, #0000 94%,#fff9)}
+  25%   {background-image:linear-gradient(90deg,#0000 50%,#fff9 0)}
+  37.5% {background-image:radial-gradient(80% 65% at right,#fff9 94%,#0000)}
+  50%   {background-image:linear-gradient(#fff9 0 0)}
+  62.5% {background-image:radial-gradient(80% 65% at left, #fff9 94%,#0000)}
+  75%   {background-image:linear-gradient(-90deg,#0000 50%,#fff9 0)}
+  87.5% {background-image:radial-gradient(80% 65% at right,#0000 94%,#fff9)}
+}
+.loader-glyph[data-style="nature-12"] {
+  width: calc(6*30px);
+  height: 50px;
+  display: flex;
+  color: #8d7958;
+  filter: drop-shadow(30px 25px 0 currentColor) drop-shadow(60px 0 0 currentColor) drop-shadow(120px 0 0 currentColor);
+  clip-path: inset(0 100% 0 0);
+  animation: pf-nature-12-l12 2s infinite steps(7);
+}
+.loader-glyph[data-style="nature-12"]:before {
+  content: "";
+  width: 30px;
+  height: 25px;
+  --c:no-repeat radial-gradient(farthest-side,currentColor 92%,#0000);
+  background:
+    var(--c) left /70% 70%,
+    var(--c) right/20% 20%,
+    var(--c) top    0 right 15%/20% 20%,
+    var(--c) bottom 0 right 15%/20% 20%;
+}
+@keyframes pf-nature-12-l12 {
+  100% {clip-path: inset(0 -30px 0 0)}
+}
+.loader-glyph[data-style="time-5"] {
+  --c1:#673b14;
+  --c2:#f8b13b;
+  width: 40px;
+  height: 80px;
+  border-top: 4px solid var(--c1);
+  border-bottom: 4px solid var(--c1);
+  background: linear-gradient(90deg, var(--c1) 2px, var(--c2) 0 5px,var(--c1) 0) 50%/7px 8px no-repeat;
+  display: grid;
+  overflow: hidden;
+  animation: pf-time-5-l5-0 2s infinite linear;
+}
+.loader-glyph[data-style="time-5"]::before,
+.loader-glyph[data-style="time-5"]::after {
+  content: "";
+  grid-area: 1/1;
+  width: 75%;
+  height: calc(50% - 4px);
+  margin: 0 auto;
+  border: 2px solid var(--c1);
+  border-top: 0;
+  box-sizing: content-box;
+  border-radius: 0 0 40% 40%;
+  -webkit-mask:
+    linear-gradient(#000 0 0) bottom/4px 2px no-repeat,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: destination-out;
+          mask-composite: exclude;
+  background:
+    linear-gradient(var(--d,0deg),var(--c2) 50%,#0000 0) bottom /100% 205%,
+    linear-gradient(var(--c2) 0 0) center/0 100%;
+  background-repeat: no-repeat;
+  animation: inherit;
+  animation-name: pf-time-5-l5-1;
+}
+.loader-glyph[data-style="time-5"]::after {
+  transform-origin: 50% calc(100% + 2px);
+  transform: scaleY(-1);
+  --s:3px;
+  --d:180deg;
+}
+@keyframes pf-time-5-l5-0 {
+  80%  {transform: rotate(0)}
+  100% {transform: rotate(0.5turn)}
+}
+@keyframes pf-time-5-l5-1 {
+  10%,70%  {background-size:100% 205%,var(--s,0) 100%}
+  70%,100% {background-position: top,center}
+}
+.loader-glyph[data-style="hungry-1"] {
+  width: 35px;
+  height: 80px;
+  position: relative;
+}
+.loader-glyph[data-style="hungry-1"]:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 3px 5px;
+  border-top: 1px solid #bbb6aa;
+  border-bottom: 4px solid #bbb6aa;
+  background:
+    linear-gradient(#612329 0 0) bottom no-repeat content-box,
+    #e4e0d7;
+  mix-blend-mode: darken;
+  animation: pf-hungry-1-l1 1.5s infinite linear;
+}
+.loader-glyph[data-style="hungry-1"]:before {
+  content: "";
+  position: absolute;
+  inset: -18px calc(50% - 2px) 8px;
+  background: #eb6b3e;
+  transform-origin: bottom;
+  transform: rotate(8deg);
+}
+@keyframes pf-hungry-1-l1 {
+ 0%   {background-size: 100% 100%}
+ 100% {background-size: 100% 5%}
+}
+.loader-glyph[data-style="shuriken-9"] {
+  width: 80px;
+  aspect-ratio: 1;
+  --c:#8d7958 98%,#0000;
+  background:
+    radial-gradient(50% 70% at 50% 120%, var(--c)) top,
+    radial-gradient(70% 50% at -20% 50%, var(--c)) right,
+    radial-gradient(50% 70% at 50% -20%, var(--c)) bottom,
+    radial-gradient(70% 50% at 120% 50%, var(--c)) left;
+  background-size: 100% 50.1%,50.1% 100%;
+  background-repeat: no-repeat;
+  -webkit-mask: radial-gradient(circle 5px,#0000 90%,#000);
+  animation: pf-shuriken-9-l9 1.5s infinite linear;
+}
+@keyframes pf-shuriken-9-l9 {
+  100%{transform: rotate(1turn)}
+}
+.loader-glyph[data-style="shuriken-10"] {
+  width: 80px;
+  aspect-ratio: 1;
+  display: grid;
+  color: #8d7958;
+  background: radial-gradient(circle 16px,currentColor 94%,#0000);
+  -webkit-mask: radial-gradient(circle 5px,#0000 90%,#000);
+  animation: pf-shuriken-10-l10 1.5s infinite linear;
+}
+.loader-glyph[data-style="shuriken-10"]:before,
+.loader-glyph[data-style="shuriken-10"]:after {
+  content: "";
+  grid-area: 1/1;
+  background:
+    radial-gradient(farthest-side at bottom right,currentColor 94%,#0000) top    right,
+    radial-gradient(farthest-side at top    left ,currentColor 94%,#0000) bottom left;
+  background-size: 40% 45%;
+  background-repeat: no-repeat;
+  -webkit-mask:
+    radial-gradient(60% 100% at bottom right,#0000 94%,#000) top    right,
+    radial-gradient(60% 100% at top    left ,#0000 94%,#000) bottom left;
+  -webkit-mask-size: 40% 45%;
+  -webkit-mask-repeat: no-repeat;
+}
+.loader-glyph[data-style="shuriken-10"]:after {
+  transform: rotate(90deg);
+}
+@keyframes pf-shuriken-10-l10 {
+  100%{transform: rotate(1turn)}
+}
+.loader-glyph[data-style="eyes-6"] {
+  display: inline-flex;
+  gap: 10px;
+}
+.loader-glyph[data-style="eyes-6"]:before,
+.loader-glyph[data-style="eyes-6"]:after {
+  content: "";
+  height: 20px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(farthest-side,#000 95%,#0000) 35% 35%/6px 6px no-repeat
+    currentColor;
+  transform: scaleX(var(--s,1)) rotate(0deg);
+  animation: pf-eyes-6-l6 1s infinite linear;
+}
+.loader-glyph[data-style="eyes-6"]:after {
+  --s: -1;
+  animation-delay:-0.1s;
+}
+@keyframes pf-eyes-6-l6 {
+  100% {transform:scaleX(var(--s,1)) rotate(360deg);}
+}
+.loader-glyph[data-style="eyes-7"] {
+  display: inline-flex;
+  gap: 10px;
+}
+.loader-glyph[data-style="eyes-7"]:before,
+.loader-glyph[data-style="eyes-7"]:after {
+  content: "";
+  height: 20px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    linear-gradient(#222 0 0) top/100% 40% no-repeat,
+    radial-gradient(farthest-side,#000 95%,#0000) 50%/8px 8px no-repeat
+    currentColor;
+  animation: pf-eyes-7-l7 1.5s infinite alternate ease-in;
+}
+@keyframes pf-eyes-7-l7 {
+  0%,
+  70% {background-size:100% 40%,8px 8px}
+  85% {background-size:100% 120%,8px 8px}
+  100% {background-size:100% 40%,8px 8px}
+}
+.loader-glyph[data-style="cut-9"] {
+  width: 50px;
+  height: calc(50px*0.866);
+  background: #FD135A;
+  clip-path: polygon(50% 0,100% 100%,0 100%);
+  --c:at 50% 66%,#000 60deg,#0000 0;
+  -webkit-mask:
+    conic-gradient(from  30deg var(--c)) right,
+    conic-gradient(from 150deg var(--c)) bottom,
+    conic-gradient(from -90deg var(--c)) left,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  -webkit-mask-repeat:no-repeat;
+  animation: pf-cut-9-l9 1.5s infinite;
+}
+@keyframes pf-cut-9-l9 {
+  0%     {-webkit-mask-size:0    0   ,0    0   ,0    0   ,auto}
+  13.33% {-webkit-mask-size:100% 100%,0    0   ,0    0   ,auto}
+  26.67% {-webkit-mask-size:100% 100%,100% 100%,0    0   ,auto}
+  40%,
+  60%    {-webkit-mask-size:100% 100%,100% 100%,100% 100%,auto}
+  73.33% {-webkit-mask-size:0    0   ,100% 100%,100% 100%,auto}
+  86.67% {-webkit-mask-size:0    0   ,0    0   ,100% 100%,auto}
+  100%   {-webkit-mask-size:0    0   ,0    0   ,0    0   ,auto}
+}
+.loader-glyph[data-style="cut-8"] {
+  width: 48px;
+  height: 48px;
+  background: #3FD97F;
+  --c:no-repeat radial-gradient(farthest-side,#000 92%,#0000);
+  --s:20px 20px;
+  -webkit-mask:
+    var(--c) top    -8px left 50%,
+    var(--c) right  -8px top  50%,
+    var(--c) bottom -8px left 50%,
+    var(--c) left   -8px top  50%,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  animation: pf-cut-8-l8 1.5s infinite;
+}
+@keyframes pf-cut-8-l8 {
+  0%    {-webkit-mask-size:0    0  ,0    0  ,0    0  ,0    0  ,auto}
+  12.5% {-webkit-mask-size:var(--s),0    0  ,0    0  ,0    0  ,auto}
+  25%   {-webkit-mask-size:var(--s),var(--s),0    0  ,0    0  ,auto}
+  37.5% {-webkit-mask-size:var(--s),var(--s),var(--s),0    0  ,auto}
+  45%,
+  55%   {-webkit-mask-size:var(--s),var(--s),var(--s),var(--s),auto}
+  62.5% {-webkit-mask-size:0    0  ,var(--s),var(--s),var(--s),auto}
+  75%   {-webkit-mask-size:0    0  ,0    0  ,var(--s),var(--s),auto}
+  87.5% {-webkit-mask-size:0    0  ,0    0  ,0   0   ,var(--s),auto}
+  100%  {-webkit-mask-size:0    0  ,0    0  ,0   0   ,0   0   ,auto}
+}
+.loader-glyph[data-style="arrow-8"] {
+  width: 30px;
+  height: 30px;
+  color: #000;
+  display: flex;
+  background:
+    linear-gradient(currentColor 0 0) center/calc(100% - 30px) 10px,
+    conic-gradient(from -136deg at right,#0000 ,currentColor 1deg 90deg,#0000 91deg) right/15px 100%,
+    conic-gradient(from   44deg at left ,#0000 ,currentColor 1deg 90deg,#0000 91deg) left /15px 100%;
+  background-repeat: no-repeat;
+  animation: pf-arrow-8-l8 .5s infinite alternate;
+}
+.loader-glyph[data-style="arrow-8"]:before {
+  content: "";
+  flex: 1;
+  background: inherit;
+  transform: rotate(90deg);
+}
+@keyframes pf-arrow-8-l8 {
+  90%,100%{width:80px}
+}
+.loader-glyph[data-style="arrow-7"] {
+  width: 110px;
+  height: 30px;
+  color: #000;
+  display: flex;
+  background:
+    linear-gradient(currentColor 0 0) left /30px 10px,
+    linear-gradient(currentColor 0 0) right/30px 10px,
+    conic-gradient(from -136deg at             15px  50%,#0000 ,currentColor 1deg 90deg,#0000 91deg) 30px              0/100% 100%,
+    conic-gradient(from   44deg at calc(100% - 15px) 50%,#0000 ,currentColor 1deg 90deg,#0000 91deg) calc(100% - 30px) 0/100% 100%;
+  background-repeat: no-repeat;
+  animation: pf-arrow-7-l7 .5s infinite alternate;
+}
+.loader-glyph[data-style="arrow-7"]:before {
+  content: "";
+  flex: 1;
+  background: inherit;
+  transform: rotate(90deg);
+}
+@keyframes pf-arrow-7-l7 {
+  90%,100%{width:93px}
+}
+.loader-glyph[data-style="blob-12"] {
+  width: 80px;
+  aspect-ratio: 1;
+  border: 10px solid #0000;
+  box-sizing: border-box;
+  background:
+    radial-gradient(farthest-side,currentColor 98%,#0000) 0    0/20px 20px,
+    radial-gradient(farthest-side,currentColor 98%,#0000) 100% 0/20px 20px,
+    radial-gradient(farthest-side,currentColor 98%,#0000) 100% 100%/20px 20px,
+    radial-gradient(farthest-side,currentColor 98%,#0000) 0 100%/20px 20px,
+    linear-gradient(currentColor 0 0) 50%/40px 40px,
+    #000;
+  background-repeat:no-repeat;
+  filter: blur(4px) contrast(10);
+  animation: pf-blob-12-l12 0.8s infinite;
+}
+@keyframes pf-blob-12-l12 {
+  100%  {background-position:100% 0,100% 100%,0 100%,0 0,center}
+}
+.loader-glyph[data-style="blob-14"] {
+  height: 50px;
+  aspect-ratio: 2;
+  border: 10px solid #000;
+  box-sizing: border-box;
+  background:
+    radial-gradient(farthest-side,currentColor 98%,#0000) left/20px 20px,
+    radial-gradient(farthest-side,currentColor 98%,#0000) left/20px 20px,
+    radial-gradient(farthest-side,currentColor 98%,#0000) center/20px 20px,
+    radial-gradient(farthest-side,currentColor 98%,#0000) right/20px 20px,
+    #000;
+  background-repeat: no-repeat;
+  filter: blur(4px) contrast(10);
+  animation: pf-blob-14-l14 1s infinite;
+}
+@keyframes pf-blob-14-l14 {
+  100%  {background-position:right,left,center,right}
+}
+.loader-glyph[data-style="blob-19"] {
+  width: 80px;
+  aspect-ratio: 1;
+  border: 10px solid #000;
+  box-sizing: border-box;
+  background:
+    radial-gradient(farthest-side,currentColor 98%,#0000) top,
+    radial-gradient(farthest-side,currentColor 98%,#0000) top,
+    radial-gradient(farthest-side,currentColor 98%,#0000) left,
+    radial-gradient(farthest-side,currentColor 98%,#0000) right,
+    radial-gradient(farthest-side,currentColor 98%,#0000) bottom,
+    #000;
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  filter: blur(4px) contrast(10);
+  animation: pf-blob-19-l19 2s infinite;
+}
+@keyframes pf-blob-19-l19 {
+  0%   {background-position:top,top,left,right,bottom}
+  25%  {background-position:right,top,left,right,bottom}
+  50%  {background-position:bottom,top,left,right,bottom}
+  75%  {background-position:left,top,left,right,bottom}
+  100% {background-position:top,top,left,right,bottom}
+}
+.loader-glyph[data-style="factory-7"] {
+  width: 90px;
+  height: 14px;
+  box-shadow: 0 3px 0 currentColor;
+  position: relative;
+  clip-path: inset(-40px 0 -5px)
+}
+.loader-glyph[data-style="factory-7"]:before {
+  content: "";
+  position: absolute;
+  inset: auto calc(50% - 17px) 0;
+  height: 50px;
+  --g:no-repeat linear-gradient(#ccc 0 0);
+  background: var(--g),var(--g),var(--g),var(--g);
+  background-size: 16px 14px;
+  animation:
+    pf-factory-7-l7-1 2s infinite linear,
+    pf-factory-7-l7-2 2s infinite linear;
+}
+@keyframes pf-factory-7-l7-1 {
+  0%,
+  100%  {background-position: 0 -50px,100% -50px}
+  17.5% {background-position: 0 100%,100% -50px,0 -50px,100% -50px}
+  35%   {background-position: 0 100%,100% 100% ,0 -50px,100% -50px}
+  52.5% {background-position: 0 100%,100% 100% ,0 calc(100% - 16px),100% -50px}
+  70%,
+  98%  {background-position: 0 100%,100% 100% ,0 calc(100% - 16px),100% calc(100% - 16px)}
+}
+@keyframes pf-factory-7-l7-2 {
+  0%,70% {transform:translate(0)}
+  100%  {transform:translate(200%)}
+}
+.loader-glyph[data-style="factory-8"] {
+  width: 90px;
+  height: 30px;
+  box-shadow: 0 3px 0 currentColor;
+  --g:repeat-x repeating-linear-gradient(90deg,#ccc 0 16px,#0000 0 18px,#ccc 0 34px,#0000 0 100%);
+  background: var(--g),var(--g);
+  background-size: 60px 14px,60px 14px;
+  animation: pf-factory-8-l8 1s infinite linear;
+}
+@keyframes pf-factory-8-l8 {
+  0%   {background-position:0    0,0    100%}
+  100% {background-position:60px 0,60px 100%}
+}
+@media(prefers-reduced-motion:reduce){.loader-glyph,.loader-glyph:before,.loader-glyph:after{animation-play-state:paused!important}}

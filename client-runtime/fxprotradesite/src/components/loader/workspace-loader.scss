@@ -3,5 +3,5 @@
 .pf-workspace-loader{position:absolute;inset:0;z-index:10;display:grid;place-items:center;min-height:160px;background:var(--pf-client-glass);color:var(--pf-client-ink);font-family:var(--pf-client-font);backdrop-filter:blur(var(--pf-client-blur));--a1:var(--pf-client-accent);--sl:var(--pf-client-edge)}
 .pf-workspace-loader .loader-overlay-inner{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:20px}
 .pf-loading-frame{position:relative;height:100%;min-height:400px}
-.pf-workspace-loader .loader-visual{width:52px;height:52px;color:var(--pf-client-accent)}
+.pf-workspace-loader .loader-visual{color:var(--pf-client-accent)}
 .pf-workspace-loader .loader-text{font-weight:650;font-size:13px}

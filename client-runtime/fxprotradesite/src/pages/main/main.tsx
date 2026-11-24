@@ -902,10 +902,10 @@ const AppWrapper = observer(() => {
                                 <PortfolioDisplay />
                             </div>
                         </div>
-                        <div label={<><PortfolioIcon /><Localize i18n_default_text='Risk Management' /></>} id='id-risk-management'>
+                        <div label={<><svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'><path d='M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6Z M8 12l3 3 5-6'/></svg><Localize i18n_default_text='Risk Management' /></>} id='id-risk-management'>
                             <div className='dashboard__portfolio-wrapper'><PortfolioDisplay section='risk-management' /></div>
                         </div>
-                        <div label={<><PortfolioIcon /><Localize i18n_default_text='Strategies' /></>} id='id-strategies'>
+                        <div label={<><svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'><path d='M5 21V3h14l-4 5 4 5H5'/></svg><Localize i18n_default_text='Strategies' /></>} id='id-strategies'>
                             <div className='dashboard__portfolio-wrapper'><PortfolioDisplay section='strategies' /></div>
                         </div>
                         {canViewMarkup && <div label={<><PortfolioIcon /><Localize i18n_default_text='Markup' /></>} id='id-markup'><OwnerMarkup /></div>}
