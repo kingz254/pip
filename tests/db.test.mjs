@@ -33,6 +33,7 @@ await db.exec(adminMigration);
 await db.exec(directDomainMigration);
 await db.exec(setupOnlyMigration);
 await db.exec(ownerVisitMigration);
+await db.exec(readFileSync(new URL('../supabase/migrations/20261125090000_package_settings.sql', import.meta.url), 'utf8'));
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
@@ -234,4 +235,24 @@ test('OAuth migration keeps encrypted sessions server-only and accepts new OAuth
   assert.equal(rows.rows[0].payload,'encrypted fixture');
   ok(await as('authenticated',A,`update public.sites set deriv_app_id='fixture_new-client' where owner='${A}'`),'new OAuth client ID');
   denied(await as('authenticated',A,`update public.sites set deriv_app_id='unsafe client id' where owner='${A}'`),'unsafe client ID');
+});
+
+
+test('package settings protect contacts, restrict price edits and expire offers on the server', async()=>{
+ const privateRead=await as('authenticated',B,'select * from public.package_settings');
+ assert.equal(privateRead.rows.length,0);
+ const denied=await as('authenticated',B,'update public.package_settings set regular_price=1');
+ assert.equal(denied.rows?.length||0,0);
+ let r=await as('anon',null,'select public.package_prices() as prices');
+ assert.equal(r.rows[0].prices.regular,200);
+ r=await as('authenticated',B,'select public.premium_contacts() as contacts');
+ assert.equal(r.rows[0].contacts,null);
+ await as('authenticated',ADMIN,"update public.package_settings set regular_price=300,regular_offer=200,offer_enabled=true,offer_ends_at=now()+interval '1 day',telegram_url='https://t.me/private_group'");
+ r=await as('anon',null,'select public.package_prices() as prices');
+ assert.equal(r.rows[0].prices.regular,200);
+ assert.equal(r.rows[0].prices.telegram_url,undefined);
+ await as('authenticated',ADMIN,"update public.package_settings set offer_ends_at=now()-interval '1 second'");
+ r=await as('anon',null,'select public.package_prices() as prices');
+ assert.equal(r.rows[0].prices.regular,300);
+ assert.equal(r.rows[0].prices.offer_active,false);
 });

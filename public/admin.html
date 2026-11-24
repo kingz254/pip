@@ -102,6 +102,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
         <details><summary>Check and hand over</summary><div class="task"><span class="muted">Wait for DNS and SSL to become ready, open the live domain, test Deriv login, then mark the remaining setup steps done below.</span></div></details>
       </section>
     </div>
+<section class="panel"><h2>Packages and offers</h2><p class="muted">Prices apply to new orders. Existing invoices keep their original amount. Premium sales stay closed until private bot execution is ready.</p><form id="package-form" class="dns-compose"><label>Regular standard price (USD)<input id="regular-price" type="number" min="0.01" step="0.01" required></label><label>Premium standard price (USD)<input id="premium-price" type="number" min="0.01" step="0.01" required></label><label>Regular offer price (USD)<input id="regular-offer" type="number" min="0.01" step="0.01" required></label><label>Premium offer price (USD)<input id="premium-offer" type="number" min="0.01" step="0.01" required></label><label>Offer ends at (your local time)<input id="offer-end" type="datetime-local" ></label><label>Premium Telegram invite<input id="premium-telegram" type="url" ></label><label>Priority WhatsApp number (country code, digits only)<input id="premium-whatsapp" type="tel" ></label><label><input id="offer-enabled" type="checkbox" style="min-width:0"> Show limited offer</label><p class="muted">An offer needs an end date. It stops automatically at that time. Telegram and WhatsApp details are private to paid Premium owners.</p><button type="submit">Save packages and contacts</button><p id="package-status" role="status"></p></form></section>
     <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
     <section><div class="section-head"><h2>Payment receipts</h2><p class="muted">Confirmed crypto payments whose receipt email is still pending or needs a retry.</p></div><div id="receipts" class="queue"></div></section>
     <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Client details, saved Deriv App ID, and a place to prepare and email that client’s DNS instructions.</p></div><div id="clients" class="queue"></div></section>
@@ -126,9 +127,27 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
   function check() {
     SB.rpc('is_admin').then(function (r) {
       if (r.data !== true) { msg('This account is not an admin.'); return; }
-      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders(); loadReceipts(); loadClients();
+      $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders(); loadReceipts(); loadClients(); loadPackages();
     });
   }
+
+  function loadPackages(){
+    SB.from('package_settings').select('*').then(function(r){
+      if(r.error||!r.data||!r.data[0]){$('package-status').textContent='Package settings are unavailable. Please apply the package migration.';return}
+      var s=r.data[0];
+      [['regular-price','regular_price'],['premium-price','premium_price'],['regular-offer','regular_offer'],['premium-offer','premium_offer'],['premium-telegram','telegram_url'],['premium-whatsapp','whatsapp_number']].forEach(function(p){$(p[0]).value=s[p[1]]||''});
+      $('offer-enabled').checked=s.offer_enabled;
+      if(s.offer_ends_at){var d=new Date(s.offer_ends_at);$('offer-end').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
+    }).catch(function(){$('package-status').textContent='Package settings could not load.'});
+  }
+  $('package-form').addEventListener('submit',function(e){
+    e.preventDefault();var end=$('offer-end').value,enabled=$('offer-enabled').checked;
+    if(enabled&&(!end||new Date(end)<=new Date())){$('package-status').textContent='Choose an offer end time in the future.';return}
+    var values={regular_price:Number($('regular-price').value),premium_price:Number($('premium-price').value),regular_offer:Number($('regular-offer').value),premium_offer:Number($('premium-offer').value),offer_enabled:enabled,offer_ends_at:end?new Date(end).toISOString():null,telegram_url:$('premium-telegram').value.trim(),whatsapp_number:$('premium-whatsapp').value.replace(/[^0-9]/g,'')};
+    var button=e.submitter;button.disabled=true;
+    SB.from('package_settings').update(values).eq('id',true).select('id').then(function(r){$('package-status').textContent=r.error?r.error.message:r.data&&r.data.length?'Packages and contacts saved.':'No changes saved. Admin access is required.';button.disabled=false}).catch(function(){button.disabled=false;$('package-status').textContent='Could not save. Please try again.'});
+  });
+
   function load() {
     msg('Loading\u2026');
     SB.from('fulfilment_tasks').select('id,task,status,notes,site_id,order_id').then(function (t) {

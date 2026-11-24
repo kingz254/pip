@@ -412,7 +412,7 @@ body{background:transparent}
 .dnote{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5}.dnote b{color:var(--ink)}
 .dst{font-size:14px;font-weight:600;min-height:20px;line-height:1.4}.dst.ok{color:#19d3a2}.dst.bad{color:#ff6b75}.dst.neu{color:var(--muted);font-weight:500;font-size:13px}
 #domain-action .btn{display:inline-flex;align-items:center;justify-content:center;min-width:160px;min-height:54px;padding:14px 28px;text-align:center;text-decoration:none;box-sizing:border-box}
-#p-pricing>.grid{grid-template-columns:minmax(0,520px)}
+#p-pricing>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.premium-package{border:1px solid #d9b86c;box-shadow:0 12px 40px rgba(217,184,108,.14)}
 .payment-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .payment-option{min-width:0;min-height:104px;padding:12px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr auto;align-items:center;gap:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--glass);box-sizing:border-box}
 .payment-option.available{border-color:color-mix(in srgb,#19b987 48%,var(--line));background:color-mix(in srgb,#19b987 8%,var(--glass))}
@@ -567,12 +567,11 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 </div>
 
 <div class="page" id="p-pricing" hidden>
-  <div class="ph"><h1>One $200 setup fee. No extra Pipforge charges.</h1><p>Pay once to launch. Your domain is purchased and renewed directly through your registrar.</p></div>
-  <div class="grid">
-    <div class="glass card"><span class="tag">Setup</span><div class="price">$200</div><p>One time. Domain registration and renewals are paid by you directly to the registrar.</p>
-      <ul class="list"><li>Your template and site name</li><li>Your own domain with SSL</li><li>Free bot library</li><li>Your Deriv referral link</li><li>Locked risk warnings</li></ul>
-      <button class="btn" data-go="checkout">Reserve my site</button></div>
-  </div>
+ <div class="ph"><h1>Your brand. Your trading site.</h1><p>One setup payment. You buy and renew your domain directly with your registrar.</p><p id="package-offer-clock" role="status" hidden></p></div>
+ <div class="grid package-grid">
+  <article class="glass card"><span class="tag">Regular</span><div class="price" id="regular-package-price">$200</div><p>Launch your branded site.</p><ul class="list"><li>Your chosen branding, themes, fonts and backgrounds</li><li>Included: free bot library</li><li>Included: mobile layout and app installation</li><li>Included: DNS instructions and Deriv login setup</li></ul><button class="btn" data-go="checkout">Choose Regular</button></article>
+  <article class="glass card premium-package"><span class="tag">Premium · coming soon</span><div class="price" id="premium-package-price">$300</div><p>Build a paid bot offering for your audience.</p><ul class="list"><li>Everything in Regular</li><li>Included: 20 private premium bot strategies</li><li>Included: tools to manage your buyers’ access</li><li>Included: priority one-to-one support contact</li><li>Included: private Telegram education community</li></ul><p>Private server execution is being built. Premium checkout is not open yet. Copy trading availability is still being verified.</p><button class="btn" disabled>Premium launch in preparation</button></article>
+ </div>
 </div>
 
 <div class="page" id="p-how" hidden>
@@ -588,7 +587,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 <div class="page" id="p-faq" hidden>
   <div class="ph"><h1>Questions, answered.</h1><p>Can’t find yours? Send us a message below.</p></div>
   <details class="glass"><summary>Is Pipforge part of Deriv?</summary><p>No. Pipforge is independent and not affiliated with Deriv. Your site links to Deriv, and Deriv’s own terms apply to your account there.</p></details>
-  <details class="glass"><summary>Do I keep my earnings?</summary><p>Yes. You pay Pipforge a one-time $200 setup fee. You buy and renew your domain directly with the registrar, and configure Deriv markup in your own Deriv app.</p></details>
+  <details class="glass"><summary>Do I keep my earnings?</summary><p>Yes. You pay Pipforge a one-time setup fee for your selected package. You buy and renew your domain directly with the registrar, and configure Deriv markup in your own Deriv app.</p></details>
   <details class="glass"><summary>Will the bots make me money?</summary><p>We can’t promise that, and nobody honestly can. Most retail traders lose money. Test every bot on a demo account first.</p></details>
   <details class="glass"><summary>Can I bring my own domain?</summary><p>You choose a name and ending when you order. Tell us in your message if you want to use one you already own.</p></details>
   <details class="glass"><summary>What happens when my domain renews?</summary><p>You renew directly with the registrar and pay its renewal price. If the domain expires, the site may stop working.</p></details>
@@ -627,7 +626,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   <div class="ph"><h1>Reserve your site</h1><p>Pay by USDT on the TRON network (TRC20).</p></div>
   <div class="two">
     <div class="glass card"><h3>Your order</h3>
-      <ul class="list"><li>Site name <span id="sN"></span></li><li>Domain <span id="sD"></span></li><li>Template <span id="sT"></span></li><li>One-time setup <span>$200</span></li></ul>
+      <ul class="list"><li>Site name <span id="sN"></span></li><li>Domain <span id="sD"></span></li><li>Template <span id="sT"></span></li><li>One-time setup <span id="checkout-package-price">Regular</span></li></ul>
       <div class="total"><span>Due today</span><strong id="sTot"></strong></div></div>
     <div class="glass cfg" style="animation:none;opacity:1">
       <div><span class="lab">Payment method</span><div class="payment-methods" id="pm" role="list" aria-label="Payment methods">
@@ -642,7 +641,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
         <p>Amount: <strong id="crypto-amount"></strong></p>
         <p>Wallet address: <code id="crypto-address"></code></p>
         <button class="btn ghost" id="crypto-copy" type="button">Copy address</button>
-        <p>Crypto transfers cannot be reversed. Confirm the network and address before sending. The sender pays the TRON network fee separately; Pipforge charges $200 only. After sending, paste the 64-character transaction ID below. Your order goes live only after Pipforge manually verifies the transfer.</p>
+        <p>Crypto transfers cannot be reversed. Confirm the network and address before sending. The sender pays the TRON network fee separately; Pipforge charges the invoice amount shown only. After sending, paste the 64-character transaction ID below. Your order goes live only after Pipforge manually verifies the transfer.</p>
         <label for="crypto-txid">TRON transaction ID</label><input class="field" id="crypto-txid" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="64-character transaction ID">
         <button class="btn" id="crypto-submit" type="button">Submit transfer for review</button>
         <div id="crypto-status" class="dst" role="status" aria-live="polite"></div>
@@ -667,6 +666,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 <script>
 (function(){
   document.documentElement.classList.add("js");
+  var packagePrices=null;function regularPrice(){return packagePrices?Number(packagePrices.regular):200}
   var st={t:"snow",e:".site",f:0,n:"Nova Trades",ft:"inter",ld:"spinner",as:"compact",blur:75,oauth_client_id:(window.PF_CONFIG||{}).DERIV_OAUTH_CLIENT_ID||""},clientThemeTemplate=null,reviewReturnTab=null,designPending=false;
   var $=function(i){return document.getElementById(i)};
   function slug(s){return (s||"yoursite").toLowerCase().replace(/[^a-z0-9]/g,"")||"yoursite"}
@@ -712,7 +712,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     var ln=document.querySelector(".links"),active=null;document.querySelectorAll(".links a").forEach(function(a){var on=a.getAttribute("href")==="#"+h;a.classList.toggle("on",on);if(on)active=a});
     if(ln&&active){if(h==="home"||h==="landing")ln.scrollLeft=0;else{var lr=ln.getBoundingClientRect(),ar=active.getBoundingClientRect();if(ar.left<lr.left)ln.scrollLeft-=lr.left-ar.left;else if(ar.right>lr.right)ln.scrollLeft+=ar.right-lr.right}}
     $("sN").textContent=st.n||"Your Site";$("sD").textContent=slug(st.n)+st.e;$("sT").textContent=cap(st.t);
-    $("sTot").textContent="$200";$("dd").textContent=slug(st.n)+st.e;
+    $("sTot").textContent="$"+regularPrice();$("dd").textContent=slug(st.n)+st.e;
     window.scrollTo(0,0);
   }
   window.addEventListener("hashchange",route);
@@ -860,7 +860,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   $("included").insertAdjacentHTML("beforebegin",'<section><h2>Why own your Deriv site?</h2><div class="grid"><div class="glass tile t1"><h3>Earn on contracts your visitors place</h3><p>Deriv lets an app owner add a markup of up to 3% to contracts placed through their app. That markup goes to you, not to us.</p></div><div class="glass tile t2"><h3>Your brand</h3><p>Your name, your domain, your audience.</p></div><div class="glass tile t3"><h3>No revenue share</h3><p>One setup fee. We take no cut of your earnings.</p></div><div class="glass tile t4"><h3>Free bots give people a reason to return</h3><p>A bot library turns a one-time visit into a site people come back to.</p></div></div><div class="glass note" style="margin-top:16px"><h2>How you get paid.</h2><div>'+earn+'</div></div></section>');
   $("p-pricing").insertAdjacentHTML("beforeend",'<div class="glass note" style="margin-bottom:40px"><h2>What you earn is yours.</h2><div><p>The setup fee pays for your site. Your markup and referral commissions come from Deriv and go to you. We take no share of either.</p></div></div>');
   $("p-how").insertAdjacentHTML("beforeend",'<div class="ph" style="padding-top:8px"><h1>How you get paid</h1></div><ol class="steps"><li class="glass"><b class="num">1</b><div><h3>A visitor places a contract</h3><p>They trade on your site, which runs on your own Deriv app ID.</p></div></li><li class="glass"><b class="num">2</b><div><h3>Your markup is added</h3><p>You set the rate from 0 to 3%, and it is shown to your visitors.</p></div></li><li class="glass"><b class="num">3</b><div><h3>Deriv pays you</h3><p>Markup commission goes to you under Deriv’s terms. We never touch it.</p></div></li><li class="glass"><b class="num">4</b><div><h3>You track it</h3><p>Your dashboard shows your site, your markup and your commission.</p></div></li></ol>');
-  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Why have my own site instead of just sharing a referral link?</summary><p>A referral link earns partner commission when people trade on Deriv’s own platforms. A site of your own can also earn markup on contracts placed through your app, carries your brand, and gives your audience somewhere to return to.</p></details><details class="glass"><summary>How exactly do I get paid?</summary><p>Deriv pays markup commission to the owner of the app ID a contract was placed through. You configure your app and markup directly with Deriv.</p></details><details class="glass"><summary>Does Pipforge take a share?</summary><p>No. Pipforge charges a one-time $200 setup fee only. You pay the registrar directly for registration and renewals.</p></details>');
+  $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Why have my own site instead of just sharing a referral link?</summary><p>A referral link earns partner commission when people trade on Deriv’s own platforms. A site of your own can also earn markup on contracts placed through your app, carries your brand, and gives your audience somewhere to return to.</p></details><details class="glass"><summary>How exactly do I get paid?</summary><p>Deriv pays markup commission to the owner of the app ID a contract was placed through. You configure your app and markup directly with Deriv.</p></details><details class="glass"><summary>Does Pipforge take a share?</summary><p>No. Pipforge charges a one-time setup fee for your selected package only. You pay the registrar directly for registration and renewals.</p></details>');
   $("pay").insertAdjacentHTML("beforebegin",'<span class="mini">You keep 100% of the markup your site earns. We take no share.</span>');
   function mkPage(id,html){var d=document.createElement("div");d.className="page";d.id="p-"+id;d.hidden=true;d.innerHTML=html;document.querySelector("main").appendChild(d);pages.push(id)}
   mkPage("why",'<div class="ph"><h1>Why have your own third-party Deriv site?</h1><p>A referral link sends people to Deriv. Your own site gives them a place to come back to, and gives you more ways to earn.</p></div><div class="cards"><div class="glass card"><h3>Earn markup</h3><p>Add up to 3% to contracts placed through your app. It is paid to you.</p></div><div class="glass card"><h3>Build a brand</h3><p>Your name and domain, so people remember you and not a link.</p></div><div class="glass card"><h3>Stand apart from scams</h3><p>Locked risk warnings, a visible markup rate and a verify page show visitors you are genuine.</p></div><div class="glass card"><h3>Keep what you earn</h3><p>One setup fee. No revenue share.</p></div></div><div class="glass note"><h2>How you get paid.</h2><div>'+earn+'</div></div><div class="cmpw"><div class="cmp"><div class="h"></div><div class="h">Pipforge site</div><div class="h">Referral link only</div><div class="h">Site bought from a stranger</div><div>Your own brand and domain</div><div class="y">Yes</div><div>No</div><div>Varies</div><div>Markup on contracts</div><div class="y">Yes, to your app ID</div><div>No</div><div>Check the app ID</div><div>You set the markup rate</div><div class="y">Yes, 0 to 3%</div><div>Not applicable</div><div>Varies</div><div>Risk warnings built in</div><div class="y">Locked on</div><div>Not applicable</div><div>Varies</div><div>Share of your earnings taken</div><div class="y">None</div><div>None</div><div>Varies</div></div></div><div class="row" style="margin-bottom:40px"><button class="btn" data-go="templates">See themes</button><button class="btn" data-go="checkout">Reserve my site</button></div>');
@@ -1510,7 +1510,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   $("dow").addEventListener("input",function(){st.own=this.value;render()});
   $("domain-action").addEventListener("click",function(e){if(e.target.closest("#dchk"))chk()});
   $("dsg").addEventListener("click",function(e){var b=e.target.closest("[data-sg]");if(!b)return;var c=document.querySelector('#exts [data-e="'+b.dataset.sg+'"]');if(c)c.click()});
-  function fillCk(){$("sD").textContent=dom();$("sTot").textContent="$200";$("dd").textContent=dom();
+  function fillCk(){$("sD").textContent=dom();$("sTot").textContent="$"+regularPrice();$("dd").textContent=dom();
     $("ckn").innerHTML=st.dm==="own"?"<b>You own and renew your domain.</b> We give you DNS records to add at your registrar.":"<b>The domain is registered in your name.</b> You handle future renewals directly with the registrar. We give you DNS records to add."}
   $("pay").insertAdjacentHTML("beforebegin",'<div class="dnote" id="ckn"></div>');
   window.addEventListener("hashchange",fillCk);
@@ -1538,7 +1538,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   mkPage("landing",'<div class="lp"><div><span class="eyebrow">Deriv site builder</span><h1>Your own <span class="deriv-wordmark"><img src="/deriv-brand-mark.png" alt="" aria-hidden="true">Deriv</span> site, live in a day.</h1><p class="lead">Sign in, pick a template, name your site, and connect a domain that you own. You keep the markup your visitors generate.</p><ul class="lpl"><li><b>One setup fee.</b> We take no share of your earnings.</li><li><b>Your domain, your account.</b> You register and renew it; we provide DNS records and check the connection.</li><li><b>Free bots included.</b> Always with clear risk warnings.</li></ul></div><div class="glass lp-r" id="auth"><div id="a1" style="display:grid;gap:12px"><h2>Sign in or create an account</h2><button class="gbtn" id="gsi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Continue with Google</button><span class="mini">Preview sign-in. On the live site this opens Google\u2019s own sign-in window.</span><div id="a1f" style="display:none"><label for="ge">Gmail address (preview only)</label><input class="field" id="ge" type="email" placeholder="you@gmail.com" autocomplete="email"><div style="height:10px"></div><button class="btn" id="gct" style="width:100%">Continue</button></div><div class="dst" id="ae" role="alert"></div></div><div id="a2" style="display:none;gap:12px"><h2>Almost there</h2><span class="mini">Signed in as <b id="gem"></b></span><div><label for="gn">Your name</label><input class="field" id="gn" autocomplete="name" maxlength="60"></div><div><label for="gp">Phone number</label><div class="phone-row"><select class="field country-picker" id="gncountry" aria-label="Phone country"></select><div class="phone-number"><span class="dial-code" id="gncode"></span><input class="field" id="gp" type="tel" inputmode="tel" autocomplete="tel" placeholder="Enter your number"></div></div><span class="mini">Choose your country to add its calling code. Deriv product availability varies by country.</span></div><div class="chk consent"><span>I agree that Pipforge stores my name, Gmail address and phone number to run my account. <a href="#legal">Privacy</a></span><input type="checkbox" id="gc" aria-label="Consent"></div><button class="btn" id="gdo">Create my account</button><button class="btn ghost" id="gbk">Back</button><div class="dst" id="ae2" role="alert"></div></div></div></div><div class="grid" style="margin-bottom:40px"><div class="glass tile t2"><h3>Earn on contracts</h3><p>Set up markup directly in your Deriv app.</p></div><div class="glass tile t2"><h3>Domain stays yours</h3><p>Register it in your name, add DNS records, and renew it directly with the registrar.</p></div><div class="glass tile t2"><h3>Built to look trusted</h3><p>35 templates, 35 animated backgrounds and type themes, 20 header compositions, locked risk warnings and a verify page.</p></div></div>');
   $("p-landing").classList.add("pub");PUB.slice(1).forEach(function(i){$("p-"+i).classList.add("pub")});
   var LS=[["1. Create your account",["Open the landing page and choose Continue with Google.","Enter your name and phone number, tick the consent box and create your account.","Next time, Continue with Google signs you straight in."]],
-   ["2. Name your site and choose a domain",["In the builder, open the Site tab and type your site name.","Check the name and ending you want. If it appears available, follow the Namecheap link and pay the registrar directly.","When the purchase is complete, return to Pipforge, choose I already own a domain and enter it.","Pipforge charges a one-time $200 setup fee only. The registrar handles domain registration and renewals."]],
+   ["2. Name your site and choose a domain",["In the builder, open the Site tab and type your site name.","Check the name and ending you want. If it appears available, follow the Namecheap link and pay the registrar directly.","When the purchase is complete, return to Pipforge, choose I already own a domain and enter it.","Pipforge charges a one-time setup fee for your selected package only. The registrar handles domain registration and renewals."]],
    ["3. Pick a template",["Open the Theme tab and choose a look.","The live preview changes straight away, so try a few."]],
    ["4. Choose a background",["Open Background to choose a subtle animation, a decorative pattern, or no background.","Still patterns use lightweight inline artwork and animations follow your theme colors."]],
    ["5. Set your header, menu and social links",["In the Fonts tab, choose a typeface. In the Header tab, try one of 7 header compositions and set your announcement.","In the Menu tab, tick the pages you want in your site\u2019s menu.","In the Social tab, enter your profile names or links. Only the ones you fill in show as icons."]],
@@ -1615,15 +1615,15 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   function gateRoute(){if(/[?&]code=/.test(location.search)||/(?:^#|&)(?:access_token|refresh_token|error|error_code)=/.test(location.hash))return;var h=(location.hash||"#home").slice(1);if(!ME&&PUB.indexOf(h)<0)location.replace("#landing");else if(ME&&h==="landing")location.replace("#home");navUI()}
   window.addEventListener("hashchange",gateRoute);
   function fix(){var own=st.dm==="own";
-    $("sTot").textContent="$200";
+    $("sTot").textContent="$"+regularPrice();
     $("ren").textContent="Buy and renew your domain directly with the registrar.";
     $("ckn").innerHTML=own?"<b>You own and renew your domain.</b> We give you DNS records to add at your registrar.":"<b>Buy the domain directly from the registrar before continuing.</b> Return here, choose I already own a domain, and enter the purchased domain. The registrar payment is separate from this Pipforge setup order.";
     ern()}
   window.addEventListener("hashchange",fix);
   var r9=render;render=function(){r9();fix()};
-  $("down").querySelector(".dnote").innerHTML="<b>You own and renew this domain.</b> Pipforge charges only the one-time $200 setup fee. We give you the DNS records to add at your registrar. Never share your registrar password.";
+  $("down").querySelector(".dnote").innerHTML="<b>You own and renew this domain.</b> Pipforge charges only the one-time setup fee for your selected package. We give you the DNS records to add at your registrar. Never share your registrar password.";
   $("dnew").querySelector(".dnote").innerHTML="<b>Buy the domain directly from the registrar.</b> After checkout, return here, choose “I already own a domain,” and enter the domain you purchased. You handle renewals and never share your registrar password.";
-  document.querySelectorAll("#p-faq details").forEach(function(d){if(d.querySelector("summary").textContent.indexOf("already own")>-1)d.querySelector("p").textContent="Yes. Choose \u201cI already own a domain\u201d and enter it. Pipforge charges a one-time $200 setup fee only. We give you DNS records to add at your registrar. Never share your registrar password."});
+  document.querySelectorAll("#p-faq details").forEach(function(d){if(d.querySelector("summary").textContent.indexOf("already own")>-1)d.querySelector("p").textContent="Yes. Choose \u201cI already own a domain\u201d and enter it. Pipforge charges a one-time setup fee for your selected package only. We give you DNS records to add at your registrar. Never share your registrar password."});
   $("p-faq").querySelector(".ph").insertAdjacentHTML("afterend",'<details class="glass"><summary>Whose name is my domain registered in?</summary><p>Yours. You handle future renewal payments directly with the registrar.</p></details>');
   var h0=(location.hash||"").slice(1);
   if(!ME&&PUB.indexOf(h0||"home")<0)location.replace("#landing");else if(ME&&(!h0||h0==="landing"))location.replace("#home");
@@ -1814,7 +1814,21 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       window.dispatchEvent(new Event("pf:tenant-ready"));
       var authResult=new URLSearchParams(location.search).get("deriv_login");if(authResult){history.replaceState(null,"",location.pathname+location.hash);toast(authResult==="cancelled"?"Deriv sign-in was cancelled.":"Deriv sign-in could not finish. Check that your Deriv OAuth app has the exact callback URL for this domain: "+location.origin+"/api/deriv/callback.")}
     }).catch(function(){tenantUnavailable("This site is temporarily unavailable. Please try again shortly.")})}
-  function start(){SB=window.PF_SB;var h=tenantHost();if(h)initTenant(h);else initBackend()}
+
+  var offerTimer=null;
+  function loadPackagePrices(){
+    if(!SB)return;
+    SB.rpc('package_prices').then(function(r){
+      if(r.error||!r.data){$('regular-package-price').textContent='Price unavailable';$('premium-package-price').textContent='Price unavailable';return}
+      packagePrices=r.data;$('regular-package-price').textContent='$'+Number(r.data.regular);$('premium-package-price').textContent='$'+Number(r.data.premium);
+      $('checkout-package-price').textContent='$'+Number(r.data.regular);
+      if(!BK.order)$('sTot').textContent='$'+Number(r.data.regular);
+      clearInterval(offerTimer);
+      function countdown(){var left=new Date(packagePrices.offer_ends_at).getTime()-Date.now(),box=$('package-offer-clock');box.hidden=!packagePrices.offer_active||left<=0;if(!box.hidden){var seconds=Math.floor(left/1000);box.textContent='Offer ends in '+Math.floor(seconds/86400)+'d '+Math.floor(seconds/3600%24)+'h '+Math.floor(seconds/60%60)+'m '+seconds%60+'s'}else if(packagePrices.offer_active){clearInterval(offerTimer);loadPackagePrices()}}
+      countdown();if(r.data.offer_active)offerTimer=setInterval(countdown,1000);
+    }).catch(function(){$('regular-package-price').textContent='Price unavailable';$('premium-package-price').textContent='Price unavailable'});
+  }
+  function start(){SB=window.PF_SB;loadPackagePrices();var h=tenantHost();if(h)initTenant(h);else initBackend()}
   if(window.PF_SB)start();else window.addEventListener("pf:ready",start);
   var renderFullRuntime=render;
   render=function(){renderFullRuntime();if(window.PipforgeRuntime)window.PipforgeRuntime.update(st);};

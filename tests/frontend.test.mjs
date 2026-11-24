@@ -78,7 +78,7 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   input($('gp'), '+254 700 000 000'); click($('gdo')); assert.match($('ae2').textContent, /consent/i);
   $('gc').checked = true; click($('gdo')); await tick(150);
   // objects made inside jsdom live in another realm, so compare as JSON
-  assert.equal(JSON.stringify(sb.calls.rpc[0]), JSON.stringify(['complete_profile', { p_name: 'Jane Doe', p_phone: '+254700000000', p_consent: true }]));
+  assert.equal(JSON.stringify(sb.calls.rpc.find(([name])=>name==='complete_profile')), JSON.stringify(['complete_profile', { p_name: 'Jane Doe', p_phone: '+254700000000', p_consent: true }]));
   assert.equal(w.location.hash, '#home'); assert.match($('acct').textContent, /Hi, Jane/);
 
   // Autosave creates the site row, then updates it
