@@ -41,7 +41,7 @@
       ]
     },
     {
-      "source": "/admin.html",
+      "source": "/kingori.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -132,3 +132,4 @@
     }
   ]
 }
+

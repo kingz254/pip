@@ -19,7 +19,7 @@ for(const [folder,route] of [['digits-no-chart-app','digits'],['rise-fall-app','
 await mkdir(resolve(root,'public'),{recursive:true});
 for(const entry of await readdir(resolve(app,'dist'))) {
   if(['index.html','markup','deriv-callback.html','deriv-callback.js','service-worker.js','test-bot-urls.html'].includes(entry))continue;
-  if(['config.js','admin.html','fxpro-preview.js'].includes(entry))throw new Error('Runtime asset conflicts with Pipforge: '+entry);
+  if(['config.js','kingori.html','fxpro-preview.js'].includes(entry))throw new Error('Runtime asset conflicts with Pipforge: '+entry);
   await cp(resolve(app,'dist',entry),resolve(root,'public',entry),{recursive:true});
 }
 let html=await readFile(resolve(app,'dist/index.html'),'utf8');
@@ -30,3 +30,4 @@ await writeFile(resolve(root,'public/fxpro.html'),html);
 const output=resolve(root,'site-output');
 await cp(resolve(root,'public'),output,{recursive:true,filter:source=>source!==resolve(root,'public/index.html')});
 await rm(resolve(output,'index.html'),{force:true});
+

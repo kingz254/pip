@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { normalizeDomain, tldOf, parseBootstrap, interpretRdap } from '../supabase/functions/_shared/domain.ts';
 import { checkDomain, _resetCache } from '../supabase/functions/_shared/rdap.ts';
-import { mpesaTimestamp, mpesaPassword, normalizeKePhone, kesAmount, stkPushBody, parseStkCallback, safeEqual } from '../supabase/functions/_shared/mpesa.ts';
+import { mpesaTimestamp, mpesaPassword, normalizeKePhone, kesAmount, stkPushBody, parseStkCallback, safeEqual, exactPaymentAmount } from '../supabase/functions/_shared/mpesa.ts';
 import { darajaToken, stkPush, stkQuery } from '../supabase/functions/_shared/daraja.ts';
 import { corsHeaders } from '../supabase/functions/_shared/cors.ts';
 
@@ -54,6 +54,9 @@ test('M-Pesa helpers', () => {
   assert.equal(kesAmount(1.1, 100), 110, 'float noise must not add a shilling');
   assert.equal(kesAmount(215.01, 129.4), 27823, 'real fractions round up');
   assert.equal(kesAmount(0.001, 1), 1);
+  assert.ok(exactPaymentAmount(100, 100));
+  assert.ok(!exactPaymentAmount(101, 100)); assert.ok(!exactPaymentAmount(99, 100));
+  assert.ok(!exactPaymentAmount(undefined, 100)); assert.ok(!exactPaymentAmount(NaN, 100));
   assert.throws(() => kesAmount(0, 130)); assert.throws(() => kesAmount(10, 0)); assert.throws(() => kesAmount(NaN, 130));
   const b = stkPushBody({ shortcode: '174379', passkey: 'k', phone: '254712345678', amountKes: 100, callbackUrl: 'https://x/cb', reference: 'PFabcdef123456789', description: 'Pipforge order', now: new Date(Date.UTC(2026, 0, 1)) });
   assert.equal(b.Amount, 100); assert.equal(b.PartyA, '254712345678'); assert.equal(b.AccountReference.length, 12); assert.equal(b.TransactionDesc.length, 13);

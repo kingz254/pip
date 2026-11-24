@@ -51,6 +51,9 @@ export interface StkCallback {
   merchantRequestId: string; checkoutRequestId: string; resultCode: number; resultDesc: string;
   amount?: number; receipt?: string; phone?: string;
 }
+export function exactPaymentAmount(actual: number | undefined, expected: number): boolean {
+  return Number.isFinite(actual) && actual === expected;
+}
 export function parseStkCallback(json: any): StkCallback {
   const cb = json?.Body?.stkCallback;
   if (!cb || typeof cb.CheckoutRequestID !== 'string') throw new Error('not an STK callback');

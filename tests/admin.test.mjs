@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { fakeSupabase } from './helpers/fakeSupabase.mjs';
 import { tick } from './helpers/boot.mjs';
 
-const html = readFileSync(new URL('../public/admin.html', import.meta.url), 'utf8');
+const html = readFileSync(new URL('../public/kingori.html', import.meta.url), 'utf8');
 function open(sb) {
   const errors = []; const vc = new VirtualConsole(); vc.on('jsdomError', (e) => errors.push(String(e.message)));
   const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://admin.test/', virtualConsole: vc, beforeParse(w) { w.PF_SB = sb; w.PF_CONFIG = { SUPABASE_URL: 'x' }; } });
@@ -54,3 +54,4 @@ test('admin sees the queue, client details are text not HTML, and finishing the 
   assert.equal(d.querySelectorAll('.task.done').length, 4);
   w.close(); assert.deepEqual(errors, []);
 });
+

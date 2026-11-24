@@ -5,7 +5,7 @@ A platform for selling templated, branded Deriv trading sites. Clients sign in w
 You fulfil the domain and DNS from an admin queue; the client's site then goes live on their own domain.
 
 * **Front-end:** the platform is static HTML in `public/`; four trading templates under `apps/` are built into `public/apps/`. One page, `index.html`, is both the builder app and
-  the client-site renderer ("tenant mode", see below). `admin.html` is the fulfilment queue.
+  the client-site renderer ("tenant mode", see below). `kingori.html` is the fulfilment queue.
 * **Backend:** Supabase. Postgres with row level security, Google sign-in, and three Edge Functions.
 * **Payments:** M-Pesa STK push (Safaricom Daraja). Card payments are not built yet.
 
@@ -21,7 +21,7 @@ Browser (public/index.html, anon key only)
   └─ Edge Function checkout                      reads the order, starts the M-Pesa prompt
 Safaricom ──> Edge Function mpesa-callback       verifies with Safaricom, then rpc mark_order_paid
 mark_order_paid                                  order paid, site "paid", fulfilment tasks created
-You (admin.html)                                 register domain, connect DNS, issue SSL, go live
+You (kingori.html)                                 register domain, connect DNS, issue SSL, go live
 public_site(domain) RPC                          read-only config for LIVE sites, used by tenant mode
 ```
 
@@ -115,7 +115,7 @@ profile, autosave, taken-domain blocking, order, payment polling, tenant mode, a
 ## Layout
 
 ```
-public/            index.html (builder + tenant renderer), admin.html, config.js
+public/            index.html (builder + tenant renderer), kingori.html, config.js
 supabase/migrations/20261107000000_init.sql   schema, RLS, pricing, ordering, fulfilment
 supabase/functions/domain-check | checkout | mpesa-callback | _shared
 tests/             db, functions, frontend, admin (+ helpers)
@@ -125,3 +125,4 @@ tests/             db, functions, frontend, admin (+ helpers)
 ## Integrated trading apps
 
 See [Deriv setup](docs/DERIV_SETUP.md) for the tab-to-template map, public feeds, shared OAuth backend, customer-domain callbacks, Vercel settings, and verification limits. Run `npm run build` before production deployment.
+

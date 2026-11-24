@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  loginId       String    @unique // Deriv login ID
+  fullName      String
+  avatar        String?   // Optional custom avatar emoji
+  bio           String?   @default("")
+  status        String    @default("online") // online, offline, away
+  joinedDate    DateTime  @default(now())
+  lastSeen      DateTime  @default(now())
+  
+  messages      Message[]
+  
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique // general, support, strategies
+  description String?
+  icon        String?
+  messageCount Int      @default(0)
+  
+  messages    Message[]
+  
+  @@map("categories")
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  content     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  // Reply functionality
+  replyToId   String?
+  replyTo     Message?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies     Message[] @relation("MessageReplies")
+  
+  // Attachments and Reactions
+  attachments Attachment[]
+  reactions   Reaction[]
+  
+  @@index([categoryId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+model Attachment {
+  id          String    @id @default(cuid())
+  type        String    // image, video
+  url         String
+  
+  messageId   String
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  
+  @@map("attachments")
+}
+
+model Reaction {
+  id          String    @id @default(cuid())
+  emoji       String
+  userIds     String[]  // Array of user IDs who reacted
+  
+  messageId   String
+  message     Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  
+  @@unique([messageId, emoji]) // Each emoji can only appear once per message
+  @@map("reactions")
+}
