@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
+import { readFileSync } from 'node:fs';
 
 test('nested analysis tools inherit palette, font and matching canvas scheme on edits', async t=>{
  const dom=new JSDOM('<iframe></iframe>',{url:'https://client.example'}),w=dom.window;
@@ -26,6 +27,12 @@ test('nested analysis tools inherit palette, font and matching canvas scheme on 
  assert.equal(w.document.documentElement.dataset.pfHeader,'balanced');
  applySiteBranding({...site,menu:{font_scale:200}});
  assert.equal(w.document.documentElement.style.fontSize,'9px');
- assert.equal(LOADER_STYLES.length,36);
- assert.equal(normalizeLoaderStyle('ripple'),'spinner-30');
+ assert.equal(LOADER_STYLES.length,44);
+ assert.equal(normalizeLoaderStyle('ripple'),'spinner');
+ const html=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
+ const choices=JSON.parse(html.match(/var LOADER_CHOICES=(\[[^\n]+\]);/)[1]);
+ assert.equal(choices.length,31);
+ assert.ok(['bars','bounce','dual','scan','blocks','spinner','flip','sweep'].every(id=>choices.some(choice=>choice[0]===id)));
+ assert.ok(['wavy-12','wavy-15','blob-14','blob-19','blob-12','pulsing-8','squishy-1','wobbling-20','nature-4','cut-8','shuriken-9','spinner-30','bars-20'].every(id=>!choices.some(choice=>choice[0]===id)));
+ assert.ok(['wavy-12','wavy-15','blob-14','blob-19','blob-12','pulsing-8','squishy-1','wobbling-20','nature-4','cut-8','shuriken-9','spinner-30','bars-20'].every(id=>LOADER_STYLES.includes(id)));
 });
