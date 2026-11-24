@@ -106,7 +106,7 @@ test('backend mode: sign in, profile, autosave, domain check, order, USDT paymen
   assert.equal($('dchk').textContent, 'Check availability');
   input($('dn'), 'taken'); click($('dchk')); await tick(1100);
   assert.ok($('dst').classList.contains('bad')); click($('reserve')); await tick(300);
-  assert.equal(sb.calls.rpc.filter((c) => c[0] === 'create_order').length, 0, 'no order for a taken domain');
+  assert.equal(sb.calls.rpc.filter((c) => c[0] === 'create_package_order').length, 0, 'no order for a taken domain');
   input($('dn'), 'alphatrades'); click($('dchk')); await tick(1100); assert.ok($('dst').classList.contains('ok'));
   assert.match(d.querySelector('#registrar-buy').href, /^https:\/\/www\.namecheap\.com\/domains\/registration\/results\.aspx\?domain=alphatrades\.site$/);
   assert.equal(d.querySelector('#registrar-buy').textContent, 'Buy now');

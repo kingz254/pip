@@ -34,6 +34,7 @@ await db.exec(directDomainMigration);
 await db.exec(setupOnlyMigration);
 await db.exec(ownerVisitMigration);
 await db.exec(readFileSync(new URL('../supabase/migrations/20261125090000_package_settings.sql', import.meta.url), 'utf8'));
+await db.exec(readFileSync(new URL('../supabase/migrations/20261125100000_premium_access.sql', import.meta.url), 'utf8'));
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
@@ -255,4 +256,24 @@ test('package settings protect contacts, restrict price edits and expire offers 
  r=await as('anon',null,'select public.package_prices() as prices');
  assert.equal(r.rows[0].prices.regular,300);
  assert.equal(r.rows[0].prices.offer_active,false);
+});
+
+
+test('premium checkout stays closed without execution; only paid site owners can grant buyer access',async()=>{
+ let r=await as('anon',null,"select public.create_package_order(gen_random_uuid(),'premium')");
+ assert.ok(r.error);
+ r=await as('authenticated',A,"select public.create_package_order(gen_random_uuid(),'premium')");assert.ok(r.error);
+ r=await as('authenticated',A,"select public.set_premium_bot_access(gen_random_uuid(),'premium-01','ROT12345',true)");assert.ok(r.error);
+ r=await as('anon',null,'select count(*)::int as count from public.premium_bot_catalog');assert.equal(r.rows[0].count,20);
+ await db.exec('reset role');
+ const site=(await db.query('select * from public.sites limit 1')).rows[0];
+ await db.query("update public.sites set status='live' where id=$1",[site.id]);
+ await db.query("insert into public.orders(owner,site_id,domain,domain_mode,setup_usd,total_usd,status,package) values($1,$2,$3,'own',300,300,'paid','premium')",[site.owner,site.id,site.domain]);
+ r=await as('authenticated',site.owner,"select public.set_premium_bot_access($1,'premium-01','ROT12345',true)",[site.id]);assert.ok(!r.error,r.error?.message);
+ r=await as('authenticated',site.owner,'select * from public.premium_bot_grants');assert.equal(r.rows.length,1);assert.equal(r.rows[0].revoked_at,null);
+ const stranger=site.owner===A?B:A;
+ r=await as('authenticated',stranger,'select * from public.premium_bot_grants');assert.equal(r.rows.length,0);
+ r=await as('authenticated',stranger,"select public.set_premium_bot_access($1,'premium-01','ROT12345',false)",[site.id]);assert.ok(r.error);
+ r=await as('authenticated',site.owner,"select public.set_premium_bot_access($1,'premium-01','ROT12345',false)",[site.id]);assert.ok(!r.error,r.error?.message);
+ r=await as('authenticated',site.owner,'select * from public.premium_bot_grants');assert.ok(r.rows[0].revoked_at);
 });

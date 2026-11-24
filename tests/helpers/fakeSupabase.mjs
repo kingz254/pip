@@ -37,6 +37,7 @@ export function fakeSupabase({ domainStatus = () => 'free', payAfterMs = 150 } =
       const p = db.profiles.find((x) => x.id === session.user.id);
       Object.assign(p, { full_name: p_name.trim(), phone: p_phone }); return { data: p, error: null };
     },
+    create_package_order({p_site,p_package}) { if(p_package!=='regular')return {error:{message:'Premium execution unavailable'}};return rpcs.create_order({p_site}); },
     create_order({ p_site }) {
       const s = db.sites.find((x) => x.id === p_site); if (!s) return { error: { message: 'site not found' } };
       if (s.domain_mode !== 'own') return { error: { message: 'buy the domain directly from your registrar first' } };

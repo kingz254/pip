@@ -1,6 +1,6 @@
 # Premium launch requirements
 
-Status: proposed package, not enabled for sale. Existing $200 orders and entitlements remain unchanged.
+Status: admin pricing, offer controls, package checkout boundary, private contacts and owner bot grants are implemented. Premium sales remain closed until private execution is deployed and validated. Existing purchases remain Regular.
 
 ## Packages
 
@@ -33,8 +33,17 @@ To keep source private, retain XML on the server and execute validated strategie
 
 Every bot needs demo validation of entry rules, stake progression, stop loss, take profit, repeat purchases, account switching and settlement. Never use a real-money trade to validate migration.
 
-## Inputs still needed
+## Current implementation and remaining work
 
-- Private server execution versus browser XML delivery with its copying limitation.
-- Real offer end date/time and basis for comparison prices.
-- Premium Telegram invite and priority contact details.
+- Admin controls prices, offer enabled/expiry, Telegram invite and WhatsApp contact.
+- create_package_order validates package and snapshots the price on the server. Premium rejects checkout until package_prices reports execution availability; it currently reports false.
+- premium_bot_catalog contains 20 short names and integrity hashes, never XML. All execution_ready flags remain false.
+- set_premium_bot_access grants or revokes a bot for one tenant and buyer account. It checks a live site owned by the caller with a paid Premium order. Browser roles cannot write grant rows directly.
+- Owner tools are present in the Pipforge dashboard and shown after the backend authorizes premium_contacts. Contact links and buyer grant controls use server validation.
+- XML has not been uploaded to public assets, a public repository, or buyers' browsers.
+
+The user selected private server execution. A worker still needs to be built and deployed; this commit does not implement execution. Vercel Daemons can host continuous container workers (https://vercel.com/docs/daemons), but provisioned memory is billed while running. Do not enable it without checking costs and the account's budget.
+
+The source for SMART RISE AND FALL BOT.xml's main_account, smartrisk_* and virtualhook blocks is missing from the current runtime. Obtain the source or an explicit behavior specification before claiming an exact migration. Other old trade/tradeOptions names need validation through existing backward compatibility hooks. All 20 strategies still need demo execution checks.
+
+Copy trading is still unimplemented. No paid checkout or marketing claim should present it as available.

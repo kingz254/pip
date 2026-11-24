@@ -412,7 +412,7 @@ body{background:transparent}
 .dnote{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5}.dnote b{color:var(--ink)}
 .dst{font-size:14px;font-weight:600;min-height:20px;line-height:1.4}.dst.ok{color:#19d3a2}.dst.bad{color:#ff6b75}.dst.neu{color:var(--muted);font-weight:500;font-size:13px}
 #domain-action .btn{display:inline-flex;align-items:center;justify-content:center;min-width:160px;min-height:54px;padding:14px 28px;text-align:center;text-decoration:none;box-sizing:border-box}
-#p-pricing>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.premium-package{border:1px solid #d9b86c;box-shadow:0 12px 40px rgba(217,184,108,.14)}
+#p-pricing>.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.premium-package{position:relative;border:1px solid #e5bc61;background:radial-gradient(ellipse at 100% 0,rgba(244,193,79,.19),transparent 62%),var(--glass);box-shadow:0 0 28px rgba(230,184,78,.18),inset 0 1px rgba(255,229,159,.32);animation:premiumGlow 4s ease-in-out infinite alternate}.premium-package .tag{background:linear-gradient(110deg,#f8e7af,#d5a844);color:#2b210b;border:0;font-weight:700}.premium-package .price{color:#f3d484;text-shadow:0 2px 16px rgba(229,188,97,.18)}.premium-package .btn{background:linear-gradient(110deg,#f5d98d,#d5a640);color:#211b0c;border-color:#edca76}.free-extra{font-size:.78em;font-weight:750;color:var(--red);letter-spacing:.04em}.premium-package .free-extra{color:#ebc879}.package-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px}@keyframes premiumGlow{to{box-shadow:0 0 38px rgba(230,184,78,.3),inset 0 1px rgba(255,229,159,.4)}}@media(prefers-reduced-motion:reduce){.premium-package{animation:none}}
 .payment-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .payment-option{min-width:0;min-height:104px;padding:12px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr auto;align-items:center;gap:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--glass);box-sizing:border-box}
 .payment-option.available{border-color:color-mix(in srgb,#19b987 48%,var(--line));background:color-mix(in srgb,#19b987 8%,var(--glass))}
@@ -505,7 +505,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
         </div>
       </div>
       <div class="total">
-        <div><span>Setup, one time</span><br><strong>$200</strong></div>
+        <div><span>Setup, one time</span><br><strong>See current package prices</strong></div>
         <span id="ren">Buy and renew your domain directly with the registrar</span>
       </div>
     </div>
@@ -567,10 +567,10 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 </div>
 
 <div class="page" id="p-pricing" hidden>
- <div class="ph"><h1>Your brand. Your trading site.</h1><p>One setup payment. You buy and renew your domain directly with your registrar.</p><p id="package-offer-clock" role="status" hidden></p></div>
+ <div class="ph"><h1>Your brand. Your trading site.</h1><p>One setup payment. FREE extras are included with your paid package at no extra charge. You buy and renew your domain directly with your registrar.</p><p id="package-offer-clock" role="status" hidden></p></div>
  <div class="grid package-grid">
-  <article class="glass card"><span class="tag">Regular</span><div class="price" id="regular-package-price">$200</div><p>Launch your branded site.</p><ul class="list"><li>Your chosen branding, themes, fonts and backgrounds</li><li>Included: free bot library</li><li>Included: mobile layout and app installation</li><li>Included: DNS instructions and Deriv login setup</li></ul><button class="btn" data-go="checkout">Choose Regular</button></article>
-  <article class="glass card premium-package"><span class="tag">Premium · coming soon</span><div class="price" id="premium-package-price">$300</div><p>Build a paid bot offering for your audience.</p><ul class="list"><li>Everything in Regular</li><li>Included: 20 private premium bot strategies</li><li>Included: tools to manage your buyers’ access</li><li>Included: priority one-to-one support contact</li><li>Included: private Telegram education community</li></ul><p>Private server execution is being built. Premium checkout is not open yet. Copy trading availability is still being verified.</p><button class="btn" disabled>Premium launch in preparation</button></article>
+  <article class="glass card"><span class="tag">Regular</span><div class="price" id="regular-package-price">$200</div><p>Launch your branded site.</p><ul class="list"><li><strong class="free-extra">FREE</strong> · Branding, themes, fonts and backgrounds</li><li><strong class="free-extra">FREE</strong> · Bot library</li><li><strong class="free-extra">FREE</strong> · mobile layout and app installation</li><li><strong class="free-extra">FREE</strong> · DNS instructions and Deriv login setup</li></ul><button class="btn" data-package="regular" data-go="checkout">Choose Regular</button></article>
+  <article class="glass card premium-package"><span class="tag">Premium · Recommended</span><div class="price" id="premium-package-price">$300</div><p>Build a paid bot offering for your audience.</p><ul class="list"><li><strong class="free-extra">FREE</strong> · Everything included in Regular</li><li><strong class="free-extra">FREE</strong> · 20 private premium bot strategies</li><li><strong class="free-extra">FREE</strong> · tools to manage your buyers’ access</li><li><strong class="free-extra">FREE</strong> · priority one-to-one support contact</li><li><strong class="free-extra">FREE</strong> · private Telegram education community</li></ul><p>Private server execution is being built. Premium checkout is not open yet. Copy trading availability is still being verified.</p><button id="choose-premium" class="btn" data-package="premium" disabled>Premium launch in preparation</button></article>
  </div>
 </div>
 
@@ -620,6 +620,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     <div><label for="dr">Referral link (optional)</label><input class="field" id="dr" placeholder="Your Deriv referral link"></div>
     <button class="btn" id="dsave">Save changes</button>
   </div>
+<section id="premium-owner-tools" class="glass card" hidden><h2>Premium owner tools</h2><p>Confirm your buyer’s payment, then grant access using their Deriv account ID. Revoking access blocks future runs.</p><div id="premium-contact-links"></div><form id="premium-access-form" class="fgrid"><label>Premium bot<select id="premium-access-bot" class="field"></select></label><label>Buyer Deriv account ID<input id="premium-access-account" class="field" required pattern="[A-Za-z0-9_-]{3,64}" maxlength="64" placeholder="Buyer’s exact account ID"></label><label>Access<select id="premium-access-enabled" class="field"><option value="true">Grant access</option><option value="false">Revoke access</option></select></label><button class="btn" type="submit">Save buyer access</button><p id="premium-access-status" role="status"></p></form></section>
 </div>
 
 <div class="page" id="p-checkout" hidden>
@@ -666,7 +667,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 <script>
 (function(){
   document.documentElement.classList.add("js");
-  var packagePrices=null;function regularPrice(){return packagePrices?Number(packagePrices.regular):200}
+  var selectedPackage="regular",packagePrices=null;function regularPrice(){return packagePrices?Number(packagePrices[selectedPackage]):selectedPackage==="premium"?300:200}
   var st={t:"snow",e:".site",f:0,n:"Nova Trades",ft:"inter",ld:"spinner",as:"compact",blur:75,oauth_client_id:(window.PF_CONFIG||{}).DERIV_OAUTH_CLIENT_ID||""},clientThemeTemplate=null,reviewReturnTab=null,designPending=false;
   var $=function(i){return document.getElementById(i)};
   function slug(s){return (s||"yoursite").toLowerCase().replace(/[^a-z0-9]/g,"")||"yoursite"}
@@ -690,7 +691,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
   $("name").addEventListener("input",function(){st.n=this.value;render()});
   function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");setTimeout(function(){t.classList.remove("on")},2400)}
   $("reserve").addEventListener("click",function(){
-    var txt="Pipforge order: "+st.n+" ("+slug(st.n)+st.e+"), template "+st.t+", $200 setup. Domain registration is paid directly to the registrar.";
+    var txt="Pipforge order: "+st.n+" ("+slug(st.n)+st.e+"), template "+st.t+", "+selectedPackage+" setup: $"+regularPrice()+". Domain registration is paid directly to the registrar.";
     try{navigator.clipboard.writeText(txt).then(function(){toast("Order summary copied")},function(){toast("Checkout opens in the next build")})}
     catch(e){toast("Checkout opens in the next build")}
   });
@@ -1671,6 +1672,21 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       var box=$("tkl"),names={register_domain:"Register your domain",connect_dns:"Connect it to our servers",issue_ssl:"Switch on SSL",go_live:"Go live"};box.textContent="";
       if(!r.data||!r.data.length){box.textContent="Nothing to do yet. Steps appear here after you pay.";return}
       r.data.forEach(function(t){var d=document.createElement("div");d.className="chk";d.textContent=(names[t.task]||t.task)+" \u2014 "+(t.status==="done"?"done":"in progress");box.appendChild(d)})})}
+
+  function loadPremiumOwner(){
+    $('premium-owner-tools').hidden=true;
+    SB.rpc('premium_contacts').then(function(r){
+      if(r.error||!r.data)return;
+      $('premium-owner-tools').hidden=false;var box=$('premium-contact-links');box.replaceChildren();
+      [['telegram_url','Premium Telegram'],['whatsapp_number','Priority WhatsApp']].forEach(function(pair){var value=r.data[pair[0]];if(!value)return;var a=document.createElement('a');a.textContent=pair[1];a.href=pair[0]==='whatsapp_number'?'https://wa.me/'+value:value;a.target='_blank';a.rel='noopener noreferrer';a.style.marginRight='16px';box.appendChild(a)});
+      return SB.from('premium_bot_catalog').select('id,name').then(function(result){var select=$('premium-access-bot');select.replaceChildren();(result.data||[]).forEach(function(bot){var option=document.createElement('option');option.value=bot.id;option.textContent=bot.name;select.appendChild(option)})});
+    }).catch(function(){$('premium-owner-tools').hidden=true});
+  }
+  $('premium-access-form').addEventListener('submit',function(e){
+    e.preventDefault();if(!BK.site)return;var button=e.submitter;button.disabled=true;
+    SB.rpc('set_premium_bot_access',{p_site:BK.site.id,p_bot:$('premium-access-bot').value,p_account:$('premium-access-account').value.trim(),p_enabled:$('premium-access-enabled').value==='true'}).then(function(r){$('premium-access-status').textContent=r.error?r.error.message:'Buyer access saved.';button.disabled=false}).catch(function(){button.disabled=false;$('premium-access-status').textContent='Could not save access. Try again.'});
+  });
+
   function loadStatus(){
     if(!BK.uid||!BK.site)return Promise.resolve();
     return SB.from("sites").select("status").eq("id",BK.site.id).single().then(function(r){
@@ -1689,17 +1705,17 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     BK.loading=true;
     return SB.from("sites").select("*").eq("owner",BK.uid).maybeSingle().then(function(r){
       if(r.error){toast("Could not load your site");return}
-      if(r.data){BK.site=r.data;fromRow(r.data);render();setSv("Saved");return loadStatus().then(loadEarn).then(loadOpenOrder)}
+      if(r.data){BK.site=r.data;loadPremiumOwner();fromRow(r.data);render();setSv("Saved");return loadStatus().then(loadEarn).then(loadOpenOrder)}
     }).then(function(){BK.loading=false},function(){BK.loading=false})}
   function loadOpenOrder(){if(!BK.site)return Promise.resolve();return SB.from("orders").select("*").eq("site_id",BK.site.id).eq("status","pending").order("created_at",{ascending:false}).limit(1).maybeSingle().then(function(r){if(!r.error&&r.data){BK.order=r.data;fix2()}})}
   function placeOrder(){
     return flushSave().then(function(){
       if(!BK.site){toast("Your site could not be saved yet");return false}
-      if(BK.order&&BK.order.status==="pending")return true;
-      return SB.rpc("create_order",{p_site:BK.site.id}).then(function(r){
+      if(BK.order&&BK.order.status==="pending"&&(BK.order.package||"regular")===selectedPackage)return true;
+      return SB.rpc("create_package_order",{p_site:BK.site.id,p_package:selectedPackage}).then(function(r){
         if(r.error){toast(r.error.message);return false}
         BK.order=r.data;BK.site.status="pending_payment";fix2();return true})})}
-  function fix2(){var o=BK.order;if(!o||o.status!=="pending")return;$("sTot").textContent="$"+Number(o.total_usd)}
+  function fix2(){var o=BK.order;if(!o||o.status!=="pending")return;selectedPackage=o.package||"regular";$("sTot").textContent="$"+Number(o.total_usd)}
   function pollOrder(n){
     clearTimeout(BK.poll);var pst=$("pst");
     SB.from("orders").select("status").eq("id",BK.order.id).single().then(function(r){
@@ -1815,12 +1831,15 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       var authResult=new URLSearchParams(location.search).get("deriv_login");if(authResult){history.replaceState(null,"",location.pathname+location.hash);toast(authResult==="cancelled"?"Deriv sign-in was cancelled.":"Deriv sign-in could not finish. Check that your Deriv OAuth app has the exact callback URL for this domain: "+location.origin+"/api/deriv/callback.")}
     }).catch(function(){tenantUnavailable("This site is temporarily unavailable. Please try again shortly.")})}
 
+
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-package]');if(!b)return;var p=b.dataset.package;if(p==='premium'&&(!packagePrices||!packagePrices.premium_available)){e.preventDefault();e.stopImmediatePropagation();return}selectedPackage=p;$('checkout-package-price').textContent=p==='premium'?'Premium':'Regular';$('sTot').textContent='$'+regularPrice();if(p==='premium')location.hash='#checkout'},true);
+
   var offerTimer=null;
   function loadPackagePrices(){
     if(!SB)return;
     SB.rpc('package_prices').then(function(r){
       if(r.error||!r.data){$('regular-package-price').textContent='Price unavailable';$('premium-package-price').textContent='Price unavailable';return}
-      packagePrices=r.data;$('regular-package-price').textContent='$'+Number(r.data.regular);$('premium-package-price').textContent='$'+Number(r.data.premium);
+      packagePrices=r.data;var premiumButton=$('choose-premium');premiumButton.disabled=!r.data.premium_available;premiumButton.textContent=r.data.premium_available?'Choose Premium':'Premium launch in preparation';$('regular-package-price').textContent='$'+Number(r.data.regular);$('premium-package-price').textContent='$'+Number(r.data.premium);
       $('checkout-package-price').textContent='$'+Number(r.data.regular);
       if(!BK.order)$('sTot').textContent='$'+Number(r.data.regular);
       clearInterval(offerTimer);
