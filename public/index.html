@@ -1712,36 +1712,33 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     }).catch(function(){st.premium_enabled=false;navUI()});
   }
   var premiumLeaderAccount=null;
-  var premiumLeaderAccounts=[];
   function loadPremiumLeader(){
     var panel=$('premium-leader-panel');if(!panel||!BK.site||!st.premium_enabled)return;panel.hidden=false;
     var status=$('premium-leader-status'),connect=$('premium-deriv-connect'),form=$('premium-leader-form'),input=$('premium-leader-account'),options=$('premium-leader-account-options'),stop=$('premium-leader-stop');
     status.textContent='Loading the saved leader account…';connect.hidden=true;form.hidden=true;
     SB.rpc('site_premium_copy_leader',{p_site:BK.site.id}).then(function(saved){
       if(saved.error)throw saved.error;premiumLeaderAccount=saved.data||null;
-      return fetch('/api/deriv/session',{credentials:'same-origin',cache:'no-store'}).then(function(response){if(!response.ok)throw new Error('Could not check the Deriv connection.');return response.json()});
-    }).then(function(session){
-      if(!session.authenticated){status.textContent=premiumLeaderAccount?'Saved leader: '+premiumLeaderAccount+'. Connect Deriv to manage or publish this account.':'Connect Deriv to choose an active leader account.';connect.hidden=false;stop.hidden=!premiumLeaderAccount;return null}
-      return fetch('/api/deriv/accounts',{credentials:'same-origin',cache:'no-store'}).then(function(response){return response.json().then(function(result){if(!response.ok)throw new Error(result.error||'Deriv accounts could not be loaded.');return result})});
-    }).then(function(result){
-      if(!result)return;var accounts=Array.isArray(result.data)?result.data.filter(function(account){return account&&account.status==='active'&&/^[A-Za-z0-9_-]{3,64}$/.test(account.account_id||'')}):[];premiumLeaderAccounts=accounts.map(function(account){return account.account_id});
-      options.replaceChildren();accounts.forEach(function(account){var option=document.createElement('option');option.value=account.account_id;option.label=(account.account_type||'Deriv account')+(account.currency?' · '+account.currency:'');options.appendChild(option)});
-      if(!accounts.length){status.textContent='No active Deriv accounts were returned. Reconnect the Deriv account that should publish trades.';connect.textContent='Reconnect Deriv';connect.hidden=false;stop.hidden=!premiumLeaderAccount;return}
-      var savedIsActive=premiumLeaderAccounts.indexOf(premiumLeaderAccount)>-1;input.value=savedIsActive?premiumLeaderAccount:'';
-      status.textContent=premiumLeaderAccount&&!savedIsActive?'Saved leader '+premiumLeaderAccount+' is not in this Deriv session. Reconnect the account that owns it, or enter an active account shown in the suggestions.':premiumLeaderAccount?'Current leader: '+premiumLeaderAccount+'. You can type its full ID or choose a suggestion.':'Enter an active account ID or choose a suggestion to publish eligible trades.';
-      form.hidden=false;stop.hidden=!premiumLeaderAccount;connect.hidden=true;
-    }).catch(function(error){status.textContent=(error&&error.message)||'Could not load leader settings.';connect.textContent='Connect or reconnect Deriv';connect.hidden=false;stop.hidden=!premiumLeaderAccount});
+      input.value=premiumLeaderAccount||'';stop.hidden=!premiumLeaderAccount;
+      status.textContent=premiumLeaderAccount?'Saved leader account: '+premiumLeaderAccount+'. Connect this same account on the Copy Trading tab to publish trades.':'Enter the full account ID to save it as this site’s Copy Trading leader.';
+      form.hidden=false;
+      return fetch('/api/deriv/session',{credentials:'same-origin',cache:'no-store'}).then(function(response){if(!response.ok)throw new Error('Deriv connection status unavailable.');return response.json()}).then(function(session){
+        if(!session.authenticated){connect.textContent='Connect Deriv (optional)';connect.hidden=false;return}
+        return fetch('/api/deriv/accounts',{credentials:'same-origin',cache:'no-store'}).then(function(response){return response.json().then(function(result){if(!response.ok)throw new Error(result.error||'Deriv account suggestions are unavailable.');return result})}).then(function(result){
+          var accounts=Array.isArray(result.data)?result.data.filter(function(account){return account&&account.status==='active'&&/^[A-Za-z0-9_-]{3,64}$/.test(account.account_id||'')}):[];
+          options.replaceChildren();accounts.forEach(function(account){var option=document.createElement('option');option.value=account.account_id;option.label=(account.account_type||'Deriv account')+(account.currency?' · '+account.currency:'');options.appendChild(option)});
+        });
+      }).catch(function(){connect.textContent='Connect or reconnect Deriv (optional)';connect.hidden=false});
+    }).catch(function(error){premiumLeaderAccount=null;input.value='';stop.hidden=true;form.hidden=false;status.textContent=(error&&error.message)||'Could not load the saved leader account. You can still enter an ID and try saving it.'});
   }
   $('premium-leader-form').addEventListener('submit',function(e){
-    e.preventDefault();if(!BK.site)return;var button=e.submitter,account=$('premium-leader-account').value.trim();if(!account)return;
-    if(premiumLeaderAccounts.indexOf(account)<0){$('premium-leader-status').textContent='Use an active account from the Deriv session connected above. Connect or reconnect Deriv if the account is missing.';$('premium-leader-account').focus();return}
-    if(!window.confirm('Use '+account+' as the one Copy Trading leader for this site?'))return;button.disabled=true;
+    e.preventDefault();if(!BK.site)return;var button=e.submitter||e.currentTarget.querySelector('[type="submit"]'),account=$('premium-leader-account').value.trim();if(!account)return;
+    button.disabled=true;var label=button.textContent;button.textContent='Saving…';
     $('premium-leader-status').textContent='Saving the leader account…';
-    SB.rpc('set_site_premium_copy_leader',{p_site:BK.site.id,p_account:account,p_enabled:true}).then(function(r){if(r.error)throw r.error;$('premium-leader-status').textContent='Leader account saved. Connect this same account on your site’s Copy Trading tab while publishing.';loadPremiumLeader()}).catch(function(error){$('premium-leader-status').textContent=(error&&error.message)||'Could not save the leader account.'}).finally(function(){button.disabled=false});
+    SB.rpc('set_site_premium_copy_leader',{p_site:BK.site.id,p_account:account,p_enabled:true}).then(function(r){if(r.error)throw r.error;return SB.rpc('site_premium_copy_leader',{p_site:BK.site.id})}).then(function(saved){if(saved.error)throw saved.error;if(saved.data!==account)throw new Error('The save request completed, but the saved leader could not be confirmed. Please refresh and try again.');premiumLeaderAccount=account;$('premium-leader-account').value=account;$('premium-leader-stop').hidden=false;$('premium-leader-status').textContent='Saved successfully: '+account+' is now this site’s Copy Trading leader. Connect this same account on the Copy Trading tab to publish trades.'}).catch(function(error){$('premium-leader-status').textContent=(error&&error.message)||'Could not save the leader account. Check the account ID and try again.'}).finally(function(){button.disabled=false;button.textContent=label});
   });
   $('premium-leader-stop').addEventListener('click',function(e){
     if(!BK.site||!premiumLeaderAccount)return;if(!window.confirm('Stop Copy Trading for this site and remove its selected leader?'))return;var button=e.currentTarget;button.disabled=true;
-    SB.rpc('set_site_premium_copy_leader',{p_site:BK.site.id,p_account:premiumLeaderAccount,p_enabled:false}).then(function(r){if(r.error)throw r.error;premiumLeaderAccount=null;$('premium-leader-status').textContent='Copy Trading leader stopped.';loadPremiumLeader()}).catch(function(error){$('premium-leader-status').textContent=(error&&error.message)||'Could not stop the leader.'}).finally(function(){button.disabled=false});
+    SB.rpc('set_site_premium_copy_leader',{p_site:BK.site.id,p_account:premiumLeaderAccount,p_enabled:false}).then(function(r){if(r.error)throw r.error;premiumLeaderAccount=null;$('premium-leader-account').value='';$('premium-leader-stop').hidden=true;$('premium-leader-status').textContent='Copy Trading has been stopped and the saved leader removed.'}).catch(function(error){$('premium-leader-status').textContent=(error&&error.message)||'Could not stop the leader.'}).finally(function(){button.disabled=false});
   });
   $('premium-access-form').addEventListener('submit',function(e){
     e.preventDefault();if(!BK.site)return;var form=e.currentTarget,button=e.submitter,name=$('premium-client-name').value.trim(),real=$('premium-real-account').value.trim(),demo=$('premium-demo-account').value.trim();
