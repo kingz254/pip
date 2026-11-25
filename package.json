@@ -7,7 +7,7 @@
   "scripts": {
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "dev": "node --env-file-if-exists=.env scripts/server.mjs --dev",
-    "check:functions": "deno check --node-modules-dir=none supabase/functions/domain-check/index.ts supabase/functions/checkout/index.ts supabase/functions/mpesa-callback/index.ts supabase/functions/send-payment-receipt/index.ts supabase/functions/send-domain-dns/index.ts",
+    "check:functions": "deno check --node-modules-dir=none supabase/functions/domain-check/index.ts supabase/functions/checkout/index.ts supabase/functions/mpesa-callback/index.ts supabase/functions/send-payment-receipt/index.ts supabase/functions/send-domain-dns/index.ts supabase/functions/admin-delete-client/index.ts",
     "start": "node --env-file-if-exists=.env scripts/server.mjs",
     "build": "node scripts/build-apps.mjs",
     "check:apps": "npm run type-check --workspaces --if-present",

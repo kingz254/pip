@@ -70,6 +70,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 .order-card>a{display:inline-block;margin:0 var(--space-2b) var(--space-2b) 0}
 .order-card button{display:block}
 .card{padding-block:20px}
+.client-title{display:flex;align-items:center;justify-content:space-between;gap:16px}.client-title h2{min-width:0}.delete-client{min-height:30px;padding:0 10px;border:1px solid #c66;border-radius:6px;background:transparent;color:#a33;font-size:12px;white-space:nowrap}.delete-client:hover{background:#a33;color:#fff}
 .card>.muted{line-height:1.6}
 .dns-compose{display:grid;gap:var(--space-2b);max-width:900px;margin-top:var(--space-3)}.dns-compose label{display:grid;gap:var(--space-2);font-size:14px;font-weight:600}.dns-compose p{margin:0}.dns-compose button{justify-self:start}
 .done{color:var(--muted)}
@@ -102,7 +103,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
         <details><summary>Check and hand over</summary><div class="task"><span class="muted">Wait for DNS and SSL to become ready, open the live domain, test Deriv login, then mark the remaining setup steps done below.</span></div></details>
       </section>
     </div>
-<section class="panel"><h2>Packages and offers</h2><p class="muted">Prices apply to new orders. Existing invoices keep their original amount. Premium checkout opens when the browser bot library is configured. No private worker is used.</p><form id="package-form" class="dns-compose"><label>Regular standard price (USD)<input id="regular-price" type="number" min="0.01" step="0.01" required></label><label>Premium standard price (USD)<input id="premium-price" type="number" min="0.01" step="0.01" required></label><label>Regular offer price (USD)<input id="regular-offer" type="number" min="0.01" step="0.01" required></label><label>Premium offer price (USD)<input id="premium-offer" type="number" min="0.01" step="0.01" required></label><label>Offer ends at (your local time)<input id="offer-end" type="datetime-local" ></label><label>Premium Telegram invite<input id="premium-telegram" type="url" ></label><label>Priority WhatsApp number (country code, digits only)<input id="premium-whatsapp" type="tel" ></label><label><input id="offer-enabled" type="checkbox" style="min-width:0"> Show limited offer</label><p class="muted">An offer needs an end date. It stops automatically at that time. Telegram and WhatsApp details are private to paid Premium owners.</p><button type="submit">Save packages and contacts</button><p id="package-status" role="status"></p></form></section>
+<section class="panel"><h2>Packages and offers</h2><p class="muted">Prices apply to new orders. Existing invoices keep their original amount. Premium checkout opens when the browser bot library is configured. No private worker is used.</p><form id="package-form" class="dns-compose"><label>Regular standard price (USD)<input id="regular-price" type="number" min="0.01" step="0.01" required></label><label>Premium standard price (USD)<input id="premium-price" type="number" min="0.01" step="0.01" required></label><label>Regular offer price (USD)<input id="regular-offer" type="number" min="0.01" step="0.01" required></label><label>Premium offer price (USD)<input id="premium-offer" type="number" min="0.01" step="0.01" required></label><label>Promotion headline<input id="promo-heading" maxlength="80" required></label><label>Promotion subheading<input id="promo-subheading" maxlength="100" required></label><label>Offer ends at (your local time)<input id="offer-end" type="datetime-local" ></label><label>Premium Telegram invite<input id="premium-telegram" type="url" ></label><label>Priority WhatsApp number (country code, digits only)<input id="premium-whatsapp" type="tel" ></label><label><input id="offer-enabled" type="checkbox" style="min-width:0"> Show limited offer</label><p class="muted">An offer needs an end date. It stops automatically at that time. Telegram and WhatsApp details are private to paid Premium owners.</p><button type="submit">Save packages and contacts</button><p id="package-status" role="status"></p></form></section>
     <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
     <section><div class="section-head"><h2>Payment receipts</h2><p class="muted">Confirmed crypto payments whose receipt email is still pending or needs a retry.</p></div><div id="receipts" class="queue"></div></section>
     <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Client details, saved Deriv App ID, and a place to prepare and email that client’s DNS instructions.</p></div><div id="clients" class="queue"></div></section>
@@ -135,7 +136,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
     SB.from('package_settings').select('*').then(function(r){
       if(r.error||!r.data||!r.data[0]){$('package-status').textContent='Package settings are unavailable. Please apply the package migration.';return}
       var s=r.data[0];
-      [['regular-price','regular_price'],['premium-price','premium_price'],['regular-offer','regular_offer'],['premium-offer','premium_offer'],['premium-telegram','telegram_url'],['premium-whatsapp','whatsapp_number']].forEach(function(p){$(p[0]).value=s[p[1]]||''});
+      [['regular-price','regular_price'],['premium-price','premium_price'],['regular-offer','regular_offer'],['premium-offer','premium_offer'],['promo-heading','promo_heading'],['promo-subheading','promo_subheading'],['premium-telegram','telegram_url'],['premium-whatsapp','whatsapp_number']].forEach(function(p){$(p[0]).value=s[p[1]]||''});
       $('offer-enabled').checked=s.offer_enabled;
       if(s.offer_ends_at){var d=new Date(s.offer_ends_at);$('offer-end').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
     }).catch(function(){$('package-status').textContent='Package settings could not load.'});
@@ -143,7 +144,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
   $('package-form').addEventListener('submit',function(e){
     e.preventDefault();var end=$('offer-end').value,enabled=$('offer-enabled').checked;
     if(enabled&&(!end||new Date(end)<=new Date())){$('package-status').textContent='Choose an offer end time in the future.';return}
-    var values={regular_price:Number($('regular-price').value),premium_price:Number($('premium-price').value),regular_offer:Number($('regular-offer').value),premium_offer:Number($('premium-offer').value),offer_enabled:enabled,offer_ends_at:end?new Date(end).toISOString():null,telegram_url:$('premium-telegram').value.trim(),whatsapp_number:$('premium-whatsapp').value.replace(/[^0-9]/g,'')};
+    var values={regular_price:Number($('regular-price').value),premium_price:Number($('premium-price').value),regular_offer:Number($('regular-offer').value),premium_offer:Number($('premium-offer').value),promo_heading:$('promo-heading').value.trim(),promo_subheading:$('promo-subheading').value.trim(),offer_enabled:enabled,offer_ends_at:end?new Date(end).toISOString():null,telegram_url:$('premium-telegram').value.trim(),whatsapp_number:$('premium-whatsapp').value.replace(/[^0-9]/g,'')};
     var button=e.submitter;button.disabled=true;
     SB.from('package_settings').update(values).eq('id',true).select('id').then(function(r){$('package-status').textContent=r.error?r.error.message:r.data&&r.data.length?'Packages and contacts saved.':'No changes saved. Admin access is required.';button.disabled=false}).catch(function(){button.disabled=false;$('package-status').textContent='Could not save. Please try again.'});
   });
@@ -189,8 +190,18 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
       SB.from('profiles').select('id,email,full_name,phone').in('id', uniq(sites.map(function (s) { return s.owner; }))).then(function (p) {
         if (p.error) { box.textContent = 'Could not load client contacts: ' + p.error.message; return; }
         var people = index(p.data), rows = sites.slice().sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); }).map(function (s) {
-          var person = people[s.owner] || {}, card = el('article', 'card');
-          card.appendChild(el('h2', null, (person.full_name || 'Client name not provided') + ' · ' + (s.name || s.domain || 'Site')));
+          var person = people[s.owner] || {}, card = el('article', 'card'), title = el('div', 'client-title');
+          title.appendChild(el('h2', null, (person.full_name || 'Client name not provided') + ' · ' + (s.name || s.domain || 'Site')));
+          var remove = el('button', 'delete-client', 'Delete'); remove.type = 'button'; remove.setAttribute('aria-label', 'Delete client ' + (person.full_name || person.email || s.domain || 'account'));
+          remove.onclick = function () {
+            if (!window.confirm('Permanently delete ' + (person.full_name || person.email || s.domain || 'this client') + ', including their sign-in, contact details, site handoff, and related orders and payment records?')) return;
+            remove.disabled = true;
+            SB.functions.invoke('admin-delete-client', { body: { user_id: s.owner } }).then(function (result) {
+              if (result.error) { msg(result.error.message || 'Client could not be deleted.'); remove.disabled = false; return; }
+              msg('Client deleted.'); loadClients(); load(); loadOrders(); loadReceipts(); loadVisits();
+            }).catch(function () { msg('Client could not be deleted. Please try again.'); remove.disabled = false; });
+          };
+          title.appendChild(remove); card.appendChild(title);
           card.appendChild(el('div', 'muted', (s.domain || 'Domain not selected') + ' · site status: ' + (s.status || 'unknown')));
           var contact = el('div', 'muted');
           if (person.email) { var email = el('a', null, person.email); email.href = 'mailto:' + person.email; contact.appendChild(email); }

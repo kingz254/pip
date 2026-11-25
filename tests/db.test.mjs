@@ -36,6 +36,7 @@ await db.exec(ownerVisitMigration);
 await db.exec(readFileSync(new URL('../supabase/migrations/20261125090000_package_settings.sql', import.meta.url), 'utf8'));
 await db.exec(readFileSync(new URL('../supabase/migrations/20261125100000_premium_access.sql', import.meta.url), 'utf8'));
 await db.exec(readFileSync(new URL('../supabase/migrations/20261125110000_private_bot_delivery.sql', import.meta.url), 'utf8'));
+await db.exec(readFileSync(new URL('../supabase/migrations/20261125130000_package_promotion_copy.sql', import.meta.url), 'utf8'));
 
 const A = '11111111-1111-1111-1111-111111111111';
 const B = '22222222-2222-2222-2222-222222222222';
