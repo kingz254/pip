@@ -83,7 +83,7 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
         if(!data){json(res,403,{error:'This site and account do not have access to this premium bot'});return true;}
         json(res,200,botId?{xml:data}:{data});return true;
       }
-      if (url.pathname === '/api/deriv/premium-admin' || url.pathname === '/api/deriv/premium-admin/grants') {
+      if (url.pathname.startsWith('/api/deriv/premium-admin')) {
         if (!premiumAdmin) { json(res, 503, { error: 'Premium workspace is not configured.' }); return true; }
         const domain = new URL(origin).hostname.replace(/^www\./, '');
         const verifyOwner = async () => {
@@ -97,6 +97,38 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
           return !!result.data?.breakdown?.some(row => String(row.app_id) === String(clientId));
         };
         if (!(await verifyOwner())) { json(res, 403, { error: 'Connect the Deriv account that owns this site’s application.' }); return true; }
+        const accountIsActive = async accountId => {
+          const response = await upstream(API + '/accounts', { headers: { Authorization: `Bearer ${session.token}`, 'Deriv-App-ID': clientId }, signal: AbortSignal.timeout(15000) });
+          if (!response.ok) return false;
+          const accounts = await response.json();
+          return Array.isArray(accounts.data) && accounts.data.some(account => account.account_id === accountId && account.status === 'active');
+        };
+        if (url.pathname.endsWith('/copy-leader')) {
+          if (req.method !== 'POST' || req.headers.origin !== origin) { json(res, req.method === 'POST' ? 403 : 405, { error: 'Owner action could not be verified.' }); return true; }
+          const body = await readJsonBody(req, 4096);
+          if (!body || !/^[A-Za-z0-9_-]{3,64}$/.test(body.account_id || '') || typeof body.enabled !== 'boolean') { json(res, 400, { error: 'Choose an active Deriv account and leader action.' }); return true; }
+          if (body.enabled && !(await accountIsActive(body.account_id))) { json(res, 403, { error: 'The leader account is not available on this Deriv session.' }); return true; }
+          const saved = await premiumAdmin.setLeader(domain, body.account_id, body.enabled);
+          if (!saved) { json(res, 403, { error: 'This site does not have Premium access.' }); return true; }
+          json(res, 200, { ok: true }); return true;
+        }
+        if (url.pathname.endsWith('/copy-signals')) {
+          if (req.method !== 'POST' || req.headers.origin !== origin) { json(res, req.method === 'POST' ? 403 : 405, { error: 'Leader event could not be verified.' }); return true; }
+          const body = await readJsonBody(req, 4096), parameters = body?.parameters;
+          const contractTypes = new Set(['CALL','PUT','HIGHER','LOWER','DIGITMATCH','DIGITDIFF','DIGITOVER','DIGITUNDER','DIGITEVEN','DIGITODD']);
+          const safeBarrier = value => value === undefined || (typeof value === 'string' && /^[-+]?[0-9]{1,16}(?:\.[0-9]{1,8})?$/.test(value));
+          const durationUnits = new Set(['s', 'm', 'h', 'd']);
+          if (!body || !/^[A-Za-z0-9_-]{3,64}$/.test(body.account_id || '') || !Number.isSafeInteger(body.source_contract_id) || !parameters ||
+            !contractTypes.has(parameters.contract_type) || !/^[A-Z]{3,8}$/.test(parameters.currency || '') || !/^[A-Za-z0-9_]{2,40}$/.test(parameters.underlying_symbol || '') ||
+            !Number.isInteger(parameters.duration) || parameters.duration < 1 || !durationUnits.has(parameters.duration_unit) ||
+            parameters.duration * ({ s: 1, m: 60, h: 3600, d: 86400 })[parameters.duration_unit] > 86400 || !safeBarrier(parameters.barrier) || !safeBarrier(parameters.barrier2)) {
+            json(res, 400, { error: 'Only supported fixed-time Deriv contracts can be shared.' }); return true;
+          }
+          if (!(await accountIsActive(body.account_id))) { json(res, 403, { error: 'The leader account is not available on this Deriv session.' }); return true; }
+          const saved = await premiumAdmin.publishSignal(domain, body.account_id, body.source_contract_id, parameters);
+          if (!saved) { json(res, 403, { error: 'This account is not the active leader for the Premium site.' }); return true; }
+          json(res, 200, { ok: true }); return true;
+        }
         if (url.pathname.endsWith('/grants')) {
           if (req.method !== 'POST') { json(res, 405, { error: 'Method not allowed.' }); return true; }
           if (req.headers.origin !== origin) { json(res, 403, { error: 'Origin required.' }); return true; }
@@ -124,6 +156,40 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
         const markupResult = markupResponse.ok ? await markupResponse.json() : null;
         const markup = markupResult?.data?.breakdown?.find(row => String(row.app_id) === String(clientId));
         json(res, 200, { ...workspace, markup: markup || null, markup_available: !!markup }); return true;
+      }
+      if (url.pathname.startsWith('/api/deriv/premium-copy')) {
+        if (!premiumAdmin) { json(res, 503, { error: 'Copy trading is not configured.' }); return true; }
+        const body = req.method === 'POST' ? await readJsonBody(req, 4096) : null;
+        const accountId = body?.account_id || url.searchParams.get('account_id');
+        if (!/^[A-Za-z0-9_-]{3,64}$/.test(accountId || '')) { json(res, 400, { error: 'Choose a valid Deriv account.' }); return true; }
+        const accountsResponse = await upstream(API + '/accounts', { headers: { Authorization: `Bearer ${session.token}`, 'Deriv-App-ID': clientId }, signal: AbortSignal.timeout(15000) });
+        if (!accountsResponse.ok) { json(res, 401, { error: 'Reconnect your Deriv account.' }); return true; }
+        const accountsResult = await accountsResponse.json();
+        if (!Array.isArray(accountsResult.data) || !accountsResult.data.some(account => account.account_id === accountId && account.status === 'active')) { json(res, 403, { error: 'That Deriv account is not available in this session.' }); return true; }
+        const domain = new URL(origin).hostname.replace(/^www\./, '');
+        if (url.pathname.endsWith('/events')) {
+          if (req.method !== 'GET') { json(res, 405, { error: 'Method not allowed.' }); return true; }
+          const data = await premiumAdmin.signals(domain, accountId);
+          json(res, 200, { data }); return true;
+        }
+        if (url.pathname.endsWith('/claim')) {
+          if (req.method !== 'POST' || req.headers.origin !== origin || !Number.isSafeInteger(body?.signal_id)) { json(res, 400, { error: 'Choose a valid copy signal.' }); return true; }
+          const claimed = await premiumAdmin.claimSignal(domain, accountId, body.signal_id);
+          json(res, 200, { claimed }); return true;
+        }
+        if (url.pathname !== '/api/deriv/premium-copy') { json(res, 404, { error: 'Not found.' }); return true; }
+        if (req.method === 'GET') {
+          const data = await premiumAdmin.follower(domain, accountId);
+          if (!data) { json(res, 403, { error: 'This site does not have Premium access.' }); return true; }
+          json(res, 200, { config: data.config, leader_connected: !!data.leader }); return true;
+        }
+        if (req.method !== 'POST' || req.headers.origin !== origin) { json(res, 403, { error: 'Origin required.' }); return true; }
+        if (!body || typeof body.enabled !== 'boolean' || (body.enabled && (body.consent !== true || !Number.isFinite(body.stake_cap) || body.stake_cap <= 0 || body.stake_cap > 1000 || !Number.isFinite(body.daily_loss_cap) || body.daily_loss_cap <= 0 || body.daily_loss_cap > 10000))) {
+          json(res, 400, { error: 'Confirm copy trading and choose valid stake and daily-loss limits.' }); return true;
+        }
+        const data = await premiumAdmin.setFollower(domain, { accountId, enabled: body.enabled, stakeCap: body.stake_cap, dailyLossCap: body.daily_loss_cap });
+        if (!data) { json(res, 403, { error: 'A Premium site leader is not available.' }); return true; }
+        json(res, 200, { ok: true }); return true;
       }
       if (url.pathname === '/api/deriv/markup' && req.method === 'GET') {
         const dateFrom = url.searchParams.get('date_from'), dateTo = url.searchParams.get('date_to');

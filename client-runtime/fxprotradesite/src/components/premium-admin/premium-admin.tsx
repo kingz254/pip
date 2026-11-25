@@ -1,6 +1,8 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import { useStore } from '@/hooks/useStore';
 import { DBOT_TABS } from '@/constants/bot-contents';
+import { api_base } from '@/external/bot-skeleton';
+import { getSelectedAccount } from '@/pipforge/session';
 import './premium-admin.scss';
 
 type Bot = { id: string; name: string; execution_ready: boolean };
@@ -10,6 +12,8 @@ type Workspace = {
     visits: { day: string; views: number }[];
     bots: Bot[];
     grants: Grant[];
+    copy_ready: boolean;
+    copy_leader: { account_id: string; enabled: boolean; updated_at: string } | null;
     contacts: { telegram_url: string; whatsapp_number: string };
     markup: { app_markup_usd?: number; volume_usd?: number; payout_usd?: number; contract_count?: number; client_count?: number } | null;
     markup_available: boolean;
@@ -26,6 +30,9 @@ export default function PremiumAdmin() {
     const [accountId, setAccountId] = useState('');
     const [botId, setBotId] = useState('');
     const [busy, setBusy] = useState(false);
+    const [leaderBusy, setLeaderBusy] = useState(false);
+    const [leaderNotice, setLeaderNotice] = useState('');
+    const [relayGeneration, setRelayGeneration] = useState(0);
     const [notice, setNotice] = useState('');
 
     async function load() {
@@ -50,6 +57,90 @@ export default function PremiumAdmin() {
     }
 
     useEffect(() => { void load(); }, [period]);
+
+    async function setLeader(enabled: boolean) {
+        const account = getSelectedAccount();
+        const accountId = enabled ? account?.account_id : data?.copy_leader?.account_id || account?.account_id;
+        if (!accountId || leaderBusy) { setLeaderNotice('Connect and select your Deriv leader account first.'); return; }
+        if (enabled && !window.confirm(`Use ${accountId} as the one leader account for ${data?.site.domain}? Followers must opt in and set their own limits.`)) return;
+        setLeaderBusy(true);
+        setLeaderNotice('');
+        try {
+            await api_base.init();
+            const response = await fetch('/api/deriv/premium-admin/copy-leader', {
+                method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ account_id: accountId, enabled }),
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Leader account could not be saved.');
+            setLeaderNotice(enabled ? `Leader stream ready for ${accountId}. Keep this workspace open while copying.` : 'Leader stream stopped.');
+            setRelayGeneration(value => value + 1);
+            await load();
+        } catch (cause) { setLeaderNotice((cause as Error).message); }
+        finally { setLeaderBusy(false); }
+    }
+
+    useEffect(() => {
+        const leaderId = data?.copy_leader?.enabled ? data.copy_leader.account_id : '';
+        if (!leaderId || getSelectedAccount()?.account_id !== leaderId || !api_base.api?.onMessage) return;
+        const pendingBuys = new Set<number>();
+        const openContracts = new Map<number, Record<string, unknown>>();
+        const subscription = api_base.api.onMessage().subscribe(({ data: raw }: { data: unknown }) => {
+            const message = raw as { transaction?: { action?: string; contract_id?: number }; proposal_open_contract?: Record<string, unknown> };
+            const transactionId = Number(message.transaction?.contract_id);
+            if (message.transaction?.action === 'buy' && Number.isSafeInteger(transactionId)) {
+                pendingBuys.add(transactionId);
+                if (pendingBuys.size > 1000) pendingBuys.delete(pendingBuys.values().next().value!);
+            }
+            const contract = message.proposal_open_contract;
+            const contractId = Number(contract?.contract_id);
+            if (contract && Number.isSafeInteger(contractId)) openContracts.set(contractId, contract);
+            for (const id of pendingBuys) {
+                const source = openContracts.get(id);
+                if (!source) continue;
+                pendingBuys.delete(id);
+                openContracts.delete(id);
+                const longcode = String(source.longcode || '');
+                const durationMatch = longcode.match(/\b(\d+)\s+(seconds?|minutes?|hours?|days?)\s+after contract start time\.?$/i);
+                if (!durationMatch) continue;
+                const duration = Number(durationMatch[1]);
+                const unitName = durationMatch[2].toLowerCase().replace(/s$/, '');
+                const durationUnit = ({ second: 's', minute: 'm', hour: 'h', day: 'd' } as const)[unitName as 'second' | 'minute' | 'hour' | 'day'];
+                if (!durationUnit || !Number.isInteger(duration) || duration < 1) continue;
+                const seconds = duration * ({ s: 1, m: 60, h: 3600, d: 86400 } as const)[durationUnit];
+                if (seconds > 86400) continue;
+                const parameters = {
+                    contract_type: source.contract_type,
+                    currency: source.currency,
+                    underlying_symbol: source.underlying_symbol,
+                    duration,
+                    duration_unit: durationUnit,
+                    ...(source.barrier ? { barrier: String(source.barrier) } : {}),
+                    ...(source.high_barrier ? { barrier: String(source.high_barrier) } : {}),
+                    ...(source.low_barrier ? { barrier2: String(source.low_barrier) } : {}),
+                };
+                void fetch('/api/deriv/premium-admin/copy-signals', {
+                    method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: leaderId, source_contract_id: id, parameters }),
+                }).then(async response => {
+                    if (!response.ok) {
+                        const result = await response.json();
+                        setLeaderNotice(result.error || 'A leader trade could not be shared.');
+                    }
+                }).catch(() => setLeaderNotice('A leader trade could not be shared. Check your connection.'));
+            }
+        });
+        setLeaderNotice('Leader stream is listening on this Deriv session. Eligible fixed-time trades are shared for 30 seconds.');
+        const handleAccountChange = () => {
+            if (getSelectedAccount()?.account_id !== leaderId) setLeaderNotice(`Select leader account ${leaderId} again to resume publishing.`);
+            setRelayGeneration(value => value + 1);
+        };
+        window.addEventListener('pf:account-changed', handleAccountChange);
+        return () => {
+            subscription.unsubscribe();
+            window.removeEventListener('pf:account-changed', handleAccountChange);
+        };
+    }, [data?.copy_leader?.account_id, data?.copy_leader?.enabled, relayGeneration]);
 
     const activeGrants = useMemo(() => data?.grants.filter(grant => !grant.revoked_at) || [], [data]);
     const visitCount = useMemo(() => (data?.visits || []).filter(row => {
@@ -120,10 +211,12 @@ export default function PremiumAdmin() {
 
                 <aside className='pfpa-side'>
                     <section className='pfpa-panel pfpa-copytrade'>
-                        <div className='pfpa-panel-head'><h2>One leader account</h2><span className='pfpa-status pfpa-status--pending'>Setup required</span></div>
-                        <p className='pfpa-copy'>Choose one leader account for this site. Followers must connect their own Deriv accounts and explicitly opt in before any trades can be copied.</p>
+                        <div className='pfpa-panel-head'><h2>One leader account</h2><span className={`pfpa-status${data.copy_leader?.enabled ? '' : ' pfpa-status--pending'}`}>{data.copy_leader?.enabled ? 'Leader selected' : 'Setup required'}</span></div>
+                        <p className='pfpa-copy'>{!data.copy_ready ? 'Copy trading needs the latest Pipforge Supabase migration before setup can be enabled.' : data.copy_leader?.enabled ? `Leader account ${data.copy_leader.account_id} is assigned to this site.` : 'Choose one owner-controlled Deriv account as the source for this site.'} Followers connect their own accounts, opt in and set stake and daily-loss limits.</p>
                         <ol className='pfpa-steps'><li><span>01</span><div><strong>Leader</strong><p>One owner-controlled source account per site.</p></div></li><li><span>02</span><div><strong>Follower consent</strong><p>Each follower chooses their account and risk cap.</p></div></li><li><span>03</span><div><strong>Protected execution</strong><p>Stop controls, duplicate protection and trade limits.</p></div></li></ol>
-                        <p className='pfpa-hold'><strong>Not running.</strong> This deployment has no persistent copy-trade relay. No trades will be mirrored from this screen.</p>
+                        <div className='pfpa-copy-actions'><button className='pfpa-button pfpa-button--primary' type='button' onClick={() => void setLeader(true)} disabled={leaderBusy || !data.copy_ready}>{leaderBusy ? 'Saving…' : data.copy_leader?.enabled ? 'Reconnect leader stream' : 'Use selected account as leader'}</button>{data.copy_leader?.enabled && <button className='pfpa-button pfpa-button--quiet' type='button' onClick={() => void setLeader(false)} disabled={leaderBusy || !data.copy_ready}>Stop leader</button>}</div>
+                        {leaderNotice && <p className='pfpa-notice' role='status'>{leaderNotice}</p>}
+                        <p className='pfpa-hold'><strong>Keep both tabs open.</strong> The leader workspace publishes supported fixed-time trades for 30 seconds. Followers only mirror while their opted-in Premium Bots tab is open. Tick contracts and unsupported contract types are skipped.</p>
                         <a href='https://developers.deriv.com/llms/transaction.md' target='_blank' rel='noreferrer'>Review Deriv transaction stream documentation <span aria-hidden='true'>↗</span></a>
                     </section>
                     <section className='pfpa-panel pfpa-support'><h2>Need a hand?</h2><p>Get help with buyer access, your domain or Premium setup.</p><div className='pfpa-support-actions'>{whatsapp && <a className='pfpa-button pfpa-button--quiet' href={whatsapp} target='_blank' rel='noreferrer'>WhatsApp</a>}{data.contacts.telegram_url && <a className='pfpa-button pfpa-button--quiet' href={data.contacts.telegram_url} target='_blank' rel='noreferrer'>Telegram</a>}{!whatsapp && !data.contacts.telegram_url && <span className='pfpa-empty'>Support contact details will appear here.</span>}</div></section>

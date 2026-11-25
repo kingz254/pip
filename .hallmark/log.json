@@ -14,7 +14,7 @@
    "error",
    "full"
   ],
-  "note": "Manrope used to avoid theme face collision; copy execution held pending durable relay."
+   "note": "Manrope avoids theme face collision; copy uses an opt-in foreground relay with account grants and fixed-duration contract filtering. Hallmark F4 is a false positive: the outlined refresh control sits above the separate bot-card actions."
  },
  {
   "date": "2026-11-18",

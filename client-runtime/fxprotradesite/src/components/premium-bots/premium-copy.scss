@@ -1,0 +1,47 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Console (by request)
+ * nav: existing Pipforge tabs · signature: buyer-controlled trade relay · states: idle, opt-in, running, stopped
+ * axes: graphite/gold/site-accent · posture: restrained · contrast: inherit tenant theme · v2.0.0 */
+/* Hallmark · pre-emit critique: P_ H_ E_ S_ R_ V_ · weakest: a local loss stop cannot account for settlements while this device is disconnected */
+:root { --pf-copy-amber: oklch(82% 0.15 80); --pf-copy-amber-ink: oklch(18% 0.04 75); }
+.pf-premium-bots { caret-color: var(--pf-copy-amber); scrollbar-color: var(--pf-client-edge) var(--pf-client-glass); }
+.pf-premium-bots ::selection { color: var(--pf-copy-amber-ink); background: var(--pf-copy-amber); }
+.pf-premium-bots__action { min-height: 40px; padding: 8px 16px; border: 1px solid var(--pf-client-edge); border-radius: 8px; color: var(--text-general); background: transparent; cursor: pointer; }
+.pf-premium-bots__action:hover:not(:disabled) { border-color: var(--pf-copy-amber); }
+.pf-premium-bots__action:active:not(:disabled) { background: color-mix(in srgb, var(--pf-copy-amber) 12%, transparent); }
+.pf-premium-bots__action:disabled { opacity: .55; cursor: not-allowed; }
+.pf-premium-bots__action:focus-visible { outline: 2px solid var(--pf-copy-amber); outline-offset: 3px; }
+.pf-copy-follower {
+    --pfc-amber: var(--pf-copy-amber);
+    --pfc-amber-ink: var(--pf-copy-amber-ink);
+    --pfc-edge: var(--pf-client-edge);
+    --pfc-glass: var(--pf-client-glass);
+    --pfc-ink: var(--pf-client-ink, var(--text-general));
+    margin: 28px 0 12px;
+    padding: clamp(20px, 3vw, 32px);
+    border: 1px solid color-mix(in srgb, var(--pfc-amber) 52%, var(--pfc-edge));
+    border-radius: 18px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--pfc-amber) 12%, var(--pfc-glass)), var(--pfc-glass));
+    color: var(--pfc-ink);
+    box-shadow: none;
+
+    &__head, &__actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    h2 { margin: 0; }
+    h2 { text-wrap: balance; }
+    p { line-height: 1.6; }
+    &__state { padding: 8px 12px; border: 1px solid var(--pf-client-edge); border-radius: 999px; font-size: 12px; }
+    &__state.is-live { color: var(--pfc-ink); border-color: var(--pfc-amber); background: color-mix(in srgb, var(--pfc-amber) 16%, transparent); }
+    &__limits { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 16px; margin: 16px 0; }
+    &__limits label { display: grid; gap: 8px; font-size: 13px; }
+    input[type='number'] { min-height: 42px; padding: 8px 12px; border: 1px solid var(--pfc-edge); border-radius: 9px; color: inherit; background: var(--pfc-glass); font: inherit; }
+    &__consent { display: flex; align-items: flex-start; gap: 8px; margin: 16px 0; font-size: 13px; line-height: 1.5; }
+    &__actions button { min-height: 40px; padding: 8px 16px; border: 0; border-radius: 9px; color: var(--pfc-amber-ink); background: var(--pfc-amber); font: inherit; font-weight: 750; cursor: pointer; }
+    &__actions button.is-secondary { color: inherit; border: 1px solid var(--pfc-edge); background: transparent; }
+    &__actions button:disabled { opacity: .5; cursor: not-allowed; }
+    &__message { font-size: 13px; }
+    &__note { padding: 12px; border-radius: 9px; background: color-mix(in srgb, var(--pfc-amber) 12%, transparent); font-size: 12px; }
+    &__actions button:focus-visible, input:focus-visible { outline: 2px solid var(--pfc-amber); outline-offset: 3px; }
+    &__actions button:hover:not(:disabled) { filter: brightness(1.06); }
+    &__actions button:active:not(:disabled) { transform: translateY(1px); }
+}
+
+@media (prefers-reduced-motion: reduce) { .pf-copy-follower *, .pf-copy-follower *::before, .pf-copy-follower *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
