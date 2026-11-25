@@ -1,5 +1,22 @@
 [
  {
+  "date": "2026-11-25",
+  "mode": "build",
+  "depth": "app",
+  "scope": "app",
+  "theme": "console",
+  "prompt": "Pipforge Premium client workspace: owner readings, bot grant ledger and copy trading controls",
+  "axes": "dark/grotesk-sans/chromatic-amber",
+  "signature": "owner access ledger",
+  "states": [
+   "loading",
+   "empty",
+   "error",
+   "full"
+  ],
+  "note": "Manrope used to avoid theme face collision; copy execution held pending durable relay."
+ },
+ {
   "date": "2026-11-18",
   "mode": "redesign",
   "depth": "full",

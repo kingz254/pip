@@ -1,4 +1,5 @@
 import PremiumBots from '@/components/premium-bots/premium-bots';
+import PremiumAdmin from '@/components/premium-admin/premium-admin';
 import { useClientBranding } from '@/pipforge/site-branding';
 import OwnerMarkup, { useOwnerMarkup } from '@/components/portfolio/owner-markup';
 import React, { lazy, Suspense, useCallback,useEffect, useState } from 'react';
@@ -277,11 +278,14 @@ const AppWrapper = observer(() => {
                     }
                 }
             }
+        } else if (premiumEnabled && !searchParams.has('bot')) {
+            setActiveTab(DBOT_TABS.PREMIUM_ADMIN);
+            setSearchParams({ tab: 'id-premium-admin' }, { replace: true });
         }
 
         // Set overunder state to "no" on page load
         localStorage.setItem('is_auto_overunder', 'false');
-    }, [searchParams, setActiveTab, setSearchParams]);
+    }, [searchParams, setActiveTab, setSearchParams, premiumEnabled]);
 
     useEffect(() => {
         const fetchBots = async () => {
@@ -799,8 +803,9 @@ const AppWrapper = observer(() => {
                         <div label={<><svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'><path d='M5 21V3h14l-4 5 4 5H5'/></svg><Localize i18n_default_text='Strategies' /></>} id='id-strategies'>
                             <div className='dashboard__portfolio-wrapper'><PortfolioDisplay section='strategies' /></div>
                         </div>
-                        {canViewMarkup && <div label={<><PortfolioIcon /><Localize i18n_default_text='Markup' /></>} id='id-markup'><OwnerMarkup /></div>}
-                        {premiumEnabled && <div label={<><span aria-hidden='true'>♛</span>Premium Bots</>} id='id-premium-bots'><PremiumBots /></div>}
+                        {canViewMarkup ? <div label={<><PortfolioIcon /><Localize i18n_default_text='Markup' /></>} id='id-markup'><OwnerMarkup /></div> : null}
+                        {premiumEnabled ? <div label={<><span aria-hidden='true'>♛</span>Premium Bots</>} id='id-premium-bots'><PremiumBots /></div> : null}
+                        {premiumEnabled ? <div label={<><span aria-hidden='true'>♛</span>Premium Admin</>} id='id-premium-admin'><PremiumAdmin /></div> : null}
                     </Tabs>
                 </div>
             </div>

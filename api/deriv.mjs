@@ -1,4 +1,5 @@
 import { createPremiumBots } from '../scripts/premium-bots.mjs';
+import { createPremiumAdmin } from '../scripts/premium-admin.mjs';
 import { createDerivAuth } from '../scripts/deriv-auth.mjs';
 import { createCredentialStore } from '../scripts/credential-store.mjs';
 import { resolveSiteAuth } from '../scripts/site-auth-config.mjs';
@@ -16,7 +17,8 @@ export default async function handler(req,res) {
       res.statusCode=503;res.setHeader('Content-Type','text/html');res.end('<h1>Account connection is not set up yet</h1><p>Please contact the site owner. Live market prices remain available without signing in.</p>');return;
     }
     const store=createCredentialStore({url:process.env.SUPABASE_URL,serviceKey:process.env.SUPABASE_SERVICE_ROLE_KEY,encryptionKey:process.env.DERIV_SESSION_ENCRYPTION_KEY});
-    const handled=await createDerivAuth({...config,store,premiumBots:createPremiumBots({url:process.env.SUPABASE_URL,serviceKey:process.env.SUPABASE_SERVICE_ROLE_KEY})})(req,res,url);
+    const credentials={url:process.env.SUPABASE_URL,serviceKey:process.env.SUPABASE_SERVICE_ROLE_KEY};
+    const handled=await createDerivAuth({...config,store,premiumBots:createPremiumBots(credentials),premiumAdmin:createPremiumAdmin(credentials)})(req,res,url);
     if(!handled){res.statusCode=404;res.end('Not found');}
   }catch{res.statusCode=503;res.setHeader('Content-Type','application/json');res.end('{"error":"Account service is temporarily unavailable. Please try again."}');}
 }

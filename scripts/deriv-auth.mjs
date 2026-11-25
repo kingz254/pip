@@ -5,7 +5,7 @@ const API = 'https://api.derivws.com/trading/v1/options';
 const opaque = () => randomBytes(32).toString('base64url');
 
 // Local development uses memory; Vercel supplies encrypted durable credential storage.
-export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetch, now = Date.now, store, premiumBots }) {
+export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetch, now = Date.now, store, premiumBots, premiumAdmin }) {
   const transactions = new Map(), sessions = new Map();
   const read = async (kind,id) => {
     const map=kind==='transaction'?transactions:sessions;
@@ -83,6 +83,48 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
         if(!data){json(res,403,{error:'This site and account do not have access to this premium bot'});return true;}
         json(res,200,botId?{xml:data}:{data});return true;
       }
+      if (url.pathname === '/api/deriv/premium-admin' || url.pathname === '/api/deriv/premium-admin/grants') {
+        if (!premiumAdmin) { json(res, 503, { error: 'Premium workspace is not configured.' }); return true; }
+        const domain = new URL(origin).hostname.replace(/^www\./, '');
+        const verifyOwner = async () => {
+          const dateTo = new Date(now()).toISOString().slice(0, 10);
+          const dateFrom = new Date(now() - 30 * 86400000).toISOString().slice(0, 10);
+          const response = await upstream('https://api.derivws.com/applications/v1/markup-statistics?' + new URLSearchParams({ date_from: dateFrom, date_to: dateTo }), {
+            headers: { Authorization: `Bearer ${session.token}`, 'Deriv-App-ID': clientId }, signal: AbortSignal.timeout(15000)
+          });
+          if (!response.ok) return false;
+          const result = await response.json();
+          return !!result.data?.breakdown?.some(row => String(row.app_id) === String(clientId));
+        };
+        if (!(await verifyOwner())) { json(res, 403, { error: 'Connect the Deriv account that owns this site’s application.' }); return true; }
+        if (url.pathname.endsWith('/grants')) {
+          if (req.method !== 'POST') { json(res, 405, { error: 'Method not allowed.' }); return true; }
+          if (req.headers.origin !== origin) { json(res, 403, { error: 'Origin required.' }); return true; }
+          const body = await readJsonBody(req, 4096);
+          if (!body || !/^premium-[0-9]{2}$/.test(body.bot_id || '') || !/^[A-Za-z0-9_-]{3,64}$/.test(body.account_id || '') || typeof body.enabled !== 'boolean') {
+            json(res, 400, { error: 'Choose a valid bot, Deriv account ID, and grant action.' }); return true;
+          }
+          const updated = await premiumAdmin.setBotAccess(domain, { botId: body.bot_id, accountId: body.account_id, enabled: body.enabled });
+          if (!updated) { json(res, 403, { error: 'This site does not have Premium access.' }); return true; }
+          json(res, 200, { ok: true }); return true;
+        }
+        if (req.method !== 'GET') { json(res, 405, { error: 'Method not allowed.' }); return true; }
+        const dateFrom = url.searchParams.get('date_from') || new Date(now() - 6 * 86400000).toISOString().slice(0, 10);
+        const dateTo = url.searchParams.get('date_to') || new Date(now()).toISOString().slice(0, 10);
+        if (![dateFrom, dateTo].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value)) || dateFrom > dateTo) {
+          json(res, 400, { error: 'Choose a valid date range.' }); return true;
+        }
+        const [workspace, markupResponse] = await Promise.all([
+          premiumAdmin.snapshot(domain),
+          upstream('https://api.derivws.com/applications/v1/markup-statistics?' + new URLSearchParams({ date_from: dateFrom, date_to: dateTo }), {
+            headers: { Authorization: `Bearer ${session.token}`, 'Deriv-App-ID': clientId }, signal: AbortSignal.timeout(15000)
+          }),
+        ]);
+        if (!workspace) { json(res, 403, { error: 'This site does not have Premium access.' }); return true; }
+        const markupResult = markupResponse.ok ? await markupResponse.json() : null;
+        const markup = markupResult?.data?.breakdown?.find(row => String(row.app_id) === String(clientId));
+        json(res, 200, { ...workspace, markup: markup || null, markup_available: !!markup }); return true;
+      }
       if (url.pathname === '/api/deriv/markup' && req.method === 'GET') {
         const dateFrom = url.searchParams.get('date_from'), dateTo = url.searchParams.get('date_to');
         if (![dateFrom, dateTo].every(value => /^\d{4}-\d{2}-\d{2}$/.test(value || '')) || dateFrom > dateTo) {
@@ -125,3 +167,13 @@ export function createDerivAuth({ origin, clientId, redirectUri, upstream = fetc
 }
 
 function jsonWithCookie(res, value) { res.writeHead(200, { 'Set-Cookie': value, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end('{"ok":true}'); }
+
+async function readJsonBody(req, maxBytes) {
+  let body = '', size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes) return null;
+    body += chunk.toString('utf8');
+  }
+  try { return JSON.parse(body); } catch { return null; }
+}
