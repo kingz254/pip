@@ -5,7 +5,7 @@ The package uses the existing browser Bot Builder. No persistent worker or extra
 ## Owner workflow
 
 1. Configure Regular/Premium prices, optional offer deadline, Telegram invitation and WhatsApp contact in the Pipforge admin page. Offers expire on the server; existing invoices keep their price.
-2. The buyer selects a package. An administrator verifies payment using the existing confirmation flow. Payment amount alone does not grant Premium.
+2. The buyer selects a package. An administrator verifies payment using the existing confirmation flow. Payment amount alone does not grant Premium. For an already-verified Regular client, an admin can grant Premium from that client’s admin card; this is recorded separately and does not edit the payment record.
 3. A paid Premium owner opens **Dashboard → Premium owner tools** in Pipforge. After confirming their own buyer's payment, they select a bot and enter that buyer's exact Deriv account ID to grant access. Repeat for each purchased bot. Access can be revoked from the same form.
 4. The buyer signs in through Deriv on that owner's live domain, selects the account that was granted access and opens **Premium Bots**. They load an unlocked bot into Bot Builder, review its settings and press Run.
 

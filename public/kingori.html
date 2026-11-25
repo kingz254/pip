@@ -70,7 +70,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 .order-card>a{display:inline-block;margin:0 var(--space-2b) var(--space-2b) 0}
 .order-card button{display:block}
 .card{padding-block:20px}
-.client-title{display:flex;align-items:center;justify-content:space-between;gap:16px}.client-title h2{min-width:0}.delete-client{min-height:30px;padding:0 10px;border:1px solid #c66;border-radius:6px;background:transparent;color:#a33;font-size:12px;white-space:nowrap}.delete-client:hover{background:#a33;color:#fff}
+.client-title{display:flex;align-items:center;justify-content:space-between;gap:16px}.client-title h2{min-width:0}.client-actions{display:flex;align-items:center;gap:7px}.delete-client{min-height:30px;padding:0 10px;border:1px solid #c66;border-radius:6px;background:transparent;color:#a33;font-size:12px;white-space:nowrap}.delete-client:hover{background:#a33;color:#fff}.premium-access{min-height:30px;padding:0 10px;border:1px solid #b18a34;border-radius:6px;background:#fff8e6;color:#71520b;font-size:12px;font-weight:600;white-space:nowrap}.premium-access[aria-pressed="true"]{border-color:#359477;background:#eefaf5;color:#17674e}.premium-access:disabled{opacity:.7}
 .card>.muted{line-height:1.6}
 .dns-compose{display:grid;gap:var(--space-2b);max-width:900px;margin-top:var(--space-3)}.dns-compose label{display:grid;gap:var(--space-2);font-size:14px;font-weight:600}.dns-compose p{margin:0}.dns-compose button{justify-self:start}
 .done{color:var(--muted)}
@@ -187,12 +187,14 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
       var box = $('clients'), sites = r.data || [];
       if (r.error) { box.textContent = 'Could not load client contacts: ' + r.error.message; return; }
       if (!sites.length) { box.textContent = 'Client contact details will appear here after someone signs in and saves a site.'; return; }
-      SB.from('profiles').select('id,email,full_name,phone').in('id', uniq(sites.map(function (s) { return s.owner; }))).then(function (p) {
+      Promise.all([SB.from('profiles').select('id,email,full_name,phone').in('id', uniq(sites.map(function (s) { return s.owner; }))), SB.rpc('admin_site_premium_access')]).then(function (results) {
+        var p=results[0], accessBySite={};if(results[1].error){box.textContent='Could not load Premium access: '+results[1].error.message;return}(results[1].data||[]).forEach(function(x){accessBySite[x.site_id]=x});
         if (p.error) { box.textContent = 'Could not load client contacts: ' + p.error.message; return; }
         var people = index(p.data), rows = sites.slice().sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); }).map(function (s) {
           var person = people[s.owner] || {}, card = el('article', 'card'), title = el('div', 'client-title');
           title.appendChild(el('h2', null, (person.full_name || 'Client name not provided') + ' · ' + (s.name || s.domain || 'Site')));
           if (s.owner !== currentAdminId) {
+            var actions=el('div','client-actions');
             var remove = el('button', 'delete-client', 'Delete'); remove.type = 'button'; remove.setAttribute('aria-label', 'Delete client ' + (person.full_name || person.email || s.domain || 'account'));
             remove.onclick = function () {
               if (!window.confirm('Permanently delete ' + (person.full_name || person.email || s.domain || 'this client') + ', including their sign-in, contact details, site handoff, and related orders and payment records?')) return;
@@ -202,7 +204,10 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
                 msg('Client deleted.'); loadClients(); load(); loadOrders(); loadReceipts(); loadVisits();
               }).catch(function () { msg('Client could not be deleted. Please try again.'); remove.disabled = false; });
             };
-            title.appendChild(remove);
+            actions.appendChild(remove);
+            var access=accessBySite[s.id]||{},premiumButton=el('button','premium-access',access.paid_premium?'Premium · paid':access.admin_granted?'Revoke Premium':'Grant Premium');premiumButton.type='button';premiumButton.setAttribute('aria-pressed',String(!!(access.paid_premium||access.admin_granted)));premiumButton.disabled=!!access.paid_premium;premiumButton.title=access.paid_premium?'Premium is included in the verified payment':access.admin_granted?'Remove this admin-granted Premium access':'Grant Premium access without changing the payment record';
+            premiumButton.onclick=function(){var enabled=!access.admin_granted;premiumButton.disabled=true;SB.rpc('set_site_premium_grant',{p_site:s.id,p_enabled:enabled}).then(function(result){if(result.error){msg(result.error.message||'Premium access could not be changed.');premiumButton.disabled=false;return}msg(enabled?'Premium access granted. The payment record is unchanged.':'Admin-granted Premium access revoked.');loadClients()}).catch(function(){msg('Premium access could not be changed. Please try again.');premiumButton.disabled=false})};
+            actions.appendChild(premiumButton);title.appendChild(actions);
           }
           card.appendChild(title);
           card.appendChild(el('div', 'muted', (s.domain || 'Domain not selected') + ' · site status: ' + (s.status || 'unknown')));

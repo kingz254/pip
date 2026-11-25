@@ -3,7 +3,10 @@ export function createPremiumBots({url,serviceKey,upstream=fetch}) {
  async function read(table,params){const response=await upstream(url+'/rest/v1/'+table+'?'+new URLSearchParams(params),{headers,signal:AbortSignal.timeout(15000)});if(!response.ok)throw new Error('Premium library unavailable');return response.json()}
  return async function premium({domain,accountId,botId}) {
   const sites=await read('sites',{domain:'eq.'+domain,status:'eq.live',select:'id'});const site=sites[0];if(!site)return null;
-  const orders=await read('orders',{site_id:'eq.'+site.id,package:'eq.premium',status:'eq.paid',select:'id',limit:'1'});if(!orders.length)return null;
+  const [orders,entitlements]=await Promise.all([
+   read('orders',{site_id:'eq.'+site.id,package:'eq.premium',status:'eq.paid',select:'id',limit:'1'}),
+   read('site_premium_access_events',{site_id:'eq.'+site.id,select:'enabled',order:'id.desc',limit:'1'})
+  ]);if(!orders.length&&entitlements[0]?.enabled!==true)return null;
   const catalog=await read('premium_bot_catalog',{select:'id,name,execution_ready',order:'id.asc'});
   const grants=await read('premium_bot_grants',{site_id:'eq.'+site.id,account_id:'eq.'+accountId,revoked_at:'is.null',select:'bot_id'});
   const access=new Set(grants.map(g=>g.bot_id));
