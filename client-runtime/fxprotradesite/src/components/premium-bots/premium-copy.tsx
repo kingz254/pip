@@ -45,7 +45,7 @@ export default function PremiumCopy() {
                 setStakeCap(String(result.config.stake_cap));
                 setDailyLossCap(String(result.config.daily_loss_cap));
             }
-            setMessage(result.config?.enabled ? 'Saved limits found. Start copying again for this browser session.' : result.leader_connected ? 'Leader is ready. Set your limits and opt in to follow.' : 'The site owner has not connected a leader yet.');
+            setMessage(result.config?.enabled ? 'Saved limits found. Tick the consent box and select Start copying to resume this browser session.' : result.leader_connected ? 'Leader account is configured. The site owner must keep that account connected on the Copy Trading tab to publish signals. Tick the consent box and select Start copying to follow.' : 'The site owner has not selected a leader account yet.');
         } catch (error) { setMessage((error as Error).message); }
     }
 
@@ -56,7 +56,8 @@ export default function PremiumCopy() {
     }, []);
 
     async function start() {
-        if (!account || !consent || !leaderConnected || running) return;
+        if (!account || !leaderConnected || running) return;
+        if (!consent) { setMessage('Tick the consent box before starting copy trading.'); return; }
         const stake = Number(stakeCap), daily = Number(dailyLossCap);
         if (!Number.isFinite(stake) || stake <= 0 || stake > 1000 || !Number.isFinite(daily) || daily <= 0 || daily > 10000) {
             setMessage('Enter a positive stake cap and daily loss limit.'); return;
@@ -160,8 +161,8 @@ export default function PremiumCopy() {
             <label>Maximum stake per trade ({account?.currency || 'USD'})<input type='number' min='0.35' max='1000' step='0.01' value={stakeCap} onChange={event => setStakeCap(event.target.value)} disabled={running} /></label>
             <label>Daily loss stop on this device ({account?.currency || 'USD'})<input type='number' min='0.35' max='10000' step='0.01' value={dailyLossCap} onChange={event => setDailyLossCap(event.target.value)} disabled={running} /></label>
         </div>
-        {!running && <label className='pf-copy-follower__consent'><input type='checkbox' checked={consent} onChange={event => setConsent(event.target.checked)} />I understand trades can lose money, will stay in my control and will stop when I close this tab.</label>}
-        <div className='pf-copy-follower__actions'>{running ? <button type='button' onClick={() => void stop()}>Stop copying</button> : <button type='button' onClick={() => void start()} disabled={!account || !leaderConnected || !consent}>Start copying</button>}{!running && <button type='button' className='is-secondary' onClick={() => void refreshAccount()}>Refresh</button>}</div>
+        {!running && <label className='pf-copy-follower__consent'><input type='checkbox' checked={consent} onChange={event => setConsent(event.target.checked)} /><span className='pf-copy-follower__check' aria-hidden='true' /><span>I understand trades can lose money, will stay in my control and will stop when I close this tab.</span></label>}
+        <div className='pf-copy-follower__actions'>{running ? <button type='button' onClick={() => void stop()}>Stop copying</button> : <button type='button' onClick={() => void start()} disabled={!account || !leaderConnected}>Start copying</button>}{!running && <button type='button' className='is-secondary' onClick={() => void refreshAccount()}>Refresh</button>}</div>
         <p className='pf-copy-follower__message' role='status'>{!account ? 'Connect a Deriv account first.' : !leaderConnected ? 'The site owner has not selected a leader account yet.' : message}</p>
         {config?.enabled && !running && <p className='pf-copy-follower__note'>Saved limits found. Copying starts only after you opt in again in this browser session.</p>}
         <p className='pf-copy-follower__note'>The daily stop counts mirrored contracts settled while this device is connected. It is not a whole-account loss limit. Copying can lose money; use a demo account first.</p>

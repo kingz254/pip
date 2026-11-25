@@ -33,7 +33,13 @@
     &__limits { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 16px; margin: 16px 0; }
     &__limits label { display: grid; gap: 8px; font-size: 13px; }
     input[type='number'] { min-height: 42px; padding: 8px 12px; border: 1px solid var(--pfc-edge); border-radius: 9px; color: inherit; background: var(--pfc-glass); font: inherit; }
-    &__consent { display: flex; align-items: flex-start; gap: 8px; margin: 16px 0; font-size: 13px; line-height: 1.5; }
+    &__consent { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0; font-size: 13px; line-height: 1.5; cursor: pointer; }
+    &__consent input[type='checkbox'] { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; }
+    &__check { display: grid; flex: 0 0 20px; width: 20px; height: 20px; place-items: center; border: 2px solid color-mix(in srgb, var(--pfc-amber) 70%, var(--pfc-edge)); border-radius: 5px; background: color-mix(in srgb, var(--pfc-glass) 82%, transparent); color: var(--pfc-amber-ink); }
+    &__check::after { content: '✓'; font-size: 14px; font-weight: 900; line-height: 1; opacity: 0; }
+    &__consent input:checked + &__check { border-color: var(--pfc-amber); background: var(--pfc-amber); }
+    &__consent input:checked + &__check::after { opacity: 1; }
+    &__consent input:focus-visible + &__check { outline: 2px solid var(--pfc-amber); outline-offset: 3px; }
     &__actions button { min-height: 40px; padding: 8px 16px; border: 0; border-radius: 9px; color: var(--pfc-amber-ink); background: var(--pfc-amber); font: inherit; font-weight: 750; cursor: pointer; }
     &__actions button.is-secondary { color: inherit; border: 1px solid var(--pfc-edge); background: transparent; }
     &__actions button:disabled { opacity: .5; cursor: not-allowed; }
