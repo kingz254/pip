@@ -25,8 +25,6 @@
 html,body{overflow-x:clip}
 *{box-sizing:border-box}
 body{margin:0;min-height:100dvh;background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--font-body)}
-body.has-admin-background{background-color:var(--paper);background-image:linear-gradient(rgba(250,247,243,.78),rgba(250,247,243,.78)),var(--admin-background-image);background-position:center;background-size:cover;background-attachment:fixed}
-body.has-admin-background .masthead,body.has-admin-background .panel{background:rgba(255,253,249,.84);backdrop-filter:blur(12px)}
 a{color:var(--ink-soft);text-underline-offset:3px}a:hover{color:var(--accent)}
 button,input{font:inherit}
 button{min-height:40px;padding:0 var(--space-3);border:1px solid var(--ink);border-radius:var(--radius);background:var(--ink);color:var(--paper-raised);font-weight:600;cursor:pointer;transition:transform 140ms ease,background-color 140ms ease}
@@ -52,7 +50,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 #portal[hidden]{display:none}
 .overview{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:20px;align-items:start;margin-bottom:var(--space-4)}
 .panel{min-width:0;padding:var(--space-4) var(--space-5);border:1px solid var(--rule);border-radius:var(--radius);background:var(--paper-raised);box-shadow:var(--shadow)}
-.background-settings{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px}.background-settings p{margin:0}.background-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.background-controls input{max-width:270px}.background-preview{display:block;width:110px;height:70px;object-fit:cover;border:1px solid var(--rule-strong);border-radius:8px}.background-remove{background:transparent;color:var(--ink);border-color:var(--rule-strong)}#background-status{grid-column:1/-1;min-height:21px;margin:0;color:var(--muted);font-size:14px}
+.background-settings{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px}.background-settings p{margin:0}.background-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.background-controls input{max-width:270px}.background-preview{display:block;width:160px;height:90px;object-fit:cover;border:1px solid var(--rule-strong);border-radius:8px;background:#151515}.background-remove{background:transparent;color:var(--ink);border-color:var(--rule-strong)}#background-status{grid-column:1/-1;min-height:21px;margin:0;color:var(--muted);font-size:14px}
 .panel h2{margin:0 0 var(--space-2);font-size:19px;line-height:1.25;letter-spacing:-.02em;font-weight:600;text-wrap:balance}
 .panel>p{margin:0 0 var(--space-3)}
 .muted{color:var(--muted);font-size:14px}
@@ -89,6 +87,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 <script src="config.js"></script>
+<script src="site-background.js" defer></script>
 </head>
 <body>
 <header class="masthead"><div class="shell masthead-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">P</span><span>Pipforge</span></div><div class="access">Private admin workspace</div></div></header>
@@ -107,7 +106,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
       </section>
     </div>
 <section class="panel"><h2>Packages and offers</h2><p class="muted">Prices apply to new orders. Existing invoices keep their original amount. Premium checkout opens when the browser bot library is configured. No private worker is used.</p><form id="package-form" class="dns-compose"><label>Regular standard price (USD)<input id="regular-price" type="number" min="0.01" step="0.01" required></label><label>Premium standard price (USD)<input id="premium-price" type="number" min="0.01" step="0.01" required></label><label>Regular offer price (USD)<input id="regular-offer" type="number" min="0.01" step="0.01" required></label><label>Premium offer price (USD)<input id="premium-offer" type="number" min="0.01" step="0.01" required></label><label>Promotion headline<input id="promo-heading" maxlength="80" required></label><label>Promotion subheading<input id="promo-subheading" maxlength="100" required></label><label>Offer ends at (your local time)<input id="offer-end" type="datetime-local" ></label><label>Premium Telegram invite<input id="premium-telegram" type="url" ></label><label>Priority WhatsApp number (country code, digits only)<input id="premium-whatsapp" type="tel" ></label><label><input id="offer-enabled" type="checkbox" style="min-width:0"> Show limited offer</label><p class="muted">An offer needs an end date. It stops automatically at that time. Telegram and WhatsApp details are private to paid Premium owners.</p><button type="submit">Save packages and contacts</button><p id="package-status" role="status"></p></form></section>
-    <section class="panel background-settings" aria-labelledby="background-heading"><div><h2 id="background-heading">Admin workspace background</h2><p class="muted">Upload a PNG, JPEG, or WebP image to use behind the admin workspace. This is saved in this browser and does not change client sites.</p></div><div class="background-controls"><img id="background-preview" class="background-preview" alt="Current admin background preview" hidden><label for="background-file">Choose image<input id="background-file" type="file" accept="image/png,image/jpeg,image/webp"></label><button id="background-remove" class="background-remove" type="button" hidden>Remove image</button></div><p id="background-status" role="status" aria-live="polite"></p></section>
+    <section class="panel background-settings" aria-labelledby="background-heading"><div><h2 id="background-heading">Pipforge site background</h2><p class="muted">Upload an image or looping video to replace Pipforge’s red wave background across the platform. The media is stored in shared cloud storage, so it appears on every device. Remove it to restore the original waves. Supported: PNG, JPEG, WebP, MP4, or WebM up to 50 MB.</p></div><div class="background-controls"><div id="background-preview" class="background-preview" aria-label="Current Pipforge background preview" hidden></div><label for="background-file">Upload background<input id="background-file" type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm"></label><button id="background-remove" class="background-remove" type="button" hidden>Remove background</button></div><p id="background-status" role="status" aria-live="polite"></p></section>
     <section><div class="section-head"><h2>Payments waiting for confirmation</h2><p class="muted">Check each transaction on its blockchain before confirming it.</p></div><div id="orders" class="queue"></div></section>
     <section><div class="section-head"><h2>Payment receipts</h2><p class="muted">Confirmed crypto payments whose receipt email is still pending or needs a retry.</p></div><div id="receipts" class="queue"></div></section>
     <section><div class="section-head"><h2>Client contacts</h2><p class="muted">Client details, saved Deriv App ID, and a place to prepare and email that client’s DNS instructions.</p></div><div id="clients" class="queue"></div></section>
@@ -117,54 +116,78 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); }, SB = null, currentAdminId = null;
-  var ADMIN_BACKGROUND_KEY = 'pipforge-admin-background-v1', MAX_BACKGROUND_BYTES = 2 * 1024 * 1024;
+  var ADMIN_BACKGROUND_KEY = 'pipforge-admin-background-v1', BACKGROUND_BUCKET = 'pipforge-backgrounds', BACKGROUND_MAX_BYTES = 50 * 1024 * 1024;
+  var currentBackgroundPath = null;
   var NAMES = { register_domain: 'Register the domain (in the client\u2019s name)', connect_dns: 'Connect DNS to our servers', issue_ssl: 'Issue SSL', go_live: 'Check the site and go live' };
   var ORDER = ['register_domain', 'connect_dns', 'issue_ssl', 'go_live'];
   function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
   function index(a) { var o = {}; (a || []).forEach(function (x) { o[x.id] = x; }); return o; }
   function msg(t) { $('msg').textContent = t || ''; }
   function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
-  function applyAdminBackground(image) {
-    var preview = $('background-preview'), remove = $('background-remove');
-    if (image) {
-      document.body.classList.add('has-admin-background');
-      document.body.style.setProperty('--admin-background-image', 'url(' + JSON.stringify(image) + ')');
-      preview.src = image; preview.hidden = false; remove.hidden = false;
-    } else {
-      document.body.classList.remove('has-admin-background');
-      document.body.style.removeProperty('--admin-background-image');
-      preview.removeAttribute('src'); preview.hidden = true; remove.hidden = true;
-    }
-  }
   function loadAdminBackground() {
-    try {
-      var image = localStorage.getItem(ADMIN_BACKGROUND_KEY);
-      if (image && /^data:image\/(?:png|jpeg|webp);base64,/i.test(image)) applyAdminBackground(image);
-      else if (image) localStorage.removeItem(ADMIN_BACKGROUND_KEY);
-    } catch (_) { $('background-status').textContent = 'Browser storage is unavailable, so an uploaded background cannot be saved here.'; }
+    try { localStorage.removeItem(ADMIN_BACKGROUND_KEY); } catch (_) {}
+    $('background-status').textContent = 'Loading the shared Pipforge background...';
+    SB.from('pipforge_site_background').select('object_path,media_kind').eq('id', true).maybeSingle().then(function (r) {
+      if (r.error) throw r.error;
+      currentBackgroundPath = r.data && r.data.object_path || null;
+      renderBackgroundPreview(r.data);
+      if (window.PF_SITE_BACKGROUND) return window.PF_SITE_BACKGROUND.load(SB);
+    }).then(function () {
+      $('background-status').textContent = currentBackgroundPath ? 'The shared background is active across Pipforge.' : 'No custom background is set. The original waves are showing.';
+    }).catch(function (e) { $('background-status').textContent = 'Could not load the shared background: ' + (e.message || 'check the Supabase migration and connection.'); });
+  }
+  function renderBackgroundPreview(settings) {
+    var preview = $('background-preview'), remove = $('background-remove');
+    preview.replaceChildren();
+    if (!settings || !settings.object_path || !['image', 'video'].includes(settings.media_kind)) { preview.hidden = true; remove.hidden = true; return; }
+    var url = SB.storage.from(BACKGROUND_BUCKET).getPublicUrl(settings.object_path).data.publicUrl;
+    var media = document.createElement(settings.media_kind === 'video' ? 'video' : 'img');
+    media.className = 'background-preview';
+    media.src = url;
+    if (settings.media_kind === 'video') { media.muted = true; media.loop = true; media.autoplay = true; media.playsInline = true; }
+    else media.alt = 'Current Pipforge background preview';
+    preview.appendChild(media); preview.hidden = false; remove.hidden = false;
+  }
+  function backgroundExtension(file) {
+    return ({'image/png':'.png','image/jpeg':'.jpg','image/webp':'.webp','video/mp4':'.mp4','video/webm':'.webm'})[file.type] || '';
   }
   $('background-file').addEventListener('change', function (event) {
     var file = event.target.files && event.target.files[0];
     if (!file) return;
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) { $('background-status').textContent = 'Choose a PNG, JPEG, or WebP image.'; event.target.value = ''; return; }
-    if (file.size > MAX_BACKGROUND_BYTES) { $('background-status').textContent = 'Choose an image smaller than 2 MB.'; event.target.value = ''; return; }
-    var reader = new FileReader();
-    reader.onerror = function () { $('background-status').textContent = 'The image could not be read. Try another file.'; event.target.value = ''; };
-    reader.onload = function () {
-      var image = new Image(), data = String(reader.result || '');
-      image.onerror = function () { $('background-status').textContent = 'That file is not a valid supported image.'; event.target.value = ''; };
-      image.onload = function () {
-        try { localStorage.setItem(ADMIN_BACKGROUND_KEY, data); applyAdminBackground(data); $('background-status').textContent = 'Background saved in this browser.'; }
-        catch (_) { $('background-status').textContent = 'Could not save the image. Try a smaller file or free browser storage.'; }
-        event.target.value = '';
-      };
-      image.src = data;
-    };
-    reader.readAsDataURL(file);
+    var ext = backgroundExtension(file);
+    if (!ext) { $('background-status').textContent = 'Choose a PNG, JPEG, WebP, MP4, or WebM file.'; event.target.value = ''; return; }
+    if (file.size > BACKGROUND_MAX_BYTES) { $('background-status').textContent = 'Choose a file smaller than 50 MB.'; event.target.value = ''; return; }
+    var path = 'global/' + crypto.randomUUID() + ext, oldPath = currentBackgroundPath;
+    var button = $('background-file'); button.disabled = true;
+    $('background-status').textContent = 'Uploading to shared storage...';
+    SB.storage.from(BACKGROUND_BUCKET).upload(path, file, { cacheControl: '31536000', upsert: false, contentType: file.type }).then(function (upload) {
+      if (upload.error) throw upload.error;
+      return SB.from('pipforge_site_background').update({object_path:path,media_kind:file.type.indexOf('video/')===0?'video':'image',updated_at:new Date().toISOString()}).eq('id',true).select('object_path,media_kind').single().then(function (save) {
+        if (save.error) return SB.storage.from(BACKGROUND_BUCKET).remove([path]).then(function () { throw save.error; });
+        currentBackgroundPath = path;
+        renderBackgroundPreview(save.data);
+        if (window.PF_SITE_BACKGROUND) return window.PF_SITE_BACKGROUND.render(SB, save.data);
+      });
+    }).then(function () {
+      $('background-status').textContent = 'Background uploaded and applied across Pipforge.';
+      if (oldPath && oldPath !== path) SB.storage.from(BACKGROUND_BUCKET).remove([oldPath]);
+    }).catch(function (e) { $('background-status').textContent = 'Background upload failed: ' + (e.message || 'check your admin access and try again.'); })
+      .then(function () { button.disabled = false; event.target.value = ''; });
   });
   $('background-remove').addEventListener('click', function () {
-    try { localStorage.removeItem(ADMIN_BACKGROUND_KEY); applyAdminBackground(null); $('background-status').textContent = 'Image removed. The original Pipforge background is restored.'; }
-    catch (_) { $('background-status').textContent = 'Could not remove the saved image from browser storage.'; }
+    var oldPath = currentBackgroundPath, button = $('background-remove');
+    if (!oldPath) return;
+    button.disabled = true; $('background-status').textContent = 'Removing the shared background...';
+    SB.from('pipforge_site_background').update({object_path:null,media_kind:null,updated_at:new Date().toISOString()}).eq('id',true).select('id').single().then(function (r) {
+      if (r.error) throw r.error;
+      currentBackgroundPath = null; renderBackgroundPreview(null);
+      if (window.PF_SITE_BACKGROUND) window.PF_SITE_BACKGROUND.clear();
+      return SB.storage.from(BACKGROUND_BUCKET).remove([oldPath]);
+    }).then(function (r) {
+      if (r && r.error) throw r.error;
+      $('background-status').textContent = 'Background removed. The original Pipforge waves are restored on every device.';
+    }).catch(function (e) { $('background-status').textContent = 'Could not remove the background: ' + (e.message || 'check your admin access and try again.'); })
+      .then(function () { button.disabled = false; });
   });
 
   function showLogin() {
