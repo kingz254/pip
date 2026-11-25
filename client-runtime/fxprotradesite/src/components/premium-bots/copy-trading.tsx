@@ -11,7 +11,6 @@ export default function CopyTrading() {
     const [canManageLeader, setCanManageLeader] = useState(false);
     const [leaderError, setLeaderError] = useState('');
     const [leaderNotice, setLeaderNotice] = useState('');
-    const [busy, setBusy] = useState(false);
     const [generation, setGeneration] = useState(0);
 
     async function refresh() {
@@ -30,27 +29,6 @@ export default function CopyTrading() {
     }
 
     useEffect(() => { void refresh(); }, []);
-
-    async function setLeaderEnabled(enabled: boolean) {
-        const accountId = enabled ? getSelectedAccount()?.account_id : leader?.account_id || getSelectedAccount()?.account_id;
-        if (!accountId || busy) { setLeaderNotice('Connect and select the site’s leader Deriv account first.'); return; }
-        if (enabled && !window.confirm(`Use ${accountId} as the one leader account for this site? Followers must opt in and set their own limits.`)) return;
-        setBusy(true);
-        setLeaderNotice('');
-        try {
-            await api_base.init();
-            const response = await fetch('/api/deriv/premium-admin/copy-leader', {
-                method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ account_id: accountId, enabled }),
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Leader account could not be saved.');
-            setLeaderNotice(enabled ? `Leader stream ready for ${accountId}. Keep this tab open while copying.` : 'Leader stream stopped.');
-            setGeneration(value => value + 1);
-            await refresh();
-        } catch (error) { setLeaderNotice((error as Error).message); }
-        finally { setBusy(false); }
-    }
 
     useEffect(() => {
         const leaderId = leader?.enabled ? leader.account_id : '';
@@ -104,10 +82,9 @@ export default function CopyTrading() {
     return <main className='pf-copy-trading' aria-labelledby='pf-copy-trading-title'>
         <header className='pf-copy-trading__hero'><span className='pf-copy-trading__icon' aria-hidden='true'><svg viewBox='0 0 24 24' width='26' height='26' fill='none' stroke='currentColor' strokeWidth='1.8'><path d='M7 7h10l3 4-8 9-8-9 3-4Z'/><path d='M9 11h6M10 14h4M7 7l5 13 5-13'/></svg></span><div><p className='pf-copy-trading__eyebrow'>PIPFORGE PREMIUM</p><h1 id='pf-copy-trading-title'>Copy Trading</h1><p>Follow the site’s selected leader using your own Deriv account and risk limits.</p></div></header>
         {canManageLeader && <section className='pf-copy-trading__leader' aria-labelledby='pf-copy-trading-leader'>
-            <div><p className='pf-copy-trading__eyebrow'>SITE LEADER</p><h2 id='pf-copy-trading-leader'>{leader?.enabled ? `Connected · ${leader.account_id}` : 'Set up the site leader'}</h2><p>{leaderError || 'The site owner chooses one source account. Followers use their own accounts and choose their own risk limits.'}</p></div>
-            <div className='pf-copy-trading__actions'><button type='button' onClick={() => void setLeaderEnabled(true)} disabled={busy}>{busy ? 'Saving…' : leader?.enabled ? 'Reconnect leader' : 'Use selected account'}</button>{leader?.enabled && <button type='button' className='is-quiet' onClick={() => void setLeaderEnabled(false)} disabled={busy}>Stop leader</button>}</div>
+            <div><p className='pf-copy-trading__eyebrow'>SITE LEADER</p><h2 id='pf-copy-trading-leader'>{leader?.enabled ? `Selected · ${leader.account_id}` : 'No leader selected yet'}</h2><p>{leaderError || 'Choose the leader in Pipforge Premium Admin. To publish eligible trades, connect this same Deriv account on this site and keep the Copy Trading tab open. Followers connect their own accounts and choose their own risk limits.'}</p></div>
             {leaderNotice && <p className='pf-copy-trading__notice' role='status'>{leaderNotice}</p>}
-            <p className='pf-copy-trading__fineprint'>Keep the leader session open while publishing. Fixed-time contracts of up to one day are supported; tick contracts and unsupported types are skipped.</p>
+            <p className='pf-copy-trading__fineprint'>The selected account is only the trade signal source. Followers must opt in; trades use their own accounts. Fixed-time contracts of up to one day are supported. Tick contracts and unsupported types are skipped.</p>
         </section>}
         <PremiumCopy />
     </main>;
