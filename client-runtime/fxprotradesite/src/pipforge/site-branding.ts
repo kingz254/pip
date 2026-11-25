@@ -26,7 +26,7 @@ declare global {
     interface Window { __PF_SITE_BRANDING__?: PipforgeSiteBranding }
 }
 
-const fonts: Record<string, string> = {"anton":"Anton","bebas-neue":"Bebas Neue","oswald":"Oswald","archivo-black":"Archivo Black","abril-fatface":"Abril Fatface","righteous":"Righteous","orbitron":"Orbitron","rajdhani":"Rajdhani","teko":"Teko","caveat":"Caveat","patrick-hand":"Patrick Hand","courgette":"Courgette","cinzel":"Cinzel","special-elite":"Special Elite","roboto-slab":"Roboto Slab",
+const fonts: Record<string, string> = {"anton":"Anton","bebas-neue":"Bebas Neue","oswald":"Oswald","archivo-black":"Archivo Black","abril-fatface":"Abril Fatface","righteous":"Righteous","orbitron":"Orbitron","rajdhani":"Rajdhani","teko":"Teko","caveat":"Caveat","patrick-hand":"Patrick Hand","courgette":"Courgette","cinzel":"Cinzel","special-elite":"Special Elite","roboto-slab":"Roboto Slab","comic-sans":"Comic Sans MS",
     inter: 'Inter', 'dm-sans': 'DM Sans', manrope: 'Manrope', 'space-grotesk': 'Space Grotesk', outfit: 'Outfit',
     'plus-jakarta': 'Plus Jakarta Sans', sora: 'Sora', urbanist: 'Urbanist', montserrat: 'Montserrat', lato: 'Lato',
     roboto: 'Roboto', 'open-sans': 'Open Sans', nunito: 'Nunito Sans', 'work-sans': 'Work Sans', rubik: 'Rubik',
@@ -42,6 +42,7 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     const theme = site.palette || templateThemes[site.template as keyof typeof templateThemes] || templateThemes.midnight;
     const light = theme.light;
     const family = fonts[site.font_theme] || fonts.inter;
+    const fontStack = site.font_theme === 'comic-sans' ? '"Comic Sans MS", "Comic Sans", cursive' : `'${family}', sans-serif`;
     const rgb = (hex: string) => hex.match(/[\da-f]{2}/gi)?.map(part => parseInt(part, 16)).join(' ') || '55 124 252';
     root.dataset.pfTenant = 'true';
     root.dataset.pfTemplate = site.template;
@@ -66,7 +67,7 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     root.style.setProperty('--pf-client-glass', theme.glass);
     root.style.setProperty('--pf-client-edge', theme.edge);
     root.style.setProperty('--pf-client-blur', `${Math.round(Math.max(0, Math.min(100, site.blur)) * 0.24)}px`);
-    root.style.setProperty('--pf-client-font', site.palette?.font || `'${family}', sans-serif`);
+    root.style.setProperty('--pf-client-font', site.palette?.font || fontStack);
     root.style.colorScheme = light ? 'light' : 'dark';
     localStorage.setItem('theme',light ? 'light' : 'dark');
     document.body?.classList.toggle('theme--dark', !light);
@@ -94,8 +95,10 @@ export function applySiteBranding(site: PipforgeSiteBranding) {
     const fontLink = document.getElementById('pf-client-font') as HTMLLinkElement || document.createElement('link');
     fontLink.id = 'pf-client-font';
     fontLink.rel = 'stylesheet';
-    fontLink.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, '+')}&display=swap`;
-    document.head.append(fontLink);
+    if (site.font_theme !== 'comic-sans') {
+        fontLink.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, '+')}&display=swap`;
+        document.head.append(fontLink);
+    } else fontLink.remove();
     const computed=window.getComputedStyle(document.body);
     for(const property of Array.from(computed)){if(!property.startsWith('--'))continue;const value=computed.getPropertyValue(property),branded=replaceGold(value);if(branded!==value)document.body.style.setProperty(property,branded);}
     const blockly=(window as any).Blockly;if(blockly?.Colours?.RootBlock){blockly.Colours.RootBlock.colour=theme.accent;blockly.Colours.RootBlock.colourSecondary=theme.accent;}

@@ -1,5 +1,5 @@
 import PremiumBots from '@/components/premium-bots/premium-bots';
-import PremiumAdmin from '@/components/premium-admin/premium-admin';
+import CopyTrading from '@/components/premium-bots/copy-trading';
 import { useClientBranding } from '@/pipforge/site-branding';
 import OwnerMarkup, { useOwnerMarkup } from '@/components/portfolio/owner-markup';
 import React, { lazy, Suspense, useCallback,useEffect, useState } from 'react';
@@ -278,9 +278,6 @@ const AppWrapper = observer(() => {
                     }
                 }
             }
-        } else if (premiumEnabled && !searchParams.has('bot')) {
-            setActiveTab(DBOT_TABS.PREMIUM_ADMIN);
-            setSearchParams({ tab: 'id-premium-admin' }, { replace: true });
         }
 
         // Set overunder state to "no" on page load
@@ -805,7 +802,7 @@ const AppWrapper = observer(() => {
                         </div>
                         {canViewMarkup ? <div label={<><PortfolioIcon /><Localize i18n_default_text='Markup' /></>} id='id-markup'><OwnerMarkup /></div> : null}
                         {premiumEnabled ? <div label={<><span aria-hidden='true'>♛</span>Premium Bots</>} id='id-premium-bots'><PremiumBots /></div> : null}
-                        {premiumEnabled ? <div label={<><span aria-hidden='true'>♛</span>Premium Admin</>} id='id-premium-admin'><PremiumAdmin /></div> : null}
+                        {premiumEnabled ? <div label={<><svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' aria-hidden='true'><path d='M7 7h10l3 4-8 9-8-9 3-4Z'/><path d='M9 11h6M10 14h4M7 7l5 13 5-13'/></svg>Copy Trading</>} id='id-copy-trading'><CopyTrading /></div> : null}
                     </Tabs>
                 </div>
             </div>

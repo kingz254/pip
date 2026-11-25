@@ -456,6 +456,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .rise>*,.cfg{opacity:1;transform:none}.js .reveal{opacity:1;transform:none}}
+.premium-hero{display:flex;align-items:center;gap:18px;margin:0 0 20px;padding:clamp(20px,3vw,34px);border:1px solid #d6b05e88;border-radius:22px;background:radial-gradient(ellipse at 4% 0%,#c49b4730,transparent 56%),linear-gradient(130deg,#14151c,#252333);box-shadow:0 18px 46px #0003;color:#fff}.premium-hero h1{margin:3px 0;font-size:clamp(28px,4vw,42px);letter-spacing:-.04em}.premium-hero p{margin:6px 0 0;color:#c4c3ca}.premium-kicker{color:#e6c975;font-size:11px;font-weight:800;letter-spacing:.16em}.premium-crown{display:grid;place-items:center;width:58px;height:58px;flex:0 0 auto;border:1px solid #f1d789;border-radius:17px;background:linear-gradient(145deg,#f4df9c,#bc8e36);color:#241d0e;font-size:31px}.premium-live{margin-left:auto;padding:7px 10px;border:1px solid #f1d78977;border-radius:999px;color:#f5df9f;font-size:11px;font-weight:800;letter-spacing:.1em;white-space:nowrap}.premium-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}.premium-stats .card{margin:0;display:grid;gap:8px}.premium-stats span{color:var(--muted);font-size:13px}.premium-stats strong{font-size:26px;font-variant-numeric:tabular-nums}.premium-columns{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);gap:16px;margin-bottom:40px}.premium-panel{margin:0;border:1px solid #d6b05e66!important;background:linear-gradient(145deg,#fffdf8,#fff)!important;color:#27231c}.premium-panel h2{margin:6px 0;font-size:22px}.premium-panel>p{color:#665f54;line-height:1.6}.premium-form{display:grid;gap:12px;margin:20px 0}.premium-form label{display:grid;gap:6px;font-weight:650}.premium-form input{min-height:44px;padding:10px 12px;border:1px solid #d8c99f;border-radius:9px;background:#fff;color:#241f14;font:inherit}.premium-buttons{display:flex;flex-wrap:wrap;gap:10px}.premium-buttons .btn{background:linear-gradient(130deg,#f0d68b,#c49a43);color:#241d0e;border:1px solid #b38c3c}.premium-buttons .btn.ghost{background:transparent;color:#644c1d}.premium-how{padding:16px;border:1px solid #e2d4ae;border-radius:12px;background:#fffaf0}.premium-how ul{padding-left:20px;color:#514832}.premium-how li+li{margin-top:7px}.premium-contact-links{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.premium-contact-links a,.premium-link{color:#765b20;font-weight:700}.premium-nav{color:#6f5417!important}.premium-nav::after{background:linear-gradient(90deg,#f0d68b,#c49a43)!important}@media(max-width:760px){.premium-hero{align-items:flex-start;flex-wrap:wrap}.premium-live{margin-left:0}.premium-stats{grid-template-columns:1fr}.premium-columns{grid-template-columns:1fr}}
 </style>
 <script>window.addEventListener("pageshow",function(e){var pending=sessionStorage.getItem("pf-oauth-pending");if(e.persisted&&pending){location.reload();return}if(!e.persisted&&pending)sessionStorage.removeItem("pf-oauth-pending")});</script>
 <script type="module">
@@ -621,7 +622,12 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     <div><label for="dr">Referral link (optional)</label><input class="field" id="dr" placeholder="Your Deriv referral link"></div>
     <button class="btn" id="dsave">Save changes</button>
   </div>
-<section id="premium-owner-tools" class="glass card" hidden><h2>Premium owner tools</h2><p>Confirm your buyer’s payment, then grant access using their Deriv account ID. Revoking access blocks future loads. Bots already loaded may remain on the buyer’s device.</p><div id="premium-contact-links"></div><form id="premium-access-form" class="fgrid"><label>Premium bot<select id="premium-access-bot" class="field"></select></label><label>Buyer Deriv account ID<input id="premium-access-account" class="field" required pattern="[A-Za-z0-9_-]{3,64}" maxlength="64" placeholder="Buyer’s exact account ID"></label><label>Access<select id="premium-access-enabled" class="field"><option value="true">Grant access</option><option value="false">Revoke access</option></select></label><button class="btn" type="submit">Save buyer access</button><p id="premium-access-status" role="status"></p></form></section>
+</div>
+
+<div class="page" id="p-premium-admin" hidden>
+ <div class="premium-hero"><span class="premium-crown" aria-hidden="true">♛</span><div><span class="premium-kicker">PIPFORGE PREMIUM</span><h1>Premium Admin</h1><p>Manage your Premium site from Pipforge. Your customer site keeps its own trading tools.</p></div><span class="premium-live">ACCESS ACTIVE</span></div>
+ <div class="premium-stats" aria-label="Site activity"><article class="glass card"><span>Site visits · 30 days</span><strong id="premium-visits">—</strong></article><article class="glass card"><span>Markup · synced</span><strong id="premium-markup">—</strong></article><article class="glass card"><span>Trading days</span><strong id="premium-days">—</strong></article></div>
+ <div class="premium-columns"><section class="glass card premium-panel"><span class="premium-kicker">BUYER ACCESS</span><h2>Unlock the complete bot library</h2><p>After you verify your buyer’s payment, enter their Deriv account ID once. Every bot in the catalog is granted together. The client’s site updates its Premium Bots and Copy Trading tabs after refresh.</p><form id="premium-access-form" class="premium-form"><label>Buyer Deriv account ID<input id="premium-access-account" required pattern="[A-Za-z0-9_-]{3,64}" maxlength="64" placeholder="Buyer’s exact account ID"></label><div class="premium-buttons"><button class="btn" type="submit">Grant all Premium bots</button><button class="btn ghost" id="premium-revoke-all" type="button">Revoke all for account</button></div><p id="premium-access-status" role="status" aria-live="polite"></p></form><div class="premium-how"><b>What your buyers get</b><ul><li>All approved Premium bots unlock together for their Deriv account.</li><li>They can load bots in Bot Builder and review settings before running.</li><li>Copy Trading has its own tab on their customer site and requires their opt-in.</li></ul></div></section><aside class="glass card premium-panel"><span class="premium-kicker">PRIORITY SUPPORT</span><h2>Your Premium contacts</h2><p>Reach the Pipforge Premium support channels included with your package.</p><div id="premium-contact-links" class="premium-contact-links">Loading contacts…</div><a class="premium-link" href="#earnings">Open detailed earnings and visits ↗</a></aside></div>
 </div>
 
 <div class="page" id="p-checkout" hidden>
@@ -706,10 +712,11 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.12});
     els.forEach(function(e){io.observe(e)});
   }else{els.forEach(function(e){e.classList.add("in")})}
-  var pages=["home","templates","bots","pricing","how","faq","legal","dashboard","checkout","client-preview"];
+  var pages=["home","templates","bots","pricing","how","faq","legal","dashboard","premium-admin","checkout","client-preview"];
   function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
   function route(){
     var h=(location.hash||"#home").slice(1);if(pages.indexOf(h)<0)h="home";
+    if(h==="premium-admin"&&!(BK&&BK.site&&st.premium_enabled))h="home";
     pages.forEach(function(p){var e=$("p-"+p);if(e){e.hidden=p!==h;if(p===h){e.classList.remove("in");void e.offsetWidth;e.classList.add("in")}}});document.body.classList.toggle("show-client-preview",h==="client-preview");if(window.__pfPreviewHost&&window.__pfPreviewPage){var target=h==="client-preview"?window.__pfPreviewPage:window.__pfPreviewHost;if(window.__pfPreviewElement&&window.__pfPreviewElement.parentNode!==target)target.appendChild(window.__pfPreviewElement)}if(h==="home"&&reviewReturnTab){var rb=cfg.querySelector('.tabs [data-tab="'+reviewReturnTab+'"]');if(rb){cfg.querySelectorAll(".tabs button").forEach(function(x){x.setAttribute("aria-selected",String(x===rb))});cfg.querySelectorAll(".tp").forEach(function(x){x.classList.toggle("on",x.dataset.p===reviewReturnTab)})}reviewReturnTab=null}
     var ln=document.querySelector(".links"),active=null;document.querySelectorAll(".links a").forEach(function(a){var on=a.getAttribute("href")==="#"+h;a.classList.toggle("on",on);if(on)active=a});
     if(ln&&active){if(h==="home"||h==="landing")ln.scrollLeft=0;else{var lr=ln.getBoundingClientRect(),ar=active.getBoundingClientRect();if(ar.left<lr.left)ln.scrollLeft-=lr.left-ar.left;else if(ar.right>lr.right)ln.scrollLeft+=ar.right-lr.right}}
@@ -1569,6 +1576,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     var ln=document.querySelector(".links"),h=location.hash||"#home",ac=$("acct"),b,s;
     ln.querySelectorAll("a").forEach(function(a){ln.removeChild(a)});
     ln.insertAdjacentHTML("afterbegin",ME?'<a href="#home">Home</a><a href="#why">Why own a site</a><a href="#templates">Themes</a><a href="#bots">Bots</a><a href="#pricing">Pricing</a><a href="#tutorials">Tutorials</a><a href="#earnings">Earnings</a><a href="#testimonials">Reviews</a><a href="#faq">FAQ</a><a href="#dashboard">Dashboard</a>':'<a href="#landing">Home</a><a href="#why">Why own a site</a><a href="#pricing">Pricing</a><a href="#testimonials">Reviews</a><a href="#faq">FAQ</a>');
+    if(ME&&BK&&BK.site&&st.premium_enabled)ln.insertAdjacentHTML("beforeend",'<a class="premium-nav" href="#premium-admin">♛ Premium Admin</a>');
     ln.querySelectorAll("a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")===h)});
     ac.textContent="";
     if(ME){s=document.createElement("span");s.className="hi2";s.textContent="Hi, "+ME.name.split(" ")[0];b=document.createElement("button");b.className="btn ghost";b.id="lgo";b.textContent="Log out";ac.appendChild(s);ac.appendChild(b)}
@@ -1675,20 +1683,24 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
       if(!r.data||!r.data.length){box.textContent="Nothing to do yet. Steps appear here after you pay.";return}
       r.data.forEach(function(t){var d=document.createElement("div");d.className="chk";d.textContent=(names[t.task]||t.task)+" \u2014 "+(t.status==="done"?"done":"in progress");box.appendChild(d)})})}
 
+  function renderPremiumStats(){var rows=BK.earn||[],since=Date.now()-30*864e5,days=rows.filter(function(row){return new Date(row.day+'T00:00:00Z').getTime()>=since}),views=days.reduce(function(n,row){return n+row.views},0),markup=days.reduce(function(n,row){return n+row.e},0);$('premium-visits').textContent=views.toLocaleString();$('premium-markup').textContent=usd(markup);$('premium-days').textContent=days.filter(function(row){return row.c||row.v||row.e}).length.toLocaleString()}
   function loadPremiumOwner(){
-    $('premium-owner-tools').hidden=true;
+    var wasPremium=st.premium_enabled;
     SB.rpc('premium_contacts').then(function(r){
-      if(r.error||!r.data)return;
-      st.premium_enabled=true;render();
-      $('premium-owner-tools').hidden=false;var box=$('premium-contact-links');box.replaceChildren();
-      [['telegram_url','Premium Telegram'],['whatsapp_number','Priority WhatsApp']].forEach(function(pair){var value=r.data[pair[0]];if(!value)return;var a=document.createElement('a');a.textContent=pair[1];a.href=pair[0]==='whatsapp_number'?'https://wa.me/'+value:value;a.target='_blank';a.rel='noopener noreferrer';a.style.marginRight='16px';box.appendChild(a)});
-      return SB.from('premium_bot_catalog').select('id,name').then(function(result){var select=$('premium-access-bot');select.replaceChildren();(result.data||[]).forEach(function(bot){var option=document.createElement('option');option.value=bot.id;option.textContent=bot.name;select.appendChild(option)})});
-    }).catch(function(){$('premium-owner-tools').hidden=true});
+      if(r.error||!r.data){st.premium_enabled=false;navUI();if(location.hash==='#premium-admin')location.hash='#dashboard';return}
+      st.premium_enabled=true;render();navUI();
+      var box=$('premium-contact-links');box.replaceChildren();
+      [['telegram_url','Premium Telegram'],['whatsapp_number','Priority WhatsApp']].forEach(function(pair){var value=r.data[pair[0]];if(!value)return;var a=document.createElement('a');a.textContent=pair[1];a.href=pair[0]==='whatsapp_number'?'https://wa.me/'+value:value;a.target='_blank';a.rel='noopener noreferrer';box.appendChild(a)});
+      if(!box.children.length)box.textContent='Contact details are not available yet.';
+      if(!wasPremium){try{var key='pf-premium-opened:'+BK.site.id,seen=localStorage.getItem(key);if(!seen){localStorage.setItem(key,'1');location.hash='#premium-admin'}}catch(ignore){location.hash='#premium-admin'}}
+      renderPremiumStats();
+    }).catch(function(){st.premium_enabled=false;navUI()});
   }
   $('premium-access-form').addEventListener('submit',function(e){
-    e.preventDefault();if(!BK.site)return;var button=e.submitter;button.disabled=true;
-    SB.rpc('set_premium_bot_access',{p_site:BK.site.id,p_bot:$('premium-access-bot').value,p_account:$('premium-access-account').value.trim(),p_enabled:$('premium-access-enabled').value==='true'}).then(function(r){$('premium-access-status').textContent=r.error?r.error.message:'Buyer access saved.';button.disabled=false}).catch(function(){button.disabled=false;$('premium-access-status').textContent='Could not save access. Try again.'});
+    e.preventDefault();if(!BK.site)return;var button=e.submitter,account=$('premium-access-account').value.trim();if(!/^[A-Za-z0-9_-]{3,64}$/.test(account))return; if(!window.confirm('Grant the complete Premium bot library to '+account+'?'))return;button.disabled=true;
+    SB.rpc('set_all_premium_bot_access',{p_site:BK.site.id,p_account:account,p_enabled:true}).then(function(r){$('premium-access-status').textContent=r.error?r.error.message:'All Premium bots are now granted to '+account+'.';button.disabled=false}).catch(function(){button.disabled=false;$('premium-access-status').textContent='Could not grant all bots. Try again.'});
   });
+  $('premium-revoke-all').addEventListener('click',function(e){var account=$('premium-access-account').value.trim();if(!BK.site||!(/^[A-Za-z0-9_-]{3,64}$/.test(account))){$('premium-access-status').textContent='Enter the buyer’s Deriv account ID first.';$('premium-access-account').focus();return}if(!window.confirm('Revoke every Premium bot for '+account+'?'))return;e.currentTarget.disabled=true;SB.rpc('set_all_premium_bot_access',{p_site:BK.site.id,p_account:account,p_enabled:false}).then(function(r){$('premium-access-status').textContent=r.error?r.error.message:'All Premium bots were revoked for '+account+'.';e.currentTarget.disabled=false}).catch(function(){e.currentTarget.disabled=false;$('premium-access-status').textContent='Could not revoke all bots. Try again.'})});
 
   function loadStatus(){
     if(!BK.uid||!BK.site)return Promise.resolve();
@@ -1703,7 +1715,7 @@ html.tenant nav,html.tenant main,html.tenant footer,html.tenant .pgbg,html.tenan
     ]).then(function(results){
       var m={};(results[0].data||[]).forEach(function(x){m[x.day]=Object.assign(m[x.day]||{},x)});(results[1].data||[]).forEach(function(x){m[x.day]=Object.assign(m[x.day]||{},x)});
       BK.earn=Object.keys(m).sort().map(function(day){var x=m[day];return{day:day,c:Number(x.contracts)||0,v:Number(x.volume)||0,e:Number(x.markup)||0,views:Number(x.views)||0}});
-      ern()})}
+      ern();if(st.premium_enabled)renderPremiumStats()})}
   function loadSite(){
     BK.loading=true;
     return SB.from("sites").select("*").eq("owner",BK.uid).maybeSingle().then(function(r){
