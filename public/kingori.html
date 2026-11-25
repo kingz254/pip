@@ -112,7 +112,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
 </main>
 <script>
 (function () {
-  var $ = function (id) { return document.getElementById(id); }, SB = null;
+  var $ = function (id) { return document.getElementById(id); }, SB = null, currentAdminId = null;
   var NAMES = { register_domain: 'Register the domain (in the client\u2019s name)', connect_dns: 'Connect DNS to our servers', issue_ssl: 'Issue SSL', go_live: 'Check the site and go live' };
   var ORDER = ['register_domain', 'connect_dns', 'issue_ssl', 'go_live'];
   function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
@@ -126,7 +126,7 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
     $('auth').replaceChildren(b);
   }
   function check() {
-    SB.rpc('is_admin').then(function (r) {
+    SB.auth.getUser().then(function (auth) { currentAdminId = auth.data && auth.data.user ? auth.data.user.id : null; return SB.rpc('is_admin'); }).then(function (r) {
       if (r.data !== true) { msg('This account is not an admin.'); return; }
       $('auth').replaceChildren(); $('portal').hidden = false; load(); loadVisits(); loadOrders(); loadReceipts(); loadClients(); loadPackages();
     });
@@ -192,16 +192,19 @@ h1{margin:0;font-size:32px;line-height:1.15;letter-spacing:-.035em;font-weight:6
         var people = index(p.data), rows = sites.slice().sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); }).map(function (s) {
           var person = people[s.owner] || {}, card = el('article', 'card'), title = el('div', 'client-title');
           title.appendChild(el('h2', null, (person.full_name || 'Client name not provided') + ' · ' + (s.name || s.domain || 'Site')));
-          var remove = el('button', 'delete-client', 'Delete'); remove.type = 'button'; remove.setAttribute('aria-label', 'Delete client ' + (person.full_name || person.email || s.domain || 'account'));
-          remove.onclick = function () {
-            if (!window.confirm('Permanently delete ' + (person.full_name || person.email || s.domain || 'this client') + ', including their sign-in, contact details, site handoff, and related orders and payment records?')) return;
-            remove.disabled = true;
-            SB.functions.invoke('admin-delete-client', { body: { user_id: s.owner } }).then(function (result) {
-              if (result.error) { msg(result.error.message || 'Client could not be deleted.'); remove.disabled = false; return; }
-              msg('Client deleted.'); loadClients(); load(); loadOrders(); loadReceipts(); loadVisits();
-            }).catch(function () { msg('Client could not be deleted. Please try again.'); remove.disabled = false; });
-          };
-          title.appendChild(remove); card.appendChild(title);
+          if (s.owner !== currentAdminId) {
+            var remove = el('button', 'delete-client', 'Delete'); remove.type = 'button'; remove.setAttribute('aria-label', 'Delete client ' + (person.full_name || person.email || s.domain || 'account'));
+            remove.onclick = function () {
+              if (!window.confirm('Permanently delete ' + (person.full_name || person.email || s.domain || 'this client') + ', including their sign-in, contact details, site handoff, and related orders and payment records?')) return;
+              remove.disabled = true;
+              SB.functions.invoke('admin-delete-client', { body: { user_id: s.owner } }).then(function (result) {
+                if (result.error) { msg(result.error.message || 'Client could not be deleted.'); remove.disabled = false; return; }
+                msg('Client deleted.'); loadClients(); load(); loadOrders(); loadReceipts(); loadVisits();
+              }).catch(function () { msg('Client could not be deleted. Please try again.'); remove.disabled = false; });
+            };
+            title.appendChild(remove);
+          }
+          card.appendChild(title);
           card.appendChild(el('div', 'muted', (s.domain || 'Domain not selected') + ' · site status: ' + (s.status || 'unknown')));
           var contact = el('div', 'muted');
           if (person.email) { var email = el('a', null, person.email); email.href = 'mailto:' + person.email; contact.appendChild(email); }
